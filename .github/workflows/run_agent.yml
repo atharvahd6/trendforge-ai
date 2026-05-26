@@ -45,6 +45,6 @@ jobs:
         git pull origin main --rebase
         git stash pop || true
         
-        git add archived_trends/* MASTER_TREND_JOURNAL.md products/* || true
+        git add archived_trends/* MASTER_TREND_JOURNAL.md products/* index.html || true
         git commit -m "🚀 Complete Systems Launch: Deployed functional web utility [skip ci]" || true
         git push origin main
