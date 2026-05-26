@@ -41,7 +41,15 @@ jobs:
       run: |
         git config --global user.name "AI-History-Bot"
         git config --global user.email "history@saas-bot.local"
+        
+        # 🛡️ Safe Git Sync: Stash changes, pull latest main via rebase, and pop changes back out
+        git stash --include-untracked || true
         git pull origin main --rebase
+        git stash pop || true
+        
+        # Stage everything newly created by the AI agents
         git add archived_trends/* MASTER_TREND_JOURNAL.md || true
+        
+        # Commit and push back to your main repository timeline
         git commit -m "🚀 Archive System: Added today's autonomous launch kit [skip ci]" || true
         git push origin main
