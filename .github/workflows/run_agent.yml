@@ -23,7 +23,7 @@ jobs:
         python-version: '3.10'
 
     - name: Fetch Core Libraries
-      run: pip install groq google-generativeai openai cohere mistralai
+      run: pip install groq google-genai openai cohere mistralai
 
     - name: Run Optimization Loop
       env:
