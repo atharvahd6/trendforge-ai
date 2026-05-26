@@ -7,10 +7,12 @@ on:
 
 permissions:
   contents: write
+  models: read        # 🔑 FIXED: This grants your GITHUB_TOKEN explicit access to the free AI models!
 
 jobs:
   run-marketing-engine:
     runs-on: ubuntu-latest
+# ... (rest of the file stays exactly the same)
     steps:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
