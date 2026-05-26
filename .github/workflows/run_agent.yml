@@ -3,7 +3,7 @@ name: Autonomous Multi-AI Trend Loop
 on:
   schedule:
     - cron: '0 6 * * *' # Runs automatically every single day at 6:00 AM UTC
-  workflow_dispatch:   # Adds a manual "Run" button inside your GitHub interface
+  workflow_dispatch:   # Manual test button
 
 permissions:
   contents: write
@@ -23,13 +23,16 @@ jobs:
         python-version: '3.10'
 
     - name: Fetch Core Libraries
-      run: pip install groq google-generativeai openai
+      run: pip install groq google-generativeai openai cohere mistralai
 
     - name: Run Optimization Loop
       env:
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided automatically by GitHub Actions!
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+        MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: python agent.py
 
     - name: Commit and Save Historical Records
