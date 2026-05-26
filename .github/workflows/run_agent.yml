@@ -3,11 +3,10 @@ name: Autonomous Multi-AI Trend Loop
 on:
   schedule:
     - cron: '0 6 * * *' # Runs daily at 6 AM UTC
-  workflow_dispatch:   # 🔑 Re-enables the manual play button!
+  workflow_dispatch:   # Re-enables manual run trigger button
 
 permissions:
   contents: write
-  models: read
 
 jobs:
   run-marketing-engine:
@@ -15,13 +14,15 @@ jobs:
     steps:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetches full history to prevent rebase issues
 
     - name: Set up Python Workspace
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
-    - name: Install Framework Core Dependencies
+    - name: Install Dependencies securely
       run: |
         python -m pip install --upgrade pip
         pip install google-genai openai cohere mistralai
@@ -36,15 +37,20 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: python agent.py
 
-    - name: Commit and Save Historical Records
+    - name: Commit and Save Historical Records Safely
       run: |
         git config --global user.name "AI-History-Bot"
         git config --global user.email "history@saas-bot.local"
         
-        git stash --include-untracked || true
-        git pull origin main --rebase
-        git stash pop || true
+        # Pull updates safely to prevent overlaps
+        git pull origin main --rebase || true
         
+        # Only stage and commit if your script successfully generated updates
         git add archived_trends/* MASTER_TREND_JOURNAL.md products/* index.html || true
-        git commit -m "🚀 Complete Systems Launch: Deployed functional web utility [skip ci]" || true
-        git push origin main
+        
+        if git diff --staged --quiet; then
+          echo "No structural product changes detected to push on this cycle."
+        else
+          git commit -m "🚀 Complete Systems Launch: Deployed functional web utility [skip ci]"
+          git push origin main
+        fi
