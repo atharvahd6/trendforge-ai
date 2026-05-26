@@ -17,7 +17,7 @@ def get_api_clients():
         try: clients["gemini"] = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
         except Exception as e: print(f"⚠️ Gemini client setup skipped: {e}")
     if os.environ.get("GROQ_API_KEY"):
-        try: clients["groq"] = OpenAI(api_key=os.environ.get("GROQ_API_KEY"), base_url="[https://api.groq.com/openai/v1](https://api.groq.com/openai/v1)")
+        try: clients["groq"] = OpenAI(api_key=os.environ.get("GROQ_API_KEY"), base_url="https://api.groq.com/openai/v1")
         except Exception as e: print(f"⚠️ Groq client setup skipped: {e}")
     if os.environ.get("COHERE_API_KEY"):
         try: clients["cohere"] = cohere.ClientV2(api_key=os.environ.get("COHERE_API_KEY"))
@@ -26,7 +26,7 @@ def get_api_clients():
         try: clients["mistral"] = Mistral(api_key=os.environ.get("MISTRAL_API_KEY"))
         except Exception as e: print(f"⚠️ Mistral client setup skipped: {e}")
     if os.environ.get("GITHUB_TOKEN"):
-        try: clients["github"] = OpenAI(api_key=os.environ.get("GITHUB_TOKEN"), base_url="[https://models.inference.ai.azure.com](https://models.inference.ai.azure.com)")
+        try: clients["github"] = OpenAI(api_key=os.environ.get("GITHUB_TOKEN"), base_url="https://models.inference.ai.azure.com")
         except Exception as e: print(f"⚠️ GitHub Token client setup skipped: {e}")
     return clients
 
@@ -106,7 +106,7 @@ def call_core_developer(clients, scout_output):
         "- Embed an elegant, modern dark-mode user interface.\n"
         "- Do not include placeholders, do not leave code sections incomplete, and do not say 'add your logic here'.\n"
         "- Include a clear, beautiful premium upgrade feature banner or modal prompt at the bottom. When clicked, it MUST trigger "
-        "a clean JavaScript alert or stylish UI modal displaying comprehensive subscription pricing details ($9/month test tier) to collect verification clicks.\n"
+        "a clean JavaScript alert or stylish UI modal displaying comprehensive subscription pricing details ($9/month tier) to collect verification verification clicks.\n"
         "Output ONLY the raw code starting with <!DOCTYPE html> and ending with </html>. Do not wrap the response in markdown blocks."
     )
     
@@ -125,7 +125,6 @@ def call_core_developer(clients, scout_output):
                     res = clients[provider].chat.completions.create(model=model_name, messages=[{"role": "user", "content": prompt}])
                     content = res.choices[0].message.content.strip()
                 
-                # 🧼 ROBUST MULTI-STAGE CLEANING TO REMOVE BROKEN CODEBLOCK TAGS
                 if "```html" in content:
                     content = content.split("```html")[1].split("```")[0].strip()
                 elif "```" in content:
@@ -165,7 +164,7 @@ def call_personal_marketer(clients, scout_output):
         except: pass
     return "Marketing templates automatically generated via internal fallback."
 
-# --- PHASE 4: LANDING PAGE GENERATION LOGIC ---
+# --- PHASE 4: PUBLIC LANDING PAGE GENERATION LOGIC (STRIPPED VERSION) ---
 def update_root_index():
     """Reads the markdown journal table, converts it safely to clean HTML rows, and forces a write to index.html"""
     if not os.path.exists("MASTER_TREND_JOURNAL.md"):
@@ -182,24 +181,20 @@ def update_root_index():
             
         parts = [p.strip() for p in clean_line.split("|")[1:-1]]
         
-        if len(parts) >= 4:
+        if len(parts) >= 3:
             date_str = parts[0]
             name_str = parts[1].replace("**", "")
             
             app_link = "#"
             if "](" in parts[2]:
+                # Directly extract the absolute URL path to resolve 404 bugs
                 app_link = parts[2].split("](")[1].split(")")[0]
-                
-            promo_link = "#"
-            if "](" in parts[3]:
-                promo_link = parts[3].split("](")[1].split(")")[0]
                 
             html_table_rows += f"""
             <tr>
                 <td>{date_str}</td>
                 <td style="font-weight:600; color:#fff;">{name_str}</td>
                 <td><a href="{app_link}" target="_blank" style="color:#10B981; text-decoration:none; font-weight:bold;">Launch App Tool 🌐</a></td>
-                <td><a href="{promo_link}" target="_blank" style="color:#818CF8; text-decoration:none;">View Promo Copy 📄</a></td>
             </tr>"""
 
     index_layout = f"""<!DOCTYPE html>
@@ -255,11 +250,10 @@ def update_root_index():
                         <th>Date Run</th>
                         <th>Discovered Startup Concept</th>
                         <th>Live Web App Link</th>
-                        <th>Strategic Copy Package</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {html_table_rows if html_table_rows else "<tr><td colspan='4' style='color:var(--text-muted); text-align:center;'>Initializing deployment matrices...</td></tr>"}
+                    {html_table_rows if html_table_rows else "<tr><td colspan='3' style='color:var(--text-muted); text-align:center;'>Initializing deployment matrices...</td></tr>"}
                 </tbody>
             </table>
         </div>
@@ -302,12 +296,13 @@ def main():
         with open(f"archived_trends/launch_kit_{current_date}.md", "w", encoding="utf-8") as f:
             f.write(f"# 🚀 Autonomous Launch Kit ({current_date})\n\n## 💡 Independent Analysis\n{scout_data}\n\n## 📋 Personal Account Promo Scripts\n{social_distribution}\n\n## 🛠️ Deployed File Location\n`/{target_dir}/index.html`")
             
-        live_app_link = f"[https://atharvahd6.github.io/trendforge-ai/products/](https://atharvahd6.github.io/trendforge-ai/products/){clean_folder_name}/"
-        journal_entry = f"| {current_date} | **{prod_name}** | [Open Live App Tool 🌐]({live_app_link}) | [View Promotion Copy 📄](archived_trends/launch_kit_{current_date}.md) |\n"
+        # Absolute URL construction to completely bypass the 404 relative grouping bug
+        live_app_link = f"https://atharvahd6.github.io/trendforge-ai/products/{clean_folder_name}/"
+        journal_entry = f"| {current_date} | **{prod_name}** | [Open Live App Tool 🌐]({live_app_link}) |\n"
         
         if not os.path.exists("MASTER_TREND_JOURNAL.md"):
             with open("MASTER_TREND_JOURNAL.md", "w", encoding="utf-8") as f:
-                f.write("# 📚 Master Autonomous Trend Journal\n\n| Date Run | Discovered Startup Concept | Live Web App Link | Strategic Copy Package |\n| :--- | :--- | :--- | :--- |\n")
+                f.write("# 📚 Master Autonomous Trend Journal\n\n| Date Run | Discovered Startup Concept | Live Web App Link |\n| :--- | :--- | :--- |\n")
                 
         with open("MASTER_TREND_JOURNAL.md", "a", encoding="utf-8") as f:
             f.write(journal_entry)
