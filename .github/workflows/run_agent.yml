@@ -2,32 +2,31 @@ name: Autonomous Multi-AI Trend Loop
 
 on:
   schedule:
-    - cron: '0 6 * * *' # Runs automatically every single day at 6:00 AM UTC
-  workflow_dispatch:   # Manual test button
+    - cron: '0 6 * * *' # Runs daily at 6 AM UTC
+  workflow_dispatch:   # 🔑 Re-enables the manual play button!
 
 permissions:
   contents: write
-  models: read        # 🔑 FIXED: This grants your GITHUB_TOKEN explicit access to the free AI models!
+  models: read
 
 jobs:
   run-marketing-engine:
     runs-on: ubuntu-latest
-# ... (rest of the file stays exactly the same)
     steps:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
-    - name: Load Python Environment
+    - name: Set up Python Workspace
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
-    - name: Fetch Core Libraries
-      run: pip install groq google-genai openai cohere mistralai
+    - name: Install Framework Core Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-genai openai cohere mistralai
 
-    - name: Run Optimization Loop
+    - name: Run Core Optimization Factory Loop
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -37,7 +36,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: python agent.py
 
-   - name: Commit and Save Historical Records
+    - name: Commit and Save Historical Records
       run: |
         git config --global user.name "AI-History-Bot"
         git config --global user.email "history@saas-bot.local"
@@ -46,8 +45,6 @@ jobs:
         git pull origin main --rebase
         git stash pop || true
         
-        # 🔑 Stage all new functional applications and record timelines
         git add archived_trends/* MASTER_TREND_JOURNAL.md products/* || true
-        
         git commit -m "🚀 Complete Systems Launch: Deployed functional web utility [skip ci]" || true
         git push origin main
