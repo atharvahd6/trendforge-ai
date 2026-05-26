@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Reminder</title>
+    <style>
+        /* Reset & Basic Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1e1e2f;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Section */
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            letter-spacing: 1.5px;
+            text-align: center;
+        }
+
+        /* Reminder Input Section */
+        #reminder-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"] {
+            background-color: #292a37;
+            border: 2px solid #4e505f;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 4px;
+            color: #ffffff;
+            width: 100%;
+        }
+
+        input[type="text"]::placeholder {
+            color: #8888a1;
+        }
+
+        button {
+            background-color: #5865F2;
+            color: #ffffff;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4853d1;
+        }
+
+        /* Reminder List Section */
+        #reminder-list {
+            list-style: none;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .reminder-item {
+            background-color: #292a37;
+            border: 2px solid #4e505f;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reminder-item span {
+            flex: 1;
+        }
+
+        .reminder-item button {
+            background-color: #d9534f;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .reminder-item button:hover {
+            background-color: #b52d2a;
+        }
+
+        /* Premium Upgrade Modal */
+        #premium-banner {
+            margin-top: auto;
+            background-color: #111;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 6px;
+            border: 2px dotted #444;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        #premium-banner p {
+            margin-bottom: 10px;
+            color: #f0f0f0;
+        }
+
+        .premium-btn {
+            color: #111;
+            background-color: #FFD700;
+            border: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s ease all;
+        }
+
+        .premium-btn:hover {
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Quick Reminder</h1>
+
+    <!-- Reminder Input Form -->
+    <form id="reminder-form">
+        <input type="text" id="reminder-text" placeholder="Enter your reminder..." required>
+        <input type="datetime-local" id="reminder-time" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <!-- Reminder List -->
+    <ul id="reminder-list"></ul>
+
+    <!-- Premium Upgrade Banner -->
+    <div id="premium-banner">
+        <p>Unlock exclusive features with <strong>Quick Reminder Pro</strong>!</p>
+        <button class="premium-btn" onclick="alert('Thank you for your interest in our premium upgrade!')">
+            Upgrade Now
+        </button>
+    </div>
+
+    <script>
+        // DOM Elements
+        const reminderForm = document.getElementById('reminder-form');
+        const reminderText = document.getElementById('reminder-text');
+        const reminderTime = document.getElementById('reminder-time');
+        const reminderList = document.getElementById('reminder-list');
+
+        // Render a reminder item
+        function addReminderToList(text, time) {
+            const reminderItem = document.createElement('li');
+            reminderItem.classList.add('reminder-item');
+
+            const formattedTime = new Date(time).toLocaleString();
+
+            reminderItem.innerHTML = `
+                <span>${text} - <em>${formattedTime}</em></span>
+                <button onclick="deleteReminder(this)">Delete</button>
+            `;
+
+            reminderList.appendChild(reminderItem);
+        }
+
+        // Event: Add Reminder
+        reminderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const text = reminderText.value.trim();
+            const time = reminderTime.value;
+
+            if (text && time) {
+                addReminderToList(text, time);
+                reminderForm.reset();
+            }
+        });
+
+        // Delete Reminder
+        function deleteReminder(button) {
+            button.parentElement.remove();
+        }
+
+        // Reminder Notifications (poll every 15 seconds)
+        setInterval(() => {
+            const reminders = document.querySelectorAll('.reminder-item');
+            reminders.forEach(reminder => {
+                const [text, timeString] = reminder.querySelector('span').textContent.split(' - ');
+                const reminderTime = new Date(timeString.replace(" -", '')).getTime();
+                if (Date.now() >= reminderTime) {
+                    alert(`Reminder: ${text}`);
+                    reminder.remove();
+                }
+            });
+        }, 15000);
+    </script>
+</body>
+
+</html>
