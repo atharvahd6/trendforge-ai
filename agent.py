@@ -111,7 +111,7 @@ def call_personal_marketer(clients, scout_output):
 
 # --- NEW EXTENSION: FORCE REWRITE MAIN INDEX.HTML FILE ---
 def update_root_index():
-    """Reads the markdown journal table, converts it to clean HTML rows, and forces a write to index.html"""
+    """Reads the markdown journal table, converts it safely to clean HTML rows, and forces a write to index.html"""
     if not os.path.exists("MASTER_TREND_JOURNAL.md"):
         return
         
@@ -120,28 +120,35 @@ def update_root_index():
         
     html_table_rows = ""
     for line in lines:
-        if line.strip().startswith("|") and not "Date Run" in line and not ":---" in line:
-            parts = [p.strip() for p in line.split("|")[1:-1]]
-            if len(parts) >= 3:
-                date_str = parts[0]
-                name_str = parts[1].replace("**", "")
+        clean_line = line.strip()
+        # Skip headers, divider lines, and empty spaces safely
+        if not clean_line.startswith("|") or "Date Run" in clean_line or ":---" in clean_line:
+            continue
+            
+        # Split columns and filter out edge spaces
+        parts = [p.strip() for p in clean_line.split("|")[1:-1]]
+        
+        # 🔑 THE SAFETY GUARD: Ensure the row has all 4 columns before reading indexes
+        if len(parts) >= 4:
+            date_str = parts[0]
+            name_str = parts[1].replace("**", "")
+            
+            # Extract links safely from markdown formats [Text](URL)
+            app_link = "#"
+            if "](" in parts[2]:
+                app_link = parts[2].split("](")[1].split(")")[0]
                 
-                # Extract links cleanly from markdown formats
-                app_link = "#"
-                if "](" in parts[2]:
-                    app_link = parts[2].split("](")[1].split(")")[0]
-                    
-                promo_link = "#"
-                if "](" in parts[3]:
-                    promo_link = parts[3].split("](")[1].split(")")[0]
-                    
-                html_table_rows += f"""
-                <tr>
-                    <td>{date_str}</td>
-                    <td style="font-weight:600; color:#fff;">{name_str}</td>
-                    <td><a href="{app_link}" target="_blank" style="color:#10B981; text-decoration:none; font-weight:bold;">Launch App Tool 🌐</a></td>
-                    <td><a href="{promo_link}" target="_blank" style="color:#818CF8; text-decoration:none;">View Promo Copy 📄</a></td>
-                </tr>"""
+            promo_link = "#"
+            if "](" in parts[3]:
+                promo_link = parts[3].split("](")[1].split(")")[0]
+                
+            html_table_rows += f"""
+            <tr>
+                <td>{date_str}</td>
+                <td style="font-weight:600; color:#fff;">{name_str}</td>
+                <td><a href="{app_link}" target="_blank" style="color:#10B981; text-decoration:none; font-weight:bold;">Launch App Tool 🌐</a></td>
+                <td><a href="{promo_link}" target="_blank" style="color:#818CF8; text-decoration:none;">View Promo Copy 📄</a></td>
+            </tr>"""
 
     index_layout = f"""<!DOCTYPE html>
 <html lang="en">
@@ -210,49 +217,3 @@ def update_root_index():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(index_layout)
-
-# --- MAIN ORCHESTRATION ENGINE ---
-def main():
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    clients = get_api_clients()
-    
-    try:
-        scout_data = call_trend_scout(clients)
-        functional_code = call_core_developer(clients, scout_data)
-        social_distribution = call_personal_marketer(clients, scout_data)
-        
-        prod_name = "Autonomous Tool"
-        for line in scout_data.split("\n"):
-            if "PRODUCT NAME:" in line:
-                prod_name = line.replace("PRODUCT NAME:", "").strip()
-        
-        clean_folder_name = "".join(c for c in prod_name if c.isalnum() or c in (' ', '_', '-')).rstrip().lower().replace(" ", "-")
-        target_dir = f"products/{clean_folder_name}"
-        os.makedirs(target_dir, exist_ok=True)
-        
-        with open(f"{target_dir}/index.html", "w", encoding="utf-8") as f:
-            f.write(functional_code)
-            
-        os.makedirs("archived_trends", exist_ok=True)
-        with open(f"archived_trends/launch_kit_{current_date}.md", "w", encoding="utf-8") as f:
-            f.write(f"# 🚀 Autonomous Launch Kit ({current_date})\n\n## 💡 Independent Analysis\n{scout_data}\n\n## 📋 Personal Account Promo Scripts\n{social_distribution}\n\n## 🛠️ Deployed File Location\n`/{target_dir}/index.html`")
-            
-        live_app_link = f"https://atharvahd6.github.io/trendforge-ai/products/{clean_folder_name}/"
-        journal_entry = f"| {current_date} | **{prod_name}** | [Open Live App Tool 🌐]({live_app_link}) | [View Promotion Copy 📄](archived_trends/launch_kit_{current_date}.md) |\n"
-        
-        if not os.path.exists("MASTER_TREND_JOURNAL.md"):
-            with open("MASTER_TREND_JOURNAL.md", "w", encoding="utf-8") as f:
-                f.write("# 📚 Master Autonomous Trend Journal\n\n| Date Run | Discovered Startup Concept | Live Web App Link | Strategic Copy Package |\n| :--- | :--- | :--- | :--- |\n")
-                
-        with open("MASTER_TREND_JOURNAL.md", "a", encoding="utf-8") as f:
-            f.write(journal_entry)
-            
-        # 🔑 CRITICAL FIX: Explicitly rewrite the main landing index.html file right now
-        update_root_index()
-            
-        print("🏁 Operational cycle complete! Product deployed completely.")
-    except Exception as e:
-        print(f"❌ Operation terminated: {e}")
-
-if __name__ == "__main__":
-    main()
