@@ -1,0 +1,42 @@
+name: Autonomous Multi-AI Trend Loop
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Runs automatically every single day at 6:00 AM UTC
+  workflow_dispatch:   # Adds a manual "Run" button inside your GitHub interface
+
+permissions:
+  contents: write
+
+jobs:
+  run-marketing-engine:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Load Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Fetch Core Libraries
+      run: pip install groq google-generativeai openai
+
+    - name: Run Optimization Loop
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided automatically by GitHub Actions!
+      run: python agent.py
+
+    - name: Commit and Save Historical Records
+      run: |
+        git config --global user.name "AI-History-Bot"
+        git config --global user.email "history@saas-bot.local"
+        git pull origin main --rebase
+        git add archived_trends/* MASTER_TREND_JOURNAL.md || true
+        git commit -m "🚀 Archive System: Added today's autonomous launch kit [skip ci]" || true
+        git push origin main
