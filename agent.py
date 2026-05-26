@@ -17,7 +17,7 @@ def get_api_clients():
         try: clients["gemini"] = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
         except Exception as e: print(f"⚠️ Gemini client setup skipped: {e}")
     if os.environ.get("GROQ_API_KEY"):
-        try: clients["groq"] = OpenAI(api_key=os.environ.get("GROQ_API_KEY"), base_url="https://api.groq.com/openai/v1")
+        try: clients["groq"] = OpenAI(api_key=os.environ.get("GROQ_API_KEY"), base_url="[https://api.groq.com/openai/v1](https://api.groq.com/openai/v1)")
         except Exception as e: print(f"⚠️ Groq client setup skipped: {e}")
     if os.environ.get("COHERE_API_KEY"):
         try: clients["cohere"] = cohere.ClientV2(api_key=os.environ.get("COHERE_API_KEY"))
@@ -26,7 +26,7 @@ def get_api_clients():
         try: clients["mistral"] = Mistral(api_key=os.environ.get("MISTRAL_API_KEY"))
         except Exception as e: print(f"⚠️ Mistral client setup skipped: {e}")
     if os.environ.get("GITHUB_TOKEN"):
-        try: clients["github"] = OpenAI(api_key=os.environ.get("GITHUB_TOKEN"), base_url="https://models.inference.ai.azure.com")
+        try: clients["github"] = OpenAI(api_key=os.environ.get("GITHUB_TOKEN"), base_url="[https://models.inference.ai.azure.com](https://models.inference.ai.azure.com)")
         except Exception as e: print(f"⚠️ GitHub Token client setup skipped: {e}")
     return clients
 
@@ -43,7 +43,6 @@ def call_trend_scout(clients):
     )
     
     if "gemini" in clients:
-        # 🔄 SELF-HEALING RETRY LOOP FOR GEMINI TRAFFIC CONGESTION
         for attempt in range(1, 4):
             try:
                 print(f"🔄 Prompting Gemini model (gemini-2.5-flash) [Attempt {attempt}/3]...")
@@ -102,11 +101,13 @@ def call_core_developer(clients, scout_output):
         "You are the Core Software Engineer. Write the absolute complete, production-ready, beautifully styled, single-file "
         "HTML/CSS/JS source code that builds this tool completely for the customer. "
         "Requirements:\n"
-        "- It must be 100% functional, calculation-ready, or text-processing complete immediately when opened.\n"
+        "- It must be 100% functional, interactive, processing-ready, or calculation-ready immediately when opened.\n"
+        "- Include proper textareas/inputs, descriptive labels, buttons, and display blocks for user interaction.\n"
         "- Embed an elegant, modern dark-mode user interface.\n"
         "- Do not include placeholders, do not leave code sections incomplete, and do not say 'add your logic here'.\n"
-        "- Include a clear, beautiful premium upgrade feature banner or modal prompt at the bottom to collect subscription test clicks.\n"
-        "Output ONLY the raw code starting with <!DOCTYPE html> and ending with </html>."
+        "- Include a clear, beautiful premium upgrade feature banner or modal prompt at the bottom. When clicked, it MUST trigger "
+        "a clean JavaScript alert or stylish UI modal displaying comprehensive subscription pricing details ($9/month test tier) to collect verification clicks.\n"
+        "Output ONLY the raw code starting with <!DOCTYPE html> and ending with </html>. Do not wrap the response in markdown blocks."
     )
     
     for provider in ["gemini", "mistral", "openai", "github"]:
@@ -124,11 +125,14 @@ def call_core_developer(clients, scout_output):
                     res = clients[provider].chat.completions.create(model=model_name, messages=[{"role": "user", "content": prompt}])
                     content = res.choices[0].message.content.strip()
                 
+                # 🧼 ROBUST MULTI-STAGE CLEANING TO REMOVE BROKEN CODEBLOCK TAGS
                 if "```html" in content:
                     content = content.split("```html")[1].split("```")[0].strip()
                 elif "```" in content:
                     content = content.split("```")[1].split("```")[0].strip()
-                return content
+                
+                if content.startswith("<!DOCTYPE") or content.startswith("<html"):
+                    return content
             except Exception as e:
                 print(f"⚠️ Developer provider {provider} failed: {e}")
                 
@@ -298,7 +302,7 @@ def main():
         with open(f"archived_trends/launch_kit_{current_date}.md", "w", encoding="utf-8") as f:
             f.write(f"# 🚀 Autonomous Launch Kit ({current_date})\n\n## 💡 Independent Analysis\n{scout_data}\n\n## 📋 Personal Account Promo Scripts\n{social_distribution}\n\n## 🛠️ Deployed File Location\n`/{target_dir}/index.html`")
             
-        live_app_link = f"https://atharvahd6.github.io/trendforge-ai/products/{clean_folder_name}/"
+        live_app_link = f"[https://atharvahd6.github.io/trendforge-ai/products/](https://atharvahd6.github.io/trendforge-ai/products/){clean_folder_name}/"
         journal_entry = f"| {current_date} | **{prod_name}** | [Open Live App Tool 🌐]({live_app_link}) | [View Promotion Copy 📄](archived_trends/launch_kit_{current_date}.md) |\n"
         
         if not os.path.exists("MASTER_TREND_JOURNAL.md"):
