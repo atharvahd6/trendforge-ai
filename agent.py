@@ -1,10 +1,10 @@
 import os
 import sys
 from datetime import datetime
-import google.generativeai as genai
+from google import genai
 from openai import OpenAI
 import cohere
-from mistralai import Mistral
+from mistralai.client import Mistral
 
 def get_api_clients():
     """Securely initialize all 6 available AI frameworks with structural fallbacks"""
@@ -15,12 +15,12 @@ def get_api_clients():
         try: clients["openai"] = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         except: print("⚠️ OpenAI client setup failed.")
 
-    # 2. Google Gemini Config
+    # 2. Modern Google GenAI Client
     if os.environ.get("GEMINI_API_KEY"):
         try:
-            genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-            clients["gemini"] = True
-        except: print("⚠️ Gemini config failed.")
+            # Picks up GEMINI_API_KEY from environment variables automatically
+            clients["gemini"] = genai.Client()
+        except Exception as e: print(f"⚠️ Gemini configuration failed: {e}")
 
     # 3. Groq Client (Llama 3.3)
     if os.environ.get("GROQ_API_KEY"):
@@ -36,10 +36,10 @@ def get_api_clients():
         try: clients["cohere"] = cohere.ClientV2(api_key=os.environ.get("COHERE_API_KEY"))
         except: print("⚠️ Cohere client setup failed.")
 
-    # 5. Mistral AI Client
+    # 5. Mistral AI Client (Updated routing location)
     if os.environ.get("MISTRAL_API_KEY"):
         try: clients["mistral"] = Mistral(api_key=os.environ.get("MISTRAL_API_KEY"))
-        except: print("⚠️ Mistral client setup failed.")
+        except Exception as e: print(f"⚠️ Mistral client setup failed: {e}")
 
     # 6. GitHub Models (Copilot Native Token Fallback)
     if os.environ.get("GITHUB_TOKEN"):
@@ -62,12 +62,25 @@ def call_trend_scout(clients):
         "WHAT IT DOES: [1-2 sentences clear value proposal]\n"
         "TARGET AUDIENCE: [Who will pay for this]"
     )
+    
+    # Check for manual ideas override file first
+    if os.path.exists("manual_ideas.txt"):
+        with open("manual_ideas.txt", "r", encoding="utf-8") as f:
+            manual_content = f.read().strip()
+        if manual_content:
+            print("🎯 Custom Manual Override File Detected! Using your user defined concept...")
+            return manual_content
+
     if "gemini" in clients:
         try:
             print("🟢 Role 1: Trend Scout running via Google Gemini...")
-            model = genai.GenerativeModel("gemini-2.5-flash")
-            return model.generate_content(scout_prompt).text.strip()
-        except: pass
+            response = clients["gemini"].models.generate_content(
+                model="gemini-2.5-flash",
+                contents=scout_prompt,
+            )
+            return response.text.strip()
+        except Exception as e: 
+            print(f"⚠️ Gemini execution failed: {e}. Moving to fallback...")
 
     if "openai" in clients:
         try:
@@ -136,7 +149,7 @@ def call_technical_analyst(clients, scout_output):
 
 # --- PHASE 5: THE STRATEGIC COPY CRITIC (GitHub Copilot GPT-4o Always Free) ---
 def call_copy_critic(clients, market_data):
-    prompt = f"Review this collective agency notes block. Strip all corporate hype. Output a sharp, high-converting launch copy copy deck:\n\n{market_data}"
+    prompt = f"Review this collective agency notes block. Strip all corporate hype. Output a sharp, high-converting launch copy deck:\n\n{market_data}"
     if "github" in clients:
         try:
             print("🟢 Role 5: Copy Critic executing audit via GitHub Models GPT-4o...")
