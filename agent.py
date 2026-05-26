@@ -9,161 +9,104 @@ from mistralai.client import Mistral
 def get_api_clients():
     """Securely initialize all 6 available AI frameworks with structural fallbacks"""
     clients = {}
-    
-    # 1. OpenAI ChatGPT Client
     if os.environ.get("OPENAI_API_KEY"):
         try: clients["openai"] = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         except: print("⚠️ OpenAI client setup failed.")
-
-    # 2. Modern Google GenAI Client
     if os.environ.get("GEMINI_API_KEY"):
-        try:
-            # Picks up GEMINI_API_KEY from environment variables automatically
-            clients["gemini"] = genai.Client()
-        except Exception as e: print(f"⚠️ Gemini configuration failed: {e}")
-
-    # 3. Groq Client (Llama 3.3)
+        try: clients["gemini"] = genai.Client()
+        except: print("⚠️ Gemini configuration failed.")
     if os.environ.get("GROQ_API_KEY"):
-        try:
-            clients["groq"] = OpenAI(
-                api_key=os.environ.get("GROQ_API_KEY"),
-                base_url="https://api.groq.com/openai/v1"
-            )
+        try: clients["groq"] = OpenAI(api_key=os.environ.get("GROQ_API_KEY"), base_url="https://api.groq.com/openai/v1")
         except: print("⚠️ Groq client setup failed.")
-
-    # 4. Cohere Client
     if os.environ.get("COHERE_API_KEY"):
         try: clients["cohere"] = cohere.ClientV2(api_key=os.environ.get("COHERE_API_KEY"))
         except: print("⚠️ Cohere client setup failed.")
-
-    # 5. Mistral AI Client (Updated routing location)
     if os.environ.get("MISTRAL_API_KEY"):
         try: clients["mistral"] = Mistral(api_key=os.environ.get("MISTRAL_API_KEY"))
-        except Exception as e: print(f"⚠️ Mistral client setup failed: {e}")
-
-    # 6. GitHub Models (Copilot Native Token Fallback)
+        except: print("⚠️ Mistral client setup failed.")
     if os.environ.get("GITHUB_TOKEN"):
-        try:
-            clients["github"] = OpenAI(
-                api_key=os.environ.get("GITHUB_TOKEN"),
-                base_url="https://models.inference.ai.azure.com"
-            )
+        try: clients["github"] = OpenAI(api_key=os.environ.get("GITHUB_TOKEN"), base_url="https://models.inference.ai.azure.com")
         except: print("⚠️ GitHub Native Token client setup failed.")
-        
     return clients
 
-# --- PHASE 1: THE TREND SCOUT (Gemini / OpenAI Fallback) ---
+# --- PHASE 1: THE PRODUCT SCOUT ---
 def call_trend_scout(clients):
     scout_prompt = (
-        "Identify one hyper-specific digital product or micro-SaaS idea that solves a painful problem "
-        "for online users right now. Output EXACTLY in this format:\n"
-        "PRODUCT NAME: [Name it]\n"
-        "THE LIVE TREND/PROBLEM: [1 sentence explanation]\n"
-        "WHAT IT DOES: [1-2 sentences clear value proposal]\n"
-        "TARGET AUDIENCE: [Who will pay for this]"
+        "Identify one hyper-specific, high-demand web utility tool or mini web app that can run "
+        "COMPLETELY inside a single index.html file using native frontend JavaScript (e.g., an advanced "
+        "CSS grid generator, an interactive SVG path optimizer, a programmatic regex visualizer, etc.). "
+        "Output EXACTLY in this format:\n"
+        "PRODUCT NAME: [Clean Name]\n"
+        "CORE UTILITY: [1 sentence explaining exactly what frontend calculation or problem it solves instantly]"
     )
-    
-    # Check for manual ideas override file first
     if os.path.exists("manual_ideas.txt"):
         with open("manual_ideas.txt", "r", encoding="utf-8") as f:
             manual_content = f.read().strip()
-        if manual_content:
-            print("🎯 Custom Manual Override File Detected! Using your user defined concept...")
-            return manual_content
+        if manual_content: return manual_content
 
     if "gemini" in clients:
         try:
-            print("🟢 Role 1: Trend Scout running via Google Gemini...")
-            response = clients["gemini"].models.generate_content(
-                model="gemini-2.5-flash",
-                contents=scout_prompt,
-            )
-            return response.text.strip()
-        except Exception as e: 
-            print(f"⚠️ Gemini execution failed: {e}. Moving to fallback...")
-
+            res = clients["gemini"].models.generate_content(model="gemini-2.5-flash", contents=scout_prompt)
+            return res.text.strip()
+        except: pass
     if "openai" in clients:
         try:
-            print("🟡 Trend Scout Fallback: Running via OpenAI GPT-4o...")
-            res = clients["openai"].chat.completions.create(
-                model="gpt-4o", messages=[{"role": "user", "content": scout_prompt}]
-            )
+            res = clients["openai"].chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": scout_prompt}])
             return res.choices[0].message.content.strip()
         except: pass
-
     if "github" in clients:
-        print("🔵 Trend Scout Hard Fallback: Running via Free GitHub Engine...")
-        res = clients["github"].chat.completions.create(
-            model="gpt-4o-mini", messages=[{"role": "user", "content": scout_prompt}]
-        )
+        res = clients["github"].chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": scout_prompt}])
         return res.choices[0].message.content.strip()
-    
-    raise Exception("No active keys available for Phase 1 Scouting.")
+    raise Exception("Scouting engine failure.")
 
-# --- PHASE 2: THE GROWTH MARKETER (Groq Llama-70B / OpenAI Fallback) ---
-def call_growth_marketer(clients, scout_output):
-    prompt = f"Analyze this product and generate 3 aggressive direct-response hooks:\n\n{scout_output}"
+# --- PHASE 2: THE CODER (Generates the 100% finished tool) ---
+def call_core_developer(clients, scout_output):
+    prompt = (
+        f"Based on this product layout:\n{scout_output}\n\n"
+        "Write the absolute complete, production-ready, beautiful, modern, single-file HTML/CSS/JS source code for this tool. "
+        "It must be 100% functional immediately when opened in a browser. Include an embedded sleek dark-mode UI layout, "
+        "all calculation algorithms, and a prominent call-to-action banner button tracking premium subscriptions. "
+        "Do not use placeholders, do not omit scripts, and do not use markdown codeblocks inside your actual app code. "
+        "Output ONLY the complete code starting with <!DOCTYPE html> and ending with </html>."
+    )
+    # Using OpenAI/GitHub GPT-4o as primary for heavy code synthesis
+    for provider in ["openai", "github", "mistral"]:
+        if provider in clients:
+            try:
+                model_name = "gpt-4o" if provider == "openai" or provider == "github" else "mistral-large-latest"
+                res = clients[provider].chat.completions.create(
+                    model=model_name, messages=[{"role": "user", "content": prompt}]
+                ) if provider != "mistral" else clients["mistral"].chat.complete(model=model_name, messages=[{"role": "user", "content": prompt}])
+                
+                content = res.choices[0].message.content.strip() if provider != "mistral" else res.choices[0].message.content.strip()
+                if "```html" in content:
+                    content = content.split("```html")[1].split("```")[0].strip()
+                elif "```" in content:
+                    content = content.split("```")[1].split("```")[0].strip()
+                return content
+            except: pass
+    raise Exception("Code generation failure.")
+
+# --- PHASE 3: THE PERSONAL BRAND MARKETER (Generates ready-to-use social posts) ---
+def call_personal_marketer(clients, scout_output):
+    prompt = (
+        f"Review this tool concept:\n{scout_output}\n\n"
+        "Write one highly engaging, high-converting Twitter/X thread (3 tweets) and one professional LinkedIn post "
+        "designed to be published directly from the founder's personal account. It must sound completely human, data-driven, "
+        "and authoritative. Highlight the exact professional problem solved and direct readers to check out the live tool link. "
+        "DO NOT mention AI, AI agents, automated loops, or automated workflows. Output cleanly under clear headers."
+    )
     if "groq" in clients:
         try:
-            print("🟢 Role 2: Growth Marketer processing via Groq Llama 3.3...")
-            res = clients["groq"].chat.completions.create(
-                model="llama-3.3-70b-versatile", messages=[{"role": "user", "content": prompt}]
-            )
+            res = clients["groq"].chat.completions.create(model="llama-3.3-70b-versatile", messages=[{"role": "user", "content": prompt}])
             return res.choices[0].message.content.strip()
         except: pass
-        
     if "openai" in clients:
         try:
-            print("🟡 Growth Marketer Fallback: Running via OpenAI GPT-4o...")
-            res = clients["openai"].chat.completions.create(
-                model="gpt-4o", messages=[{"role": "user", "content": prompt}]
-            )
+            res = clients["openai"].chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
             return res.choices[0].message.content.strip()
         except: pass
-
-    return "Marketer Agent offline due to key restrictions. Bypassing strategy framework step safely."
-
-# --- PHASE 3: AUDIENCE DEMOGRAPHICS TARGETER (Cohere / ChatGPT Fallback) ---
-def call_audience_segmenter(clients, scout_output):
-    prompt = f"Based on this concept, define the core user persona, their psychological pain point, and their wallet budget size:\n\n{scout_output}"
-    if "cohere" in clients:
-        try:
-            print("🟢 Role 3: Audience Profiler running via Cohere...")
-            res = clients["cohere"].chat(model="command-r-plus", messages=[{"role": "user", "content": prompt}])
-            return res.message.content[0].text.strip()
-        except: pass
-
-    return "Audience segmentation skipped safely."
-
-# --- PHASE 4: CODE ARCHITECT & RISK ANALYST (Mistral / Free GitHub Fallback) ---
-def call_technical_analyst(clients, scout_output):
-    prompt = f"Review this tech stack requirement. Provide a clean, rapid 3-step MVP development layout and note any privacy hurdles:\n\n{scout_output}"
-    if "mistral" in clients:
-        try:
-            print("🟢 Role 4: Code Architect mapping layouts via Mistral...")
-            res = clients["mistral"].chat.complete(model="mistral-large-latest", messages=[{"role": "user", "content": prompt}])
-            return res.choices[0].message.content.strip()
-        except: pass
-
-    return "Technical feasibility checks bypassed safely."
-
-# --- PHASE 5: THE STRATEGIC COPY CRITIC (GitHub Copilot GPT-4o Always Free) ---
-def call_copy_critic(clients, market_data):
-    prompt = f"Review this collective agency notes block. Strip all corporate hype. Output a sharp, high-converting launch copy deck:\n\n{market_data}"
-    if "github" in clients:
-        try:
-            print("🟢 Role 5: Copy Critic executing audit via GitHub Models GPT-4o...")
-            res = clients["github"].chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are a strict Copywriting Critic."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            return res.choices[0].message.content.strip()
-        except: pass
-        
-    return "Launch copy structure updated."
+    return "Marketing assets generation bypassed safely."
 
 # --- CORE INTEGRATION ENGINE ---
 def main():
@@ -171,48 +114,42 @@ def main():
     clients = get_api_clients()
     
     try:
-        # Run the full pipeline chain
         scout_data = call_trend_scout(clients)
-        marketing_data = call_growth_marketer(clients, scout_data)
-        audience_data = call_audience_segmenter(clients, scout_data)
-        tech_data = call_technical_analyst(clients, scout_data)
+        functional_code = call_core_developer(clients, scout_data)
+        social_distribution = call_personal_marketer(clients, scout_data)
         
-        compiled_brief = f"{marketing_data}\n\n## 👥 User Segmentation\n{audience_data}\n\n## 🛠️ Technical Plan\n{tech_data}"
-        final_copy_kit = call_copy_critic(clients, compiled_brief)
-        
-        # Save to permanent dated folder archive
-        os.makedirs("archived_trends", exist_ok=True)
-        dated_file_path = f"archived_trends/trend_{current_date}.md"
-        
-        final_report = (
-            f"# 🚀 Automated Startup Launch Kit ({current_date})\n\n"
-            f"## 💡 Micro-SaaS Business Concept\n{scout_data}\n\n"
-            f"## 🎯 Conversion Copywriting & Go-To-Market Execution Package\n{final_copy_kit}"
-        )
-        
-        with open(dated_file_path, "w", encoding="utf-8") as f:
-            f.write(final_report)
-            
-        # Parse product line name safely for index table
-        prod_name = "Automated Micro-SaaS"
+        prod_name = "Automated Utility"
         for line in scout_data.split("\n"):
             if "PRODUCT NAME:" in line:
                 prod_name = line.replace("PRODUCT NAME:", "").strip()
-
-        # Update running chronological timeline record index
-        journal_entry = f"| {current_date} | **{prod_name}** | [View Full Launch Kit 📂]({dated_file_path}) |\n"
+        
+        clean_folder_name = "".join(c for c in prod_name if c.isalnum() or c in (' ', '_', '-')).rstrip().lower().replace(" ", "-")
+        target_dir = f"products/{clean_folder_name}"
+        os.makedirs(target_dir, exist_ok=True)
+        
+        # Save the 100% finished product ready to be served immediately by GitHub Pages
+        with open(f"{target_dir}/index.html", "w", encoding="utf-8") as f:
+            f.write(functional_code)
+            
+        # Save marketing copy assets to the archived historical system records
+        os.makedirs("archived_trends", exist_ok=True)
+        with open(f"archived_trends/launch_kit_{current_date}.md", "w", encoding="utf-8") as f:
+            f.write(f"# 🚀 Complete Product Launch Kit ({current_date})\n\n## 💡 Discovered Concept\n{scout_data}\n\n## 📋 Personal Distribution Copy\n{social_distribution}\n\n## 🛠️ Generated Application Directory Path\n`/{target_dir}/index.html`")
+            
+        # Update your running dashboard timeline index
+        live_app_link = f"https://atharvahd6.github.io/trendforge-ai/products/{clean_folder_name}/"
+        journal_entry = f"| {current_date} | **{prod_name}** | [Launch App Tool 🌐]({live_app_link}) | [View Promotion Copy 📄](archived_trends/launch_kit_{current_date}.md) |\n"
         
         if not os.path.exists("MASTER_TREND_JOURNAL.md"):
             with open("MASTER_TREND_JOURNAL.md", "w", encoding="utf-8") as f:
-                f.write("# 📚 Master Autonomous Trend Journal\n\n| Date Run | Discovered Startup Concept | Deep-Dive Link |\n| :--- | :--- | :--- |\n")
+                f.write("# 📚 Master Autonomous Trend Journal\n\n| Date Run | Discovered Startup Concept | Live Web App Link | Strategic Copy Package |\n| :--- | :--- | :--- | :--- |\n")
                 
         with open("MASTER_TREND_JOURNAL.md", "a", encoding="utf-8") as f:
             f.write(journal_entry)
             
-        print("🏁 Operational cycle complete! Historical links safely pushed.")
-        
-    except Exception as final_error:
-        print(f"❌ Operation terminated prematurely: {final_error}")
+        print("🏁 Operational cycle complete! Product deployed completely.")
+    except Exception as e:
+        print(f"❌ Operation terminated prematurely: {e}")
 
 if __name__ == "__main__":
     main()
