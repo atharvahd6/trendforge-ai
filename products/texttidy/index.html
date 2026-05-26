@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextTidy - Clean & Normalize Your Text Instantly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Dark Mode Theme */
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --tertiary-bg: #0f3460;
+            --text-color: #e0e0e0;
+            --accent-color: #e94560;
+            --border-color: #533483;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --button-hover-bg: #c9354f;
+            --button-text-color: #ffffff;
+            --modal-bg: rgba(0, 0, 0, 0.7);
+            --modal-content-bg: #16213e;
+            --modal-border: 1px solid var(--border-color);
+        }
+
+        /* Base Body Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align content to the top */
+            min-height: 100vh;
+            box-sizing: border-box;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Main Container for the Application */
+        .container {
+            background-color: var(--secondary-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            display: grid;
+            grid-template-rows: auto auto 1fr auto;
+            gap: 25px;
+            margin-bottom: 80px; /* Space for fixed banner at the bottom */
+            box-sizing: border-box;
+        }
+
+        /* Header Styling */
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Description Paragraph */
+        .description {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: var(--text-color);
+        }
+
+        /* Text Input/Output Sections Layout */
+        .text-section {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column on small screens */
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .text-section {
+                grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+            }
+        }
+
+        /* Input Group (Label + Textarea) */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Label Styling */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95em;
+        }
+
+        /* Textarea Styling */
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--tertiary-bg);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            resize: vertical; /* Allow vertical resizing only */
+            box-sizing: border-box; /* Include padding/border in element's total width/height */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            -webkit-appearance: none; /* Remove default styling for iOS */
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.3); /* Accent glow on focus */
+        }
+
+        /* Control Buttons Section */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        /* Base Button Styling */
+        .button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap; /* Prevent button text from wrapping */
+            text-decoration: none; /* For potential anchor buttons */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Primary Button Style */
+        .button--primary {
+            background-color: var(--accent-color);
+            color: var(--button-text-color);
+        }
+
+        .button--primary:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        /* Secondary Button Style */
+        .button--secondary {
+            background-color: var(--border-color);
+            color: var(--button-text-color);
+        }
+
+        .button--secondary:hover {
+            background-color: #6a4da3; /* Slightly lighter purple */
+            transform: translateY(-2px);
+        }
+
+        /* Premium Upgrade Banner (fixed at the bottom) */
+        .premium-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--tertiary-bg);
+            color: var(--text-color);
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 -5px 20px var(--shadow-color);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            box-sizing: border-box;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .premium-banner p {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+
+        /* Button within the premium banner */
+        .premium-banner .button {
+            background-color: var(--accent-color);
+            color: var(--button-text-color);
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+
+        .premium-banner .button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Subscription Modal (initially hidden) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1001; /* Sit on top of banner */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: var(--modal-bg); /* Dark overlay with opacity */
+            backdrop-filter: blur(5px); /* Blurred background effect */
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+            opacity: 0; /* For fade-in animation */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Modal Content Box */
+        .modal-content {
+            background-color: var(--modal-content-bg);
+            padding: 30px;
+            border: var(--modal-border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            position: relative;
+            text-align: center;
+            transform: translateY(-20px); /* For slide-in animation */
+            opacity: 0; /* For fade-in animation */
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        /* Modal Header */
+        .modal-content h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Modal Paragraphs */
+        .modal-content p {
+            margin-bottom: 15px;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        /* Feature List in Modal */
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin: 25px 0;
+            font-size: 0.95em;
+        }
+
+        .modal-content ul li {
+            background-color: var(--tertiary-bg);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-content ul li::before {
+            content: '✓'; /* Checkmark icon */
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        /* Pricing Display in Modal */
+        .modal-price {
+            font-size: 2.2em;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin: 20px 0;
+        }
+
+        .modal-price span {
+            font-size: 0.5em; /* Smaller for '/month' */
+            color: var(--text-color);
+            vertical-align: middle;
+        }
+
+        /* Call-to-action button in Modal */
+        .modal-cta {
+            background-color: var(--accent-color);
+            color: var(--button-text-color);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .modal-cta:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Close Button for Modal */
+        .close-button {
+            color: var(--text-color);
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--accent-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TextTidy</h1>
+        <p class="description">Instantly clean and normalize text by standardizing line breaks, consolidating redundant spaces, and stripping unwanted formatting.</p>
+
+        <div class="text-section">
+            <div class="input-group">
+                <label for="inputText">Paste Your Text Here:</label>
+                <textarea id="inputText" spellcheck="false"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="outputText">Cleaned Text Output:</label>
+                <textarea id="outputText" readonly spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="normalizeButton" class="button button--primary">Normalize Text</button>
+            <button id="copyButton" class="button button--secondary">Copy Cleaned Text</button>
+        </div>
+    </div>
+
+    <!-- Premium Upgrade Feature Banner -->
+    <div class="premium-banner">
+        <p>Unlock advanced features and unlimited usage with TextTidy Premium!</p>
+        <button id="premiumBannerButton" class="button">Learn More</button>
+    </div>
+
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" title="Close Modal">&times;</span>
+            <h2>TextTidy Premium</h2>
+            <p>Upgrade to Premium for an unparalleled text cleaning experience. Get rid of all formatting headaches and streamline your workflow!</p>
+
+            <div class="modal-price">
+                $9<span>/month</span>
+                <p style="font-size: 0.6em; color: var(--text-color); margin-top: 5px;">Special Test Tier - Limited Time Offer</p>
+            </div>
+
+            <ul>
+                <li>Unlimited Text Normalizations</li>
+                <li>Advanced Customization Options (e.g., specific character stripping, case conversion)</li>
+                <li>Priority Customer Support</li>
+                <li>Completely Ad-Free Experience</li>
+                <li>Early Access to Exclusive Beta Features</li>
+            </ul>
+
+            <button class="modal-cta">Start Your Premium Trial Now!</button>
+            <p style="font-size: 0.8em; color: #aaa; margin-top: 25px;">By clicking, you acknowledge this is a verification click to collect comprehensive subscription details.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputTextarea = document.getElementById('inputText');
+            const outputTextarea = document.getElementById('outputText');
+            const normalizeButton = document.getElementById('normalizeButton');
+            const copyButton = document.getElementById('copyButton');
+            const premiumBannerButton = document.getElementById('premiumBannerButton');
+            const subscriptionModal = document.getElementById('subscriptionModal');
+            const closeModalButton = subscriptionModal.querySelector('.close-button');
+            const modalCTA = subscriptionModal.querySelector('.modal-cta');
+
+            // Core text normalization logic
+            const normalizeText = () => {
+                let text = inputTextarea.value;
+
+                // 1. Standardize line breaks: Replace Windows (\r\n) and old Mac (\r) line endings with Unix (\n)
+                text = text.replace(/\r\n|\r/g, '\n');
+
+                // 2. Remove most non-printable control characters and zero-width spaces/joiners.
+                // This regex targets:
+                // - ASCII control characters (U+0000-U+0008, U+000B, U+000C, U+000E-U+001F)
+                // - DEL (U+007F) and C1 control characters (U+0080-U+009F)
+                // - Soft Hyphen (U+00AD)
+                // - Zero-width spaces, joiners, no-break spaces (U+200B-U+200F, U+202F, U+205F, U+FEFF)
+                // - Unicode Line Separator (U+2028) and Paragraph Separator (U+2029)
+                // Important: Tab (\t, U+0009) and Newline (\n, U+000A) are intentionally NOT removed here.
+                text = text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u00AD\u200B-\u200F\u2028\u2029\u205F\uFEFF]/g, '');
+
+                // 3. Consolidate redundant spaces and tabs into a single space
+                // This will also convert tabs into single spaces, as per "consolidating redundant spaces".
+                text = text.replace(/[ \t]+/g, ' ');
+
+                // 4. Trim leading/trailing whitespace from each line individually
+                // This prevents lines starting or ending with spaces after consolidation, but preserves intended line breaks.
+                text = text.split('\n').map(line => line.trim()).join('\n');
+
+                // 5. Final overall trim of leading/trailing whitespace for the entire text block
+                text = text.trim();
+
+                outputTextarea.value = text;
+            };
+
+            // Function to copy text to clipboard
+            const copyToClipboard = async () => {
+                try {
+                    await navigator.clipboard.writeText(outputTextarea.value);
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy text to clipboard. Please copy manually.');
+                }
+            };
+
+            // Function to show the premium modal
+            const showModal = () => {
+                subscriptionModal.style.display = 'flex'; // Make it visible with flex centering
+                // Force a reflow to ensure the transition plays from the initial state
+                void subscriptionModal.offsetWidth;
+                subscriptionModal.style.opacity = '1';
+                subscriptionModal.querySelector('.modal-content').style.transform = 'translateY(0)';
+                subscriptionModal.querySelector('.modal-content').style.opacity = '1';
+            };
+
+            // Function to hide the premium modal
+            const hideModal = () => {
+                subscriptionModal.querySelector('.modal-content').style.transform = 'translateY(-20px)';
+                subscriptionModal.querySelector('.modal-content').style.opacity = '0';
+                subscriptionModal.style.opacity = '0';
+                // Delay setting display: none until after the transition
+                setTimeout(() => {
+                    subscriptionModal.style.display = 'none';
+                }, 300); // Matches the CSS transition duration
+            };
+
+            // Event Listeners
+            normalizeButton.addEventListener('click', normalizeText);
+            copyButton.addEventListener('click', copyToClipboard);
+            premiumBannerButton.addEventListener('click', showModal);
+            closeModalButton.addEventListener('click', hideModal);
+
+            // Close modal when clicking outside the content box
+            subscriptionModal.addEventListener('click', (event) => {
+                if (event.target === subscriptionModal) {
+                    hideModal();
+                }
+            });
+
+            // Handle the CTA button inside the modal to trigger a verification alert
+            modalCTA.addEventListener('click', () => {
+                alert("Thank you for your interest! Your verification click for TextTidy Premium has been successfully registered. We'll be in touch with more comprehensive subscription details shortly.");
+                hideModal(); // Close modal after the alert
+            });
+
+            // Initial content for immediate demonstration on page load
+            inputTextarea.value = `  This is some text with   \r\n inconsistent line breaks. \r Let's see how   it cleans up.  \n\n\t  It also has extra spaces,
+and some unwanted invisible characters like zero-width space here:​ and a form feed here:\f and a vertical tab here:\v.
+This line ends with an unwanted\u2028Line Separator.
+And this one with a\u2029Paragraph Separator.  Also, an obnoxious\uFEFFBOM.  `;
+            normalizeText(); // Run normalization immediately on load
+        });
+    </script>
+</body>
+</html>
