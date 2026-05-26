@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendForge-AI | Autonomous Venture Lab</title>
+    <title>TrendForge-AI | Complete Functional Startup Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
@@ -38,32 +38,9 @@
         .subtitle {
             color: var(--text-muted);
             font-size: 1.2rem;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 2rem auto;
         }
-        .cta-box {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: 0 auto 4rem auto;
-        }
-        .cta-box h3 { margin-top: 0; color: #fff; }
-        .cta-btn {
-            background-color: var(--accent);
-            color: #000;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 1rem;
-            transition: opacity 0.2s;
-        }
-        .cta-btn:hover { opacity: 0.9; }
         main {
             max-width: 1100px;
             margin: 0 auto;
@@ -86,41 +63,32 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         th { color: var(--accent); font-weight: 600; }
-        a { color: #818CF8; text-decoration: none; }
+        a { color: #818CF8; text-decoration: none; font-weight: bold; }
         a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>TrendForge-AI Lab</h1>
-        <p class="subtitle">An autonomous hexa-agent matrix generating validated micro-SaaS and digital product launch kits every 24 hours on a cloud automation clock.</p>
-        
-        <div class="cta-box">
-            <h3>Get Custom Strategic Deep-Dives</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Unlock full implementation source code templates, targeted database lookups, and direct API implementation architectures for any concept below.</p>
-            <a href="#" class="cta-btn" onclick="alert('Validation Smoke Test: Premium checkout placeholder triggered!')">Subscribe to Premium Lab Pass</a>
-        </div>
+        <h1>TrendForge Venture Lab</h1>
+        <p class="subtitle">Every 24 hours, this lab deploys a 100% complete, functional, ready-to-use web tool to solve real digital constraints immediately.</p>
     </header>
 
     <main>
-        <h2>📚 Live Venture Pipeline Journal</h2>
+        <h2>📚 Operational Live Product Ledger</h2>
         <div id="journal-container">
-            <p style="color: var(--text-muted);">Syncing live database framework record rows...</p>
+            <p style="color: var(--text-muted);">Syncing complete product systems layout columns...</p>
         </div>
     </main>
 
     <script>
-        // Dynamically fetch and display the master markdown journal matrix table natively
         fetch('MASTER_TREND_JOURNAL.md')
             .then(response => response.text())
             .then(markdownText => {
-                // Parse out the header title from the raw markdown file to avoid duplication
-                const cleanMarkdown = markdownText.replace('# 📚 Master Autonomous Trend Journal', '').strip;
                 document.getElementById('journal-container').innerHTML = marked.parse(markdownText);
             })
             .catch(err => {
-                document.getElementById('journal-container').innerHTML = "<p style='color:#EF4444;'>Sync error initializing journal matrix index rows.</p>";
+                document.getElementById('journal-container').innerHTML = "<p style='color:#EF4444;'>Sync error initializing product ledger matrix.</p>";
             });
     </script>
 </body>
