@@ -54,7 +54,7 @@ def call_trend_scout(clients):
     if "github" in clients:
         res = clients["github"].chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": scout_prompt}])
         return res.choices[0].message.content.strip()
-    raise Exception("Scouting engine failure. Check API key configurations.")
+    raise Exception("Scouting engine failure.")
 
 # --- PHASE 2: AUTOMATED WEB APP DEVELOPER ---
 def call_core_developer(clients, scout_output):
@@ -109,19 +109,116 @@ def call_personal_marketer(clients, scout_output):
         except: pass
     return "Marketing templates automatically generated via internal fallback."
 
+# --- NEW EXTENSION: FORCE REWRITE MAIN INDEX.HTML FILE ---
+def update_root_index():
+    """Reads the markdown journal table, converts it to clean HTML rows, and forces a write to index.html"""
+    if not os.path.exists("MASTER_TREND_JOURNAL.md"):
+        return
+        
+    with open("MASTER_TREND_JOURNAL.md", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        
+    html_table_rows = ""
+    for line in lines:
+        if line.strip().startswith("|") and not "Date Run" in line and not ":---" in line:
+            parts = [p.strip() for p in line.split("|")[1:-1]]
+            if len(parts) >= 3:
+                date_str = parts[0]
+                name_str = parts[1].replace("**", "")
+                
+                # Extract links cleanly from markdown formats
+                app_link = "#"
+                if "](" in parts[2]:
+                    app_link = parts[2].split("](")[1].split(")")[0]
+                    
+                promo_link = "#"
+                if "](" in parts[3]:
+                    promo_link = parts[3].split("](")[1].split(")")[0]
+                    
+                html_table_rows += f"""
+                <tr>
+                    <td>{date_str}</td>
+                    <td style="font-weight:600; color:#fff;">{name_str}</td>
+                    <td><a href="{app_link}" target="_blank" style="color:#10B981; text-decoration:none; font-weight:bold;">Launch App Tool 🌐</a></td>
+                    <td><a href="{promo_link}" target="_blank" style="color:#818CF8; text-decoration:none;">View Promo Copy 📄</a></td>
+                </tr>"""
+
+    index_layout = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendForge Venture Lab</title>
+    <style>
+        :root {{
+            --bg-main: #0B0F19;
+            --bg-card: #151D30;
+            --accent: #38BDF8;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+        }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0; padding: 0; line-height: 1.6;
+        }}
+        header {{
+            max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 2rem 2rem; text-align: center;
+        }}
+        h1 {{
+            font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #38BDF8, #818CF8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }}
+        .subtitle {{ color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 0 auto; }}
+        main {{ max-width: 1100px; margin: 0 auto; padding: 2rem; }}
+        .table-container {{
+            background-color: var(--bg-card); border-radius: 12px; padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05); overflow-x: auto;
+        }}
+        table {{ width: 100%; border-collapse: collapse; text-align: left; }}
+        th, td {{ padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }}
+        th {{ color: var(--accent); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; }}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TrendForge Venture Lab</h1>
+        <p class="subtitle">Every 24 hours, this lab deploys a 100% complete, functional, ready-to-use web tool to solve real digital constraints immediately.</p>
+    </header>
+    <main>
+        <h2 style="font-size:1.5rem; margin-bottom:1rem;">📚 Live Operational Product Ledger</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date Run</th>
+                        <th>Discovered Startup Concept</th>
+                        <th>Live Web App Link</th>
+                        <th>Strategic Copy Package</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {html_table_rows if html_table_rows else "<tr><td colspan='4' style='color:var(--text-muted); text-align:center;'>Initializing deployment matrices...</td></tr>"}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>"""
+
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(index_layout)
+
 # --- MAIN ORCHESTRATION ENGINE ---
 def main():
     current_date = datetime.now().strftime("%Y-%m-%d")
     clients = get_api_clients()
     
     try:
-        # 1. AI automatically scouts a real world problem on its own
         scout_data = call_trend_scout(clients)
-        
-        # 2. AI automatically codes the complete, ready-to-use application
         functional_code = call_core_developer(clients, scout_data)
-        
-        # 3. AI automatically drafts your personal promotional posts
         social_distribution = call_personal_marketer(clients, scout_data)
         
         prod_name = "Autonomous Tool"
@@ -133,16 +230,13 @@ def main():
         target_dir = f"products/{clean_folder_name}"
         os.makedirs(target_dir, exist_ok=True)
         
-        # Write the functional customer-facing app file
         with open(f"{target_dir}/index.html", "w", encoding="utf-8") as f:
             f.write(functional_code)
             
-        # Write marketing assets for your personal records
         os.makedirs("archived_trends", exist_ok=True)
         with open(f"archived_trends/launch_kit_{current_date}.md", "w", encoding="utf-8") as f:
             f.write(f"# 🚀 Autonomous Launch Kit ({current_date})\n\n## 💡 Independent Analysis\n{scout_data}\n\n## 📋 Personal Account Promo Scripts\n{social_distribution}\n\n## 🛠️ Deployed File Location\n`/{target_dir}/index.html`")
             
-        # Push variables to your central master journal dashboard link
         live_app_link = f"https://atharvahd6.github.io/trendforge-ai/products/{clean_folder_name}/"
         journal_entry = f"| {current_date} | **{prod_name}** | [Open Live App Tool 🌐]({live_app_link}) | [View Promotion Copy 📄](archived_trends/launch_kit_{current_date}.md) |\n"
         
@@ -152,6 +246,9 @@ def main():
                 
         with open("MASTER_TREND_JOURNAL.md", "a", encoding="utf-8") as f:
             f.write(journal_entry)
+            
+        # 🔑 CRITICAL FIX: Explicitly rewrite the main landing index.html file right now
+        update_root_index()
             
         print("🏁 Operational cycle complete! Product deployed completely.")
     except Exception as e:
