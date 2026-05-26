@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendForge-AI | Autonomous Venture Lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #0B0F19;
+            --bg-card: #151D30;
+            --accent: #38BDF8;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem 2rem 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #38BDF8, #818CF8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            margin: 0 auto 4rem auto;
+        }
+        .cta-box h3 { margin-top: 0; color: #fff; }
+        .cta-btn {
+            background-color: var(--accent);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: opacity 0.2s;
+        }
+        .cta-btn:hover { opacity: 0.9; }
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem 2rem;
+        }
+        #journal-container {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        th { color: var(--accent); font-weight: 600; }
+        a { color: #818CF8; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TrendForge-AI Lab</h1>
+        <p class="subtitle">An autonomous hexa-agent matrix generating validated micro-SaaS and digital product launch kits every 24 hours on a cloud automation clock.</p>
+        
+        <div class="cta-box">
+            <h3>Get Custom Strategic Deep-Dives</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Unlock full implementation source code templates, targeted database lookups, and direct API implementation architectures for any concept below.</p>
+            <a href="#" class="cta-btn" onclick="alert('Validation Smoke Test: Premium checkout placeholder triggered!')">Subscribe to Premium Lab Pass</a>
+        </div>
+    </header>
+
+    <main>
+        <h2>📚 Live Venture Pipeline Journal</h2>
+        <div id="journal-container">
+            <p style="color: var(--text-muted);">Syncing live database framework record rows...</p>
+        </div>
+    </main>
+
+    <script>
+        // Dynamically fetch and display the master markdown journal matrix table natively
+        fetch('MASTER_TREND_JOURNAL.md')
+            .then(response => response.text())
+            .then(markdownText => {
+                // Parse out the header title from the raw markdown file to avoid duplication
+                const cleanMarkdown = markdownText.replace('# 📚 Master Autonomous Trend Journal', '').strip;
+                document.getElementById('journal-container').innerHTML = marked.parse(markdownText);
+            })
+            .catch(err => {
+                document.getElementById('journal-container').innerHTML = "<p style='color:#EF4444;'>Sync error initializing journal matrix index rows.</p>";
+            });
+    </script>
+</body>
+</html>
