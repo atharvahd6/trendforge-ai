@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PlainText Paste: Instantly strip unwanted formatting, whitespace, and hidden characters from pasted text.">
+    <title>PlainText Paste</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #00ff99;
+        }
+        h2 {
+            font-size: 1rem;
+            font-weight: normal;
+            color: #bbbbbb;
+        }
+
+        /* Text Area and Button Styles */
+        #text-area-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 2px solid #00ff99;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00ff99;
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00cc7a;
+        }
+
+        /* Premium Banner Styles */
+        .premium-banner {
+            width: 100%;
+            max-width: 700px;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #222222;
+            border: 2px solid #4b4b4b;
+            border-radius: 10px;
+            text-align: center;
+            color: #ffffff;
+            position: relative;
+        }
+        .premium-banner h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #00ff99;
+        }
+        .premium-banner p {
+            font-size: 0.9rem;
+            color: #b0b0b0;
+            margin-bottom: 15px;
+        }
+        .premium-banner a {
+            text-decoration: none;
+            color: #121212;
+            background-color: #00ff99;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .premium-banner a:hover {
+            background-color: #00cc7a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PlainText Paste</h1>
+        <h2>Instantly clean your text with a single paste</h2>
+    </header>
+
+    <div id="text-area-wrapper">
+        <textarea id="input-text" placeholder="Paste your text here..."></textarea>
+        <button id="clear-formatting">Clean Text</button>
+    </div>
+
+    <div class="premium-banner">
+        <h3>Upgrade to PlainText Paste Premium</h3>
+        <p>Unlock advanced features like auto-save, batch processing, and cloud backups.</p>
+        <a href="#subscribe" id="subscribe-btn">Subscribe Now</a>
+    </div>
+
+    <script>
+        // Utility function to strip unwanted formatting, whitespace, and hidden characters
+        function cleanText(rawText) {
+            // Remove extra whitespace characters
+            let cleanedText = rawText.replace(/\s+/g, ' ').trim();
+
+            // Remove any non-printable characters
+            cleanedText = cleanedText.replace(/[\x00-\x1F\x7F]/g, '');
+
+            return cleanedText;
+        }
+
+        // DOM Elements
+        const inputTextArea = document.getElementById('input-text');
+        const clearFormattingBtn = document.getElementById('clear-formatting');
+        const subscribeBtn = document.getElementById('subscribe-btn');
+
+        // Event Listener for Cleaning Text
+        clearFormattingBtn.addEventListener('click', () => {
+            const rawText = inputTextArea.value;
+            const cleanedText = cleanText(rawText);
+            inputTextArea.value = cleanedText;
+            alert('Text cleaned successfully!');
+        });
+
+        // Event Listener for Premium Subscription Click
+        subscribeBtn.addEventListener('click', () => {
+            alert('Thank you for your interest in PlainText Paste Premium! Coming soon.');
+        });
+    </script>
+</body>
+</html>
