@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from datetime import datetime
 from google import genai
 from openai import OpenAI
@@ -42,15 +43,33 @@ def call_trend_scout(clients):
     )
     
     if "gemini" in clients:
+        # 🔄 SELF-HEALING RETRY LOOP FOR GEMINI TRAFFIC CONGESTION
+        for attempt in range(1, 4):
+            try:
+                print(f"🔄 Prompting Gemini model (gemini-2.5-flash) [Attempt {attempt}/3]...")
+                res = clients["gemini"].models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=scout_prompt,
+                )
+                return res.text.strip()
+            except Exception as e:
+                print(f"⚠️ Gemini attempt {attempt} failed: {e}")
+                if "503" in str(e) or "UNAVAILABLE" in str(e):
+                    print("⏳ Server busy. Pausing 5 seconds before self-healing retry...")
+                    time.sleep(5)
+                else:
+                    break
+
+    if "mistral" in clients:
         try:
-            print("🔄 Prompting Gemini model (gemini-2.5-flash)...")
-            res = clients["gemini"].models.generate_content(
-                model='gemini-2.5-flash',
-                contents=scout_prompt,
+            print("🔄 Backup: Prompting Mistral model (mistral-large-latest)...")
+            res = clients["mistral"].chat.complete(
+                model="mistral-large-latest",
+                messages=[{"role": "user", "content": scout_prompt}]
             )
-            return res.text.strip()
+            return res.choices[0].message.content.strip()
         except Exception as e:
-            print(f"❌ Gemini generation failed: {e}")
+            print(f"❌ Mistral generation failed: {e}")
             
     if "openai" in clients:
         try:
@@ -90,7 +109,7 @@ def call_core_developer(clients, scout_output):
         "Output ONLY the raw code starting with <!DOCTYPE html> and ending with </html>."
     )
     
-    for provider in ["openai", "github", "mistral", "gemini"]:
+    for provider in ["gemini", "mistral", "openai", "github"]:
         if provider in clients:
             try:
                 print(f"⚙️ Developer Agent executing via {provider}...")
@@ -142,7 +161,7 @@ def call_personal_marketer(clients, scout_output):
         except: pass
     return "Marketing templates automatically generated via internal fallback."
 
-# --- NEW EXTENSION: FORCE REWRITE MAIN INDEX.HTML FILE ---
+# --- PHASE 4: LANDING PAGE GENERATION LOGIC ---
 def update_root_index():
     """Reads the markdown journal table, converts it safely to clean HTML rows, and forces a write to index.html"""
     if not os.path.exists("MASTER_TREND_JOURNAL.md"):
