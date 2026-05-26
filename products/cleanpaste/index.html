@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanPaste - Text Formatting Cleaner</title>
+    <style>
+        /* CSS for elegant, modern dark-mode UI */
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --primary-color: #0f3460; /* Dark blue */
+            --secondary-color: #e94560; /* Red-pink accent */
+            --border-color: #3f5f84; /* Muted blue for borders */
+            --card-bg: #2a2a4a; /* Darker purple-blue for cards */
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Global Reset and Body Styling */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Main Container Styling */
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto 120px auto; /* Increased bottom margin for premium banner */
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Header Styling */
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            letter-spacing: 0.05em;
+            text-shadow: 2px 2px 4px var(--shadow-color);
+        }
+
+        p {
+            font-size: 1.1em;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        /* Textarea Styling */
+        textarea {
+            width: calc(100% - 20px); /* Account for padding */
+            min-height: 250px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            font-size: 1.1em;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.3); /* Accent glow on focus */
+        }
+
+        /* Button Group Styling */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        /* Button Styling */
+        button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+
+        button:hover {
+            background-color: #c93e55; /* Slightly darker secondary color */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(233, 69, 96, 0.2);
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7;
+        }
+
+        /* Premium Upgrade Banner Styling */
+        .premium-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #16213e; /* Darker primary color for contrast */
+            color: var(--text-color);
+            padding: 20px 0;
+            box-shadow: 0 -5px 20px var(--shadow-color);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            z-index: 1000; /* Ensure it stays on top of other content */
+        }
+
+        .premium-banner h3 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--secondary-color);
+            letter-spacing: 0.03em;
+        }
+
+        .premium-banner p {
+            margin: 0;
+            font-size: 1em;
+            opacity: 0.8;
+            max-width: 600px;
+            padding: 0 15px; /* Add horizontal padding for smaller screens */
+        }
+
+        .premium-banner button {
+            background-color: #5d5d81; /* A distinct, muted purple for premium button */
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1em;
+            box-shadow: 0 4px 10px rgba(93, 93, 129, 0.4);
+            text-transform: none; /* Override uppercase for premium button */
+        }
+
+        .premium-banner button:hover {
+            background-color: #7b7b9e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(93, 93, 129, 0.5);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            textarea {
+                min-height: 200px;
+                font-size: 1em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px 15px;
+            }
+
+            .premium-banner {
+                padding: 15px 10px;
+            }
+
+            .premium-banner h3 {
+                font-size: 1.2em;
+            }
+
+            .premium-banner p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CleanPaste</h1>
+        <p>Tired of messy text? Paste it here and let CleanPaste do the magic!</p>
+
+        <textarea id="inputText" placeholder="Paste your text here..." aria-label="Input text for cleaning"></textarea>
+
+        <div class="button-group">
+            <button id="cleanButton">Clean Text</button>
+            <button id="copyButton">Copy Cleaned Text</button>
+        </div>
+    </div>
+
+    <div class="premium-banner">
+        <h3>Unlock Premium Features!</h3>
+        <p>Get advanced cleaning options, custom rules, and unlimited usage with CleanPaste Premium. Click to learn more!</p>
+        <button id="premiumUpgradeButton">Upgrade Now</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputTextarea = document.getElementById('inputText');
+            const cleanButton = document.getElementById('cleanButton');
+            const copyButton = document.getElementById('copyButton');
+            const premiumUpgradeButton = document.getElementById('premiumUpgradeButton');
+
+            // Initial demonstration text with various formatting issues
+            inputTextarea.value = `  Hello World!  This is a test.   
+            
+            
+            It has   multiple   spaces, and "smart" quotes like ‘this’ and “that”.
+            Also some
+            excessive
+            line
+            breaks.
+            What about ellipsis… and em—dashes and en–dashes?
+            Let's see if it works.  `;
+
+            /**
+             * Processes the input text to remove unwanted formatting.
+             * - Standardizes line breaks.
+             * - Converts smart quotes and other special characters to plain ASCII.
+             * - Removes multiple consecutive spaces, collapsing them to single spaces.
+             * - Trims leading/trailing whitespace from each line and the overall text.
+             * - Collapses excessive blank lines to a single blank line (preserving paragraph breaks).
+             */
+            const cleanText = () => {
+                let text = inputTextarea.value;
+
+                // 1. Normalize all line endings to Unix-style \n (CRLF \r\n and CR \r to LF \n)
+                text = text.replace(/\r\n|\r/g, '\n');
+
+                // 2. Convert smart quotes and special characters to plain ASCII equivalents
+                text = text.replace(/[\u2018\u2019]/g, "'"); // Smart single quotes ‘’ to '
+                text = text.replace(/[\u201C\u201D]/g, '"'); // Smart double quotes “” to "
+                text = text.replace(/\u2026/g, '...');      // Ellipsis … to ...
+                text = text.replace(/\u2013/g, '-');       // En dash – to -
+                text = text.replace(/\u2014/g, '--');      // Em dash — to --
+
+                // 3. Collapse multiple spaces and tabs into a single space
+                // This targets scenarios like "  word   word  " -> " word word "
+                text = text.replace(/[ \t]+/g, ' ');
+
+                // 4. Standardize line breaks and trim excessive whitespace per line:
+                //    - Trim leading/trailing whitespace from each line. This is important
+                //      for lines that might start or end with spaces, especially after step 3.
+                //      The 'gm' flags ensure global and multi-line matching.
+                //    - Collapse three or more consecutive newlines into exactly two newlines.
+                //      This preserves intentional paragraph breaks (represented by two newlines)
+                //      while removing truly "excessive" empty lines.
+                text = text.replace(/^[ \t]+|[ \t]+$/gm, ''); // Trim leading/trailing whitespace on each line
+                text = text.replace(/\n{3,}/g, '\n\n');     // Collapse 3+ newlines to 2 newlines (preserve paragraph breaks)
+
+                // 5. Trim leading/trailing whitespace for the entire text block
+                // This removes any remaining leading/trailing spaces or newlines from the whole content.
+                text = text.trim();
+
+                inputTextarea.value = text; // Update the textarea with the cleaned text
+            };
+
+            /**
+             * Copies the current content of the textarea to the clipboard.
+             * Includes visual feedback for a better user experience.
+             */
+            const copyToClipboard = () => {
+                inputTextarea.select(); // Selects all text in the textarea
+                inputTextarea.setSelectionRange(0, 99999); // For mobile devices to ensure full selection
+
+                try {
+                    const successful = document.execCommand('copy'); // Execute the copy command
+                    if (successful) {
+                        const originalText = copyButton.textContent;
+                        copyButton.textContent = 'Copied!';
+                        copyButton.disabled = true; // Disable temporarily to prevent multiple clicks
+                        setTimeout(() => {
+                            copyButton.textContent = originalText;
+                            copyButton.disabled = false;
+                        }, 1500); // Reset button after 1.5 seconds
+                    } else {
+                        alert('Failed to copy text. Please copy manually.');
+                    }
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy text. Your browser might not support direct copying. Please copy manually.');
+                }
+            };
+
+            // Event Listeners for buttons
+            cleanButton.addEventListener('click', cleanText);
+            copyButton.addEventListener('click', copyToClipboard);
+
+            // Premium Upgrade Button Handler
+            premiumUpgradeButton.addEventListener('click', () => {
+                // In a production environment, this would typically:
+                // 1. Redirect to a subscription landing page: window.location.href = '/premium';
+                // 2. Open a dedicated modal with upgrade details and payment options.
+                // For this demonstration, an alert simulates the click capture.
+                alert('Thank you for your interest in CleanPaste Premium! This would lead to our subscription page with advanced features.');
+                console.log('Premium upgrade button clicked!');
+            });
+        });
+    </script>
+</body>
+</html>
