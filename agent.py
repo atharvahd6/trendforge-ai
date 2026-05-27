@@ -4,7 +4,7 @@ import random
 from google import genai
 from openai import OpenAI
 from groq import Groq
-from mistralai import Mistral
+from mistralai.client import Mistral
 
 def get_clients():
     """Initializes all available AI clients."""
