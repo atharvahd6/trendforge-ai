@@ -1,57 +1,64 @@
 import os
-import sys
 import time
-from datetime import datetime
 from google import genai
 from openai import OpenAI
-from mistralai.client import Mistral
 
 def get_api_clients():
     clients = {}
     if os.environ.get("OPENAI_API_KEY"):
-        try: clients["openai"] = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        except: pass
+        clients["openai"] = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     if os.environ.get("GEMINI_API_KEY"):
-        try: clients["gemini"] = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
-        except: pass
-    if os.environ.get("MISTRAL_API_KEY"):
-        try: clients["mistral"] = Mistral(api_key=os.environ.get("MISTRAL_API_KEY"))
-        except: pass
+        clients["gemini"] = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
     return clients
 
 def call_trend_scout(clients):
-    # --- PIPELINE INJECTION: CHECK FOR MANUAL IDEA FIRST ---
-    if os.path.exists("INPUT_IDEA.txt") and os.path.getsize("INPUT_IDEA.txt") > 0:
-        with open("INPUT_IDEA.txt", "r", encoding="utf-8") as f:
-            user_idea = f.read().strip()
-        with open("INPUT_IDEA.txt", "w", encoding="utf-8") as f: f.write("") # Clear file
-        return f"PRODUCT NAME: Custom Tool\nPROBLEM SOLVED: {user_idea}\nCORE UTILITY: Build a professional tool that solves the specific problem requested by the user."
+    idea_file = "INPUT_IDEA.txt"
     
-    # --- AUTOMATED SCOUTING ---
-    scout_prompt = (
-        "Identify a high-value professional bottleneck (e.g., tax calculation, invoice extraction). "
-        "Output: PRODUCT NAME, PROBLEM SOLVED, CORE UTILITY."
-    )
+    # 1. Check for manual idea
+    if os.path.exists(idea_file) and os.path.getsize(idea_file) > 10:
+        with open(idea_file, "r", encoding="utf-8") as f:
+            user_idea = f.read().strip()
+        print(f"DEBUG: Manual Idea Detected: {user_idea[:50]}...")
+        
+        # Clear the file
+        with open(idea_file, "w", encoding="utf-8") as f: f.write("")
+        return f"PRODUCT NAME: Custom Tool\nPROBLEM SOLVED: {user_idea}\nCORE UTILITY: Build a professional, single-file HTML/CSS/JS tool based on these requirements."
+
+    # 2. Automated Scouting if no input
+    print("DEBUG: No manual idea. Running autonomous scout...")
     if "gemini" in clients:
-        try: return clients["gemini"].models.generate_content(model='gemini-2.5-flash', contents=scout_prompt).text.strip()
-        except: pass
-    return "PRODUCT NAME: Default Tool\nPROBLEM SOLVED: Generic efficiency.\nCORE UTILITY: Simple calculation utility."
+        scout_prompt = "Identify a high-value professional bottleneck. Output: PRODUCT NAME, PROBLEM SOLVED, CORE UTILITY."
+        return clients["gemini"].models.generate_content(model='gemini-2.0-flash', contents=scout_prompt).text.strip()
+    
+    return "PRODUCT NAME: Default Tool\nPROBLEM SOLVED: Productivity\nCORE UTILITY: Basic utility."
 
 def call_core_developer(clients, scout_output):
-    prompt = f"Review this analysis:\n{scout_output}\n\nWrite complete, production-ready, beautifully styled, single-file HTML/CSS/JS code. Include a 'Buy Source Code' button linked to your payment platform. Output ONLY raw code."
-    # ... (Rest of your existing developer logic)
-    # [Keep your existing code generation implementation here]
-    return "<html>...</html>" # Placeholder for your generated code logic
-
-def update_root_index():
-    # ... (Your existing 3-column table logic)
-    pass
+    print("DEBUG: Generating code...")
+    prompt = f"Review this analysis:\n{scout_output}\n\nWrite complete, production-ready, beautifully styled, single-file HTML/CSS/JS code. Include a 'Buy Source Code' button. Output ONLY the code starting with <html> and ending with </html>."
+    
+    if "openai" in clients:
+        response = clients["openai"].chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip("`").replace("html", "").strip()
+    return "<html>Error: No AI model available.</html>"
 
 def main():
     clients = get_api_clients()
     scout_data = call_trend_scout(clients)
-    functional_code = call_core_developer(clients, scout_data)
-    # ... (Rest of your deployment logic)
-    print("🏁 Operational cycle complete!")
+    
+    # Generate the product
+    code = call_core_developer(clients, scout_data)
+    
+    # Save the file
+    product_name = "custom-tool-" + str(int(time.time()))
+    os.makedirs(f"products/{product_name}", exist_ok=True)
+    
+    with open(f"products/{product_name}/index.html", "w", encoding="utf-8") as f:
+        f.write(code)
+    
+    print(f"SUCCESS: Tool deployed to products/{product_name}/index.html")
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
