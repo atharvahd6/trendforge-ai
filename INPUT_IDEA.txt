@@ -1,1 +1,25 @@
-
+PRODUCT NAME: India Referral Goldmine Guide
+PROBLEM SOLVED: Indians are unaware of high-paying B2B/B2C referral programs available for digital services, leaving easy income on the table.
+CORE UTILITY: Build a mobile-friendly, plain HTML/CSS/JS comparison dashboard listing 20+ top-tier referral programs. 
+DATA TO INCLUDE: 
+- Salesforce (₹5000/referral)
+- Freshworks (₹3000/referral)
+- Zoho (₹2000/referral)
+- Notion (Credits)
+- Canva Pro (30% commission)
+- Fiverr (30% rev share)
+- Bluehost India (₹3000/signup)
+- BigRock (30% commission)
+- Instamojo (₹500/merchant)
+- Cashfree Payments (₹1000/merchant)
+- Paytm for Business (₹500/merchant)
+- BrowserStack (20% commission)
+- Postman (Referral credits)
+- Chargebee (₹5000/referral)
+- Hubspot (30% recurring)
+- Semrush (40% recurring)
+- Grammarly (₹1000/premium)
+- NordVPN (40% commission)
+- Namecheap (35% commission)
+- DigitalOcean (₹7000 credit)
+REQUIRED FEATURES: A clean table with columns: [Program, Payout, Difficulty, Target Audience, How to Share]. Add a search filter and a 'Copy Link' button. Mobile-first design, no frameworks, pure CSS.
