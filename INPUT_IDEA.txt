@@ -1,1 +1,10 @@
-
+PRODUCT NAME: Offline AI Desktop Assistant
+PROBLEM SOLVED: Need for a private, offline tool to track daily activities and generate work reports without relying on internet-connected AI APIs.
+CORE UTILITY: Build a complete, single-file Python script using Tkinter for the GUI. 
+REQUIRED FEATURES:
+1. A text area for users to log daily activities.
+2. A 'Generate Report' button that takes the text and formats it into a summary.
+3. Since this is an offline tool, it should assume the user has Ollama installed locally.
+4. The Python code should use the 'subprocess' module to call 'ollama run llama3' to process the text.
+5. Add a 'Save to File' feature to export the report to a local .txt file.
+6. The code must be clean, commented, and ready to run as a desktop app.
