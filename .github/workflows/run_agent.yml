@@ -25,7 +25,7 @@ jobs:
     - name: Install Dependencies securely
       run: |
         python -m pip install --upgrade pip
-        # Added groq and mistralai to the installation list
+        # Essential libraries for the multi-AI fallback system
         pip install google-genai openai groq mistralai
 
     - name: Run Core Optimization Factory Loop
@@ -46,12 +46,12 @@ jobs:
         # Pull updates safely to prevent overlaps
         git pull origin main --rebase || true
         
-        # Only stage and commit if your script successfully generated updates
-        git add archived_trends/* MASTER_TREND_JOURNAL.md products/* index.html || true
+        # Stage the new desktop tools generated in the products directory
+        git add products/* || true
         
         if git diff --staged --quiet; then
-          echo "No structural product changes detected to push on this cycle."
+          echo "No new desktop tools generated on this cycle."
         else
-          git commit -m "🚀 Complete Systems Launch: Deployed functional web utility [skip ci]"
+          git commit -m "🚀 Factory Update: Deployed new Python Desktop Assistant [skip ci]"
           git push origin main
         fi
