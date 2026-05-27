@@ -1,13 +1,11 @@
 import os
 import time
-import random
 from google import genai
-from openai import OpenAI
 from groq import Groq
 from mistralai.client import Mistral
 
 def get_clients():
-    """Initializes all available AI clients."""
+    """Initializes available AI clients with error handling."""
     return {
         "gemini": genai.Client(api_key=os.environ.get("GEMINI_API_KEY")),
         "groq": Groq(api_key=os.environ.get("GROQ_API_KEY")),
@@ -27,21 +25,21 @@ def call_ai_with_fallback(clients, task_prompt):
     except Exception as e:
         print(f"Gemini failed: {e}")
 
-    # 2. Try Groq (Llama 3 - Ultra Fast)
+    # 2. Try Groq (Using current model: llama-3.3-70b-versatile)
     try:
         print("DEBUG: Falling back to Groq...")
         response = clients["groq"].chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": task_prompt}]
         )
         return response.choices[0].message.content
     except Exception as e:
         print(f"Groq failed: {e}")
 
-    # 3. Try Mistral (Reliable)
+    # 3. Try Mistral (Using updated SDK syntax)
     try:
         print("DEBUG: Falling back to Mistral...")
-        response = clients["mistral"].chat.completions.create(
+        response = clients["mistral"].chat.complete(
             model="mistral-large-latest",
             messages=[{"role": "user", "content": task_prompt}]
         )
@@ -54,19 +52,20 @@ def main():
     clients = get_clients()
     idea_file = "INPUT_IDEA.txt"
     
-    # Check for manual input
+    # Detect manual input
     if os.path.exists(idea_file) and os.path.getsize(idea_file) > 10:
         with open(idea_file, "r", encoding="utf-8") as f:
             user_idea = f.read().strip()
+        # Clear the file after reading
         with open(idea_file, "w", encoding="utf-8") as f: f.write("")
-        task = f"Build this tool: {user_idea}. Output ONLY raw HTML/CSS/JS."
+        task = f"Build this tool: {user_idea}. Output ONLY raw HTML/CSS/JS (no markdown)."
     else:
         task = "Identify a high-value professional bottleneck and write complete, single-file HTML code for a tool that solves it."
 
-    # Execute generation with self-healing fallback
+    # Execution with self-healing fallback
     code = call_ai_with_fallback(clients, task)
     
-    # Clean output
+    # Clean output formatting
     code = code.replace("```html", "").replace("```", "").strip()
     
     # Save output
