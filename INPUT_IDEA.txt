@@ -1,10 +1,25 @@
-PRODUCT NAME: Offline AI Desktop Assistant
-PROBLEM SOLVED: Need for a private, offline tool to track daily activities and generate work reports without relying on internet-connected AI APIs.
-CORE UTILITY: Build a complete, single-file Python script using Tkinter for the GUI. 
-REQUIRED FEATURES:
-1. A text area for users to log daily activities.
-2. A 'Generate Report' button that takes the text and formats it into a summary.
-3. Since this is an offline tool, it should assume the user has Ollama installed locally.
-4. The Python code should use the 'subprocess' module to call 'ollama run llama3' to process the text.
-5. Add a 'Save to File' feature to export the report to a local .txt file.
-6. The code must be clean, commented, and ready to run as a desktop app.
+Subject: Request for Python Script to Automate Keep-Alive and Context Optimization for AI Coding Tools
+
+Hi [Developer Name],
+
+I need a Python script designed to optimize and extend my coding sessions with terminal-based AI tools (like Claude Code, GitHub Copilot CLI, etc.). These tools often timeout, expire, or lose context during long sessions, and I want to automate the process of keeping them active and maximizing their session length.
+
+Here are the specific requirements for the script:
+
+1. Shortcut / Keep-Alive Word Inserter: 
+The script should automatically or via a hotkey inject specific "keep-alive" phrases into the terminal or prompt history. These are phrases that force the AI to maintain its state without generating massive, expensive responses (e.g., "Status check. Acknowledge with '.' and await next instruction").
+
+2. Automated Session Ping:
+An optional background timer that sends a subtle, low-token prompt to the AI tool every X minutes to prevent the session from idling out or expiring due to inactivity.
+
+3. Context Compression / Management:
+A feature that periodically summarizes the current code context into a highly dense "shortcut word" or reference block. When the session is close to expiring, the script should automatically feed this summary back to the AI to seamlessly kickstart a new, long-running session without losing progress.
+
+4. Configuration & Safety:
+- Written in Python 3.x.
+- A simple configuration file (JSON or YAML) to adjust the ping intervals and custom shortcut words.
+- Cross-platform support (Windows/macOS/Linux) for terminal interactions if possible.
+
+Please let me know if you need any clarification on these requirements or if you have suggestions on the best way to handle the terminal automation side of things.
+
+Thanks!
