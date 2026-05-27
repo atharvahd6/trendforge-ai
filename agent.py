@@ -5,17 +5,28 @@ from groq import Groq
 from mistralai.client import Mistral
 
 def get_clients():
-    """Initializes available AI clients with error handling."""
+    """Initializes all available AI clients."""
     return {
         "gemini": genai.Client(api_key=os.environ.get("GEMINI_API_KEY")),
         "groq": Groq(api_key=os.environ.get("GROQ_API_KEY")),
         "mistral": Mistral(api_key=os.environ.get("MISTRAL_API_KEY")),
     }
 
+def get_scout_prompt():
+    """Persona for the problem-scouting agent."""
+    return """
+    Act as a professional Trend Analyst. Identify one high-value, specific professional 
+    bottleneck that professionals in India currently face. 
+    Output the result in this exact format:
+    PRODUCT NAME: [A catchy name]
+    PROBLEM SOLVED: [Detailed description of the problem]
+    CORE UTILITY: [Description of the HTML tool to be built]
+    """
+
 def call_ai_with_fallback(clients, task_prompt):
     """Attempts the task on multiple providers until one succeeds."""
     
-    # 1. Try Gemini (Flash 2.0)
+    # 1. Try Gemini
     try:
         print("DEBUG: Trying Gemini...")
         response = clients["gemini"].models.generate_content(
@@ -25,7 +36,7 @@ def call_ai_with_fallback(clients, task_prompt):
     except Exception as e:
         print(f"Gemini failed: {e}")
 
-    # 2. Try Groq (Using current model: llama-3.3-70b-versatile)
+    # 2. Try Groq
     try:
         print("DEBUG: Falling back to Groq...")
         response = clients["groq"].chat.completions.create(
@@ -36,7 +47,7 @@ def call_ai_with_fallback(clients, task_prompt):
     except Exception as e:
         print(f"Groq failed: {e}")
 
-    # 3. Try Mistral (Using updated SDK syntax)
+    # 3. Try Mistral
     try:
         print("DEBUG: Falling back to Mistral...")
         response = clients["mistral"].chat.complete(
@@ -52,20 +63,22 @@ def main():
     clients = get_clients()
     idea_file = "INPUT_IDEA.txt"
     
-    # Detect manual input
+    # Check for manual input
     if os.path.exists(idea_file) and os.path.getsize(idea_file) > 10:
         with open(idea_file, "r", encoding="utf-8") as f:
             user_idea = f.read().strip()
-        # Clear the file after reading
         with open(idea_file, "w", encoding="utf-8") as f: f.write("")
-        task = f"Build this tool: {user_idea}. Output ONLY raw HTML/CSS/JS (no markdown)."
+        task = f"Build this tool: {user_idea}. Output ONLY raw HTML/CSS/JS."
     else:
-        task = "Identify a high-value professional bottleneck and write complete, single-file HTML code for a tool that solves it."
+        # AUTONOMOUS SCOUTING MODE
+        print("DEBUG: No manual input. Scouting for problems...")
+        scout_info = call_ai_with_fallback(clients, get_scout_prompt())
+        task = f"Build a tool based on this: {scout_info}. Output ONLY raw HTML/CSS/JS (no markdown)."
 
-    # Execution with self-healing fallback
+    # Execute generation
     code = call_ai_with_fallback(clients, task)
     
-    # Clean output formatting
+    # Clean output
     code = code.replace("```html", "").replace("```", "").strip()
     
     # Save output
