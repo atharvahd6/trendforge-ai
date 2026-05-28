@@ -22,6 +22,9 @@ AUDIT_DB_PATH       = "scout_audit.db"
 PRODUCTS_DIR        = "products"
 INPUT_IDEA_FILE     = "INPUT_IDEA.txt"
 
+# Tracks providers that hit a quota/auth error this session — skip them instantly
+_EXHAUSTED_PROVIDERS: set = set()
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # AUDIT LOGGER
@@ -317,15 +320,26 @@ DEPLOYMENT NOTES:
 # AI PROVIDER FALLBACK
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _is_quota_error(e: Exception) -> bool:
+    """Returns True if the exception is a rate-limit or quota exhaustion error."""
+    msg = str(e).lower()
+    return any(k in msg for k in ("429", "resource_exhausted", "quota", "rate_limit", "too many requests"))
+
+
 def call_ai_with_fallback(clients: dict, task_prompt: str, label: str = "task") -> str | None:
     """
     Attempts the prompt on Gemini → Groq → Mistral in order.
+    - Skips any provider already marked exhausted this session (_EXHAUSTED_PROVIDERS).
+    - Permanently marks a provider exhausted on 429 / quota errors so retries
+      don't waste time hammering a dead endpoint.
+    - Dumps the first 400 chars of every successful response to stdout so you
+      can see what the model actually returned (critical for gate debugging).
     Returns the first successful response text, or None if all fail.
-    Logs every attempt and outcome to the audit DB.
     """
+    global _EXHAUSTED_PROVIDERS
 
     # 1. Try Gemini
-    if clients.get("gemini"):
+    if clients.get("gemini") and "gemini" not in _EXHAUSTED_PROVIDERS:
         try:
             print(f"DEBUG: [{label}] Trying Gemini...")
             response = clients["gemini"].models.generate_content(
@@ -333,45 +347,131 @@ def call_ai_with_fallback(clients: dict, task_prompt: str, label: str = "task") 
             )
             if response.text:
                 audit(label, "success", provider="gemini")
+                print(f"DEBUG: [{label}] Gemini response preview:\n{response.text[:400]}\n{'─'*60}")
                 return response.text
         except Exception as e:
-            print(f"Gemini failed: {e}")
-            audit(label, "provider_error", provider="gemini", detail=str(e))
+            if _is_quota_error(e):
+                print(f"Gemini QUOTA EXHAUSTED — skipping for the rest of this session.")
+                _EXHAUSTED_PROVIDERS.add("gemini")
+                audit(label, "quota_exhausted", provider="gemini")
+            else:
+                print(f"Gemini failed: {e}")
+                audit(label, "provider_error", provider="gemini", detail=str(e)[:300])
+    elif "gemini" in _EXHAUSTED_PROVIDERS:
+        print(f"DEBUG: [{label}] Skipping Gemini (quota exhausted this session).")
 
     # 2. Try Groq
-    if clients.get("groq"):
+    if clients.get("groq") and "groq" not in _EXHAUSTED_PROVIDERS:
         try:
-            print(f"DEBUG: [{label}] Falling back to Groq...")
+            print(f"DEBUG: [{label}] Trying Groq...")
             response = clients["groq"].chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[{"role": "user", "content": task_prompt}]
             )
-            if response.choices[0].message.content:
+            text = response.choices[0].message.content
+            if text:
                 audit(label, "success", provider="groq")
-                return response.choices[0].message.content
+                print(f"DEBUG: [{label}] Groq response preview:\n{text[:400]}\n{'─'*60}")
+                return text
         except Exception as e:
-            print(f"Groq failed: {e}")
-            audit(label, "provider_error", provider="groq", detail=str(e))
+            if _is_quota_error(e):
+                print(f"Groq QUOTA EXHAUSTED — skipping for the rest of this session.")
+                _EXHAUSTED_PROVIDERS.add("groq")
+                audit(label, "quota_exhausted", provider="groq")
+            else:
+                print(f"Groq failed: {e}")
+                audit(label, "provider_error", provider="groq", detail=str(e)[:300])
+    elif "groq" in _EXHAUSTED_PROVIDERS:
+        print(f"DEBUG: [{label}] Skipping Groq (quota exhausted this session).")
 
     # 3. Try Mistral
-    if clients.get("mistral"):
+    if clients.get("mistral") and "mistral" not in _EXHAUSTED_PROVIDERS:
         try:
-            print(f"DEBUG: [{label}] Falling back to Mistral...")
+            print(f"DEBUG: [{label}] Trying Mistral...")
             response = clients["mistral"].chat.complete(
                 model="mistral-large-latest",
                 messages=[{"role": "user", "content": task_prompt}]
             )
-            if response.choices[0].message.content:
+            text = response.choices[0].message.content
+            if text:
                 audit(label, "success", provider="mistral")
-                return response.choices[0].message.content
+                print(f"DEBUG: [{label}] Mistral response preview:\n{text[:400]}\n{'─'*60}")
+                return text
         except Exception as e:
-            print(f"Mistral failed: {e}")
-            audit(label, "provider_error", provider="mistral", detail=str(e))
+            if _is_quota_error(e):
+                print(f"Mistral QUOTA EXHAUSTED — skipping for the rest of this session.")
+                _EXHAUSTED_PROVIDERS.add("mistral")
+                audit(label, "quota_exhausted", provider="mistral")
+            else:
+                print(f"Mistral failed: {e}")
+                audit(label, "provider_error", provider="mistral", detail=str(e)[:300])
+    elif "mistral" in _EXHAUSTED_PROVIDERS:
+        print(f"DEBUG: [{label}] Skipping Mistral (quota exhausted this session).")
 
-    print(f"CRITICAL: [{label}] All AI providers failed.")
+    print(f"CRITICAL: [{label}] All available AI providers failed or are exhausted.")
     audit(label, "all_providers_failed")
     return None
 
+
+def _check_gate_result(raw: str) -> tuple[bool, str]:
+    """
+    Robustly determines whether an LLM response represents a gate PASS or FAIL.
+
+    Why this exists: Groq (llama-3.3-70b) frequently ignores exact formatting
+    instructions and paraphrases the token we're looking for. This function uses
+    multiple detection strategies in priority order so a good idea isn't thrown
+    away just because the model wrote "GATE: PASSED" instead of "[GATE: PASS]".
+
+    Returns:
+        (passed: bool, reason: str)
+    """
+    # Normalise for case-insensitive matching
+    text_lower = raw.lower()
+
+    # ── Strategy 1: Exact token match (ideal case) ────────────────────────────
+    if "[gate: pass]" in text_lower:
+        return True, "exact_token"
+
+    # ── Strategy 2: Common Groq paraphrases of PASS ───────────────────────────
+    pass_phrases = [
+        "gate verdict: pass",
+        "gate verdict: [pass]",
+        "gate: passed",
+        "verdict: pass",
+        "all three gates: pass",
+        "gate status: pass",
+        "passes all three",
+        "passes all 3",
+        "idea passes",
+        "gate check: pass",
+    ]
+    if any(p in text_lower for p in pass_phrases):
+        return True, "fuzzy_pass_phrase"
+
+    # ── Strategy 3: Response contains the expected structured fields ──────────
+    # If the model filled out PRODUCT NAME + PROBLEM STATEMENT it almost
+    # certainly intended a pass even if it forgot the token.
+    required_fields = ["product name:", "problem statement:", "buyer profile:"]
+    fields_found = sum(1 for f in required_fields if f in text_lower)
+    if fields_found >= 3:
+        return True, "structured_fields_present"
+
+    # ── Strategy 4: Explicit FAIL signals ────────────────────────────────────
+    if "[gate: fail]" in text_lower:
+        reason = raw.split("[GATE: FAIL]")[-1].strip()[:200] if "[GATE: FAIL]" in raw else "model signalled fail"
+        return False, reason
+
+    fail_phrases = ["gate verdict: fail", "gate: failed", "verdict: fail", "idea fails"]
+    for p in fail_phrases:
+        if p in text_lower:
+            return False, f"fuzzy_fail_phrase: {p}"
+
+    # ── Strategy 5: Response is suspiciously short (model gave up / confused) ─
+    if len(raw.strip()) < 200:
+        return False, f"response_too_short ({len(raw.strip())} chars)"
+
+    # ── Default: ambiguous — treat as fail and log the full response for review ─
+    return False, f"ambiguous_response — no clear pass/fail signal detected"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # TWO-STAGE SCOUT PIPELINE
@@ -399,18 +499,20 @@ def run_scout_pipeline(clients: dict) -> str | None:
             audit("scout_stage1", "no_response")
             break
 
-        if "[GATE: PASS]" in raw:
-            print("[Scout] ✅ Gate passed.")
-            audit("scout_stage1", "gate_pass")
+        passed, reason = _check_gate_result(raw)
+
+        if passed:
+            print(f"[Scout] ✅ Gate passed (detection method: {reason}).")
+            audit("scout_stage1", "gate_pass", detail=reason)
             validation_output = raw
             break
         else:
-            # Extract the fail reason for the log
-            fail_reason = "unknown"
-            if "[GATE: FAIL]" in raw:
-                fail_reason = raw.split("[GATE: FAIL]")[-1].strip()[:200]
-            print(f"[Scout] ❌ Gate failed: {fail_reason}")
-            audit("scout_stage1", "gate_fail", detail=fail_reason)
+            print(f"[Scout] ❌ Gate failed: {reason}")
+            audit("scout_stage1", "gate_fail", detail=reason)
+            # On ambiguous failures, dump the full raw response so you can
+            # inspect what the model actually returned and tune accordingly.
+            if "ambiguous" in reason or reason == "unknown":
+                print(f"[Scout] Full raw response for inspection:\n{'═'*60}\n{raw}\n{'═'*60}")
 
     if not validation_output:
         print("[Scout] Could not generate a passing idea after "
