@@ -2,7 +2,10 @@ import os
 import time
 from google import genai
 from groq import Groq
-from mistralai import Mistral  # Adjusted import style based on modern SDK versions
+try:
+    from mistralai.client import Mistral
+except ImportError:
+    from mistralai import Mistral
 
 def get_clients():
     """Initializes available AI clients safely."""
