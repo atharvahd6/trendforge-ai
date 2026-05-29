@@ -1,1 +1,23 @@
+Objective: Create an automated Python agent framework for a "Deep Document Forensic Compliance Reviewer." The script must handle heavy document desiloing to help users fight institutional denials (e.g., insurance claim rejections, municipal application stalls, or land document disputes) by finding precise evidentiary contradictions.
 
+Data Inputs (Variables to handle):
+1. POLICY_RULEBOOK (Path to a massive local text file or PDF representing the master policy laws, corporate guidelines, or municipal rules).
+2. USER_HISTORY_LOG (Path to a directory containing the user's fragmented records, emails, text dumps, or previous application transcripts).
+3. THE_DENIAL_TEXT (The specific rejection letter or stalling message received from the institution).
+
+Agent Core Pipeline & Logic Requirements:
+- Phase 1: Context Chunking & Extraction. Parse THE_DENIAL_TEXT to identify the exact "Reason Code" or specific clause the institution is using to reject the user.
+- Phase 2: Rulebook Validation. Query POLICY_RULEBOOK using the identified rejection clause. The agent must locate the exact page, section, and line conditions required to satisfy or bypass that clause.
+- Phase 3: Evidentiary Audit. Cross-reference those specific rules against the USER_HISTORY_LOG. The agent must perform an absolute text-matching and semantic search to extract proof that the user actually met the criteria.
+- Phase 4: Contradiction Mapping. Isolate any instances where the user's data satisfies the rulebook, proving the institution's denial is factually incorrect or legally inconsistent.
+
+Output Format Requirements:
+The Python script must process these phases and output a clean, markdown-formatted "Appeals Brief" file containing:
+1. Executive Summary: A direct, polite statement of why the denial is incorrect.
+2. The Evidence Grid: A structured markdown table mapping [Rejection Claim] vs [Exact Rulebook Page/Clause] vs [User Document Proof & Timestamp].
+3. The Response Template: A bulletproof, formal appeal letter the user can copy-paste and send back to the institution to force an immediate review.
+
+Coding Constraints for the AI Generator:
+- Use standard, highly reliable Python libraries for text handling and parsing (e.g., os, re, json, or lightweight vectorization mechanics).
+- Ensure error handling is robust in case files in the USER_HISTORY_LOG directory are corrupted or empty.
+- Provide clean code comments explaining how the comparative data mapping loop works.
