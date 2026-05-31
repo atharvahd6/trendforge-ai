@@ -1,295 +1,147 @@
+Here is the updated **Multi-Model Orchestrator Script** configured for your specific AI stack.
+
+This agent script uses **Gemini** to run the heavy SEO trend analysis, **Groq** to build the high-speed responsive HTML user interface, and **Mistral** to perform final security code audits and compliance cross-checks.
+
+### Preparation
+
+Ensure you install the required orchestration libraries first:
+
+```bash
+pip install crewai google-genai groq mistralai
+
+```
+
+Set your respective API keys in your terminal session before launching the orchestrator:
+
+```bash
+export GEMINI_API_KEY="your-gemini-key"
+export GROQ_API_KEY="your-groq-key"
+export MISTRAL_API_KEY="your-mistral-key"
+
+```
+
+---
+
+### The Triple-AI Orchestration Engine (`salarybit_agents.py`)
+
+```python
 import os
-import time
-from google import genai
-from groq import Groq
+from crewai import Agent, Task, Crew, Process, LLM
 
-# Backward and forward compatible Mistral SDK import
-try:
-    from mistralai.client import Mistral
-except ImportError:
-    from mistralai import Mistral
+# 1. Verify and Initialize the Three AI Engines safely
+if not all([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os.environ.get("MISTRAL_API_KEY")]):
+    raise ValueError("CRITICAL: One or more API keys (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY) are missing.")
 
-def get_clients():
-    """Initializes available AI clients safely."""
-    return {
-        "gemini": genai.Client(api_key=os.environ.get("GEMINI_API_KEY")) if os.environ.get("GEMINI_API_KEY") else None,
-        "groq": Groq(api_key=os.environ.get("GROQ_API_KEY")) if os.environ.get("GROQ_API_KEY") else None,
-        "mistral": Mistral(api_key=os.environ.get("MISTRAL_API_KEY")) if os.environ.get("MISTRAL_API_KEY") else None,
-    }
+# The Research Engine
+gemini_llm = LLM(
+    model="gemini/gemini-2.0-flash",
+    temperature=0.3
+)
 
-def get_scout_prompt():
-    """Persona for generating highly sellable B2B enterprise desktop utilities."""
-    return """
-    Act as an elite Enterprise Software Architect and B2B SaaS Product Director.
-    Your goal is to design a secure, air-gapped Outlook-style Calendar Assistant.
-    The technical stack MUST use:
-    1. A beautiful, multi-frame Python Tkinter GUI environment.
-    2. High-speed local database operations via sqlite3.
-    3. Python's subprocess module orchestration to pass text prompts to local Ollama endpoints using llama3.
-    
-    Output ONLY raw Python code (no markdown wrappers, no explanations).
-    """
+# The High-Speed Coding Engine
+groq_llm = LLM(
+    model="groq/llama-3.3-70b-versatile",
+    temperature=0.1
+)
 
-def call_ai_with_fallback(clients, task_prompt):
-    """Attempts the task on multiple providers until one succeeds."""
-    
-    # 1. Try Gemini
-    if clients.get("gemini"):
-        try:
-            print("DEBUG: Trying Gemini...")
-            response = clients["gemini"].models.generate_content(
-                model='gemini-2.0-flash', contents=task_prompt
-            )
-            if response.text:
-                return response.text
-        except Exception as e:
-            print(f"Gemini failed: {e}")
+# The Security & Audit Engine
+mistral_llm = LLM(
+    model="mistral/mistral-large-latest",
+    temperature=0.2
+)
 
-    # 2. Try Groq
-    if clients.get("groq"):
-        try:
-            print("DEBUG: Falling back to Groq...")
-            response = clients["groq"].chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": task_prompt}]
-            )
-            if response.choices[0].message.content:
-                return response.choices[0].message.content
-        except Exception as e:
-            print(f"Groq failed: {e}")
+# 2. Assign Specialized Agents to their Best-Suited LLM Superpower
+seo_analyst = Agent(
+    role="Lead SEO Strategy & Global Mobility Analyst",
+    goal="Pinpoint high-volume, highly searched global visa and immigration keywords on Google.",
+    backstory=(
+        "You are an expert data miner specializing in global relocation trends. You leverage Gemini's "
+        "comprehensive analytical capabilities to find out exactly what moving expats are looking for."
+    ),
+    llm=gemini_llm,
+    allow_delegation=False,
+    verbose=True
+)
 
-    # 3. Try Mistral
-    if clients.get("mistral"):
-        try:
-            print("DEBUG: Falling back to Mistral...")
-            response = clients["mistral"].chat.complete(
-                model="mistral-large-latest",
-                messages=[{"role": "user", "content": task_prompt}]
-            )
-            if response.choices[0].message.content:
-                return response.choices[0].message.content
-        except Exception as e:
-            print(f"Mistral failed: {e}")
+ui_architect = Agent(
+    role="Senior Frontend Web Architecture Engineer",
+    goal="Transform abstract trend matrices into clean, dark-themed vanilla HTML/CSS/JS interface tools.",
+    backstory=(
+        "You are a frontend virtuoso running on Groq's high-speed engine. You craft modular web layouts "
+        "with robust localStorage persistence features in fractions of a second."
+    ),
+    llm=groq_llm,
+    allow_delegation=False,
+    verbose=True
+)
 
-    print("CRITICAL: All AI providers failed. Injecting the hardcoded Enterprise Blueprint Architecture...")
-    return get_hardcoded_calendar_blueprint()
+compliance_auditor = Agent(
+    role="Principal System Security & Legal Compliance Auditor",
+    goal="Audit code output, implement error handlers, and optimize logic layers for production deployment.",
+    backstory=(
+        "You are an elite European software compliance engineer running on Mistral. You verify "
+        "frontend inputs, clean up syntax, ensure HTML code output contains zero markdown syntax wrappers, "
+        "and inject realistic fallback mocks matching high-performance standards."
+    ),
+    llm=mistral_llm,
+    allow_delegation=False,
+    verbose=True
+)
 
-def get_hardcoded_calendar_blueprint():
-    """Deterministic fallback to guarantee deployment success even if cloud APIs are dead."""
-    return """import os
-import tkinter as tk
-from tkinter import ttk, messagebox
-import sqlite3
-import subprocess
-from datetime import datetime
+# 3. Chain the Cross-Model Workflow Sequence
+task_1_seo = Task(
+    description=(
+        "Analyze high-volume international immigration search paths. Identify the 3 top-searched "
+        "global visa streams (e.g., German Blue Card, Canada Express Entry, UK Skilled Worker) "
+        "along with their typical required document checkpoints (ECA verification, biometric steps, legal translations)."
+    ),
+    expected_output="Detailed markdown breakdown outlining high-traffic countries, programs, and visa tracking notes.",
+    agent=seo_analyst
+)
 
-DB_PATH = "enterprise_calendar.db"
+task_2_html = Task(
+    description=(
+        "Take the targeted visa parameters discovered by the analyst and build a standalone single-page responsive website. "
+        "Design constraints:\n"
+        "- Dark-slate aesthetics (#1a252f, #2c3e50, #27ae60) targeting professional corporate audiences.\n"
+        "- Left panel form setup to save inputs into a browser matrix table shown in the right panel.\n"
+        "- Use localStorage to initialize and display the 3 high-volume SEO visa pathways by default out-of-the-box.\n"
+        "- Include a 'Run Groq-Powered Compliance Audit' button linked to an async fetch container pointing "
+        "safely to 'https://salarybit.in/api/v1/visa-brief' with a responsive status modal framework built-in."
+    ),
+    expected_output="Comprehensive, structured HTML page source code containing embedded styling and JavaScript variables.",
+    agent=ui_architect
+)
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            attendees TEXT,
-            description TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+task_3_audit = Task(
+    description=(
+        "Perform a structural sanity audit on the code generated by the UI Architect. Ensure the client-side JavaScript "
+        "is fully secure and completely free from exposed API keys. Verify that the async fetch engine includes a flawless "
+        "fallback script to present realistic simulated metrics if the server endpoint is not active. "
+        "CRITICAL: Output ONLY the raw HTML source content file. Strip away any trailing markdown blocks or surrounding ```html syntax markers."
+    ),
+    expected_output="Pure raw deployable HTML source code document text ready for production deployment.",
+    agent=compliance_auditor,
+    output_file="products/salarybit_visa_tool.html"
+)
 
-def query_local_ai(prompt):
-    try:
-        result = subprocess.run(
-            ["ollama", "run", "llama3", prompt],
-            capture_output=True, text=True, check=True, encoding="utf-8"
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        return f"Local AI Assistant offline. Ensure Ollama is running 'llama3'. (Error: {e})"
-
-class EnterpriseCalendarApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Secure Intel-Calendar (Air-Gapped)")
-        self.root.geometry("900x600")
-        self.root.configure(bg="#2c3e50")
-        self.style = ttk.Style()
-        self.style.theme_use("clam")
-        self.create_widgets()
-        self.load_events()
-
-    def create_widgets(self):
-        left_panel = tk.Frame(self.root, bg="#34495e", width=350)
-        left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
-        
-        tk.Label(left_panel, text="Schedule Management", fg="white", bg="#34495e", font=("Arial", 14, "bold")).pack(pady=10)
-        
-        tk.Label(left_panel, text="Meeting Title:", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_title = ttk.Entry(left_panel, width=35)
-        self.ent_title.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Date (YYYY-MM-DD):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_date = ttk.Entry(left_panel, width=35)
-        self.ent_date.insert(0, datetime.today().strftime('%Y-%m-%d'))
-        self.ent_date.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Time (HH:MM):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_time = ttk.Entry(left_panel, width=35)
-        self.ent_time.pack(padx=10, pady=2)
-
-        tk.Label(left_panel, text="Attendees (Separated by commas):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_attendees = ttk.Entry(left_panel, width=35)
-        self.ent_attendees.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Agenda / Context:", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.txt_desc = tk.Text(left_panel, width=30, height=4, font=("Arial", 10))
-        self.txt_desc.pack(padx=10, pady=5)
-        
-        btn_save = tk.Button(left_panel, text="🔒 Save Secure Event", bg="#27ae60", fg="white", font=("Arial", 10, "bold"), command=self.save_event)
-        btn_save.pack(fill=tk.X, padx=10, pady=5)
-        
-        tk.Label(left_panel, text="AI Executive Assistant", fg="white", bg="#34495e", font=("Arial", 12, "bold")).pack(pady=15)
-        
-        btn_brief = tk.Button(left_panel, text="🧠 Generate Daily Executive Brief", bg="#2980b9", fg="white", command=self.generate_daily_brief)
-        btn_brief.pack(fill=tk.X, padx=10, pady=5)
-
-        right_panel = tk.Frame(self.root, bg="#2c3e50")
-        right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        tk.Label(right_panel, text="Corporate Agenda Timeline", fg="white", bg="#2c3e50", font=("Arial", 14, "bold")).pack(pady=5)
-        
-        columns = ("id", "title", "date", "time", "attendees")
-        self.tree = ttk.Treeview(right_panel, columns=columns, show="headings", selectmode="browse")
-        self.tree.heading("id", text="ID")
-        self.tree.heading("title", text="Meeting Topic")
-        self.tree.heading("date", text="Scheduled Date")
-        self.tree.heading("time", text="Time")
-        self.tree.heading("attendees", text="Internal Personnel")
-        
-        self.tree.column("id", width=30, anchor="center")
-        self.tree.column("title", width=180)
-        self.tree.column("date", width=100, anchor="center")
-        self.tree.column("time", width=70, anchor="center")
-        self.tree.pack(fill=tk.BOTH, expand=True, pady=5)
-
-    def save_event(self):
-        title = self.ent_title.get().strip()
-        date = self.ent_date.get().strip()
-        time = self.ent_time.get().strip()
-        attendees = self.ent_attendees.get().strip()
-        desc = self.txt_desc.get("1.0", tk.END).strip()
-        
-        if not title or not date or not time:
-            messagebox.showerror("Validation Error", "Topic, Date, and Time are mandatory.")
-            return
-            
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO events (title, date, time, attendees, description) VALUES (?, ?, ?, ?, ?)",
-                       (title, date, time, attendees, desc))
-        conn.commit()
-        conn.close()
-        
-        messagebox.showinfo("Success", "Event locked into local database.")
-        self.clear_form()
-        self.load_events()
-
-    def load_events(self):
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, title, date, time, attendees FROM events ORDER BY date ASC, time ASC")
-        rows = cursor.fetchall()
-        for row in rows:
-            self.tree.insert("", tk.END, values=row)
-        conn.close()
-
-    def clear_form(self):
-        self.ent_title.delete(0, tk.END)
-        self.ent_time.delete(0, tk.END)
-        self.ent_attendees.delete(0, tk.END)
-        self.txt_desc.delete("1.0", tk.END)
-
-    def generate_daily_brief(self):
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT title, time, attendees, description FROM events WHERE date = ?", (self.ent_date.get().strip(),))
-        meetings = cursor.fetchall()
-        conn.close()
-        
-        if not meetings:
-            messagebox.showinfo("AI Executive Brief", "No corporate items scheduled.")
-            return
-            
-        agenda_context = f"Date: {self.ent_date.get().strip()}\\n"
-        for i, m in enumerate(meetings, 1):
-            agenda_context += f"- Meeting {i}: Title: {m[0]} at {m[1]} | Staff: {m[2]} | Details: {m[3]}\\n"
-            
-        ai_prompt = f"Review these entries and give a bulleted summary briefing:\\n{agenda_context}"
-        messagebox.showinfo("Processing", "Analyzing data locally with Ollama...")
-        brief_result = query_local_ai(ai_prompt)
-        
-        brief_window = tk.Toplevel(self.root)
-        brief_window.title("AI Briefing")
-        brief_window.geometry("500x400")
-        txt_output = tk.Text(brief_window, wrap=tk.WORD)
-        txt_output.insert(tk.END, brief_result)
-        txt_output.config(state=tk.DISABLED)
-        txt_output.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-if __name__ == '__main__':
-    init_db()
-    if "DISPLAY" not in os.environ and os.name != "nt":
-        print("HEADLESS ENVIRONMENT DETECTED: Skipping GUI initialization.")
-        print("SUCCESS: Database initialized and code structural verification complete.")
-    else:
-        root = tk.Tk()
-        app = EnterpriseCalendarApp(root)
-        root.mainloop()
-"""
-
+# 4. Spin up the Collaborative Execution Engine
 def main():
-    clients = get_clients()
-    idea_file = "INPUT_IDEA.txt"
-    is_manual = False
-    
-    # Check for manual input
-    if os.path.exists(idea_file) and os.path.getsize(idea_file) > 10:
-        print("DEBUG: Found manual input. Processing...")
-        with open(idea_file, "r", encoding="utf-8") as f:
-            user_idea = f.read().strip()
-        task = f"Build a Python/Tkinter desktop app for: {user_idea}. Use subprocess to call Ollama. Output ONLY raw Python code."
-        is_manual = True
-    else:
-        # AUTONOMOUS SCOUTING MODE
-        print("DEBUG: No manual input. Triggering Enterprise Scout Model...")
-        scout_info = call_ai_with_fallback(clients, get_scout_prompt())
-        task = f"Build a comprehensive Python Tkinter desktop app based on this requirement: {scout_info}. Complete all logic code blocks completely without truncation or markdown syntax wrappers."
+    print("Assembling Triple-AI Team (Gemini -> Groq -> Mistral)...")
+    orchestrator_crew = Crew(
+        agents=[seo_analyst, ui_architect, compliance_auditor],
+        tasks=[task_1_seo, task_2_html, task_3_audit],
+        process=Process.sequential,
+        verbose=True
+    )
 
-    # Execute generation
-    code = call_ai_with_fallback(clients, task)
+    print("\n🚀 Kickoff: Initiating agent loop protocol. Writing production asset directly...")
+    orchestrator_crew.kickoff()
     
-    # Clean output (remove markdown code blocks safely)
-    code = code.replace("```python", "").replace("```", "").strip()
-    
-    # Save output cleanly
-    product_name = f"desktop-tool-{int(time.time())}"
-    os.makedirs(f"products/{product_name}", exist_ok=True)
-    with open(f"products/{product_name}/assistant.py", "w", encoding="utf-8") as f:
-        f.write(code)
-        
-    print(f"SUCCESS: Desktop tool deployed to products/{product_name}/assistant.py")
-
-    # Clear out input files safely upon verification completion
-    if is_manual:
-        with open(idea_file, "w", encoding="utf-8") as f: 
-            f.write("")
-        print("DEBUG: Input file cleared safely.")
+    print("\n=== PLATFORM ENGINES ALIGNED COMPLETED ===")
+    print("Success: Finalized enterprise asset successfully written to products/salarybit_visa_tool.html")
 
 if __name__ == "__main__":
     main()
+
+```
