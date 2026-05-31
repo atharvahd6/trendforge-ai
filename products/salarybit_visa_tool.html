@@ -1,295 +1,437 @@
-import os
-import time
-from google import genai
-from groq import Groq
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immigration Tracking Workspace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
 
-# Backward and forward compatible Mistral SDK import
-try:
-    from mistralai.client import Mistral
-except ImportError:
-    from mistralai import Mistral
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
 
-def get_clients():
-    """Initializes available AI clients safely."""
-    return {
-        "gemini": genai.Client(api_key=os.environ.get("GEMINI_API_KEY")) if os.environ.get("GEMINI_API_KEY") else None,
-        "groq": Groq(api_key=os.environ.get("GROQ_API_KEY")) if os.environ.get("GROQ_API_KEY") else None,
-        "mistral": Mistral(api_key=os.environ.get("MISTRAL_API_KEY")) if os.environ.get("MISTRAL_API_KEY") else None,
-    }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-def get_scout_prompt():
-    """Persona for generating highly sellable B2B enterprise desktop utilities."""
-    return """
-    Act as an elite Enterprise Software Architect and B2B SaaS Product Director.
-    Your goal is to design a secure, air-gapped Outlook-style Calendar Assistant.
-    The technical stack MUST use:
-    1. A beautiful, multi-frame Python Tkinter GUI environment.
-    2. High-speed local database operations via sqlite3.
-    3. Python's subprocess module orchestration to pass text prompts to local Ollama endpoints using llama3.
-    
-    Output ONLY raw Python code (no markdown wrappers, no explanations).
-    """
+        nav li {
+            margin: 0 20px;
+        }
 
-def call_ai_with_fallback(clients, task_prompt):
-    """Attempts the task on multiple providers until one succeeds."""
-    
-    # 1. Try Gemini
-    if clients.get("gemini"):
-        try:
-            print("DEBUG: Trying Gemini...")
-            response = clients["gemini"].models.generate_content(
-                model='gemini-2.0-flash', contents=task_prompt
-            )
-            if response.text:
-                return response.text
-        except Exception as e:
-            print(f"Gemini failed: {e}")
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+        }
 
-    # 2. Try Groq
-    if clients.get("groq"):
-        try:
-            print("DEBUG: Falling back to Groq...")
-            response = clients["groq"].chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": task_prompt}]
-            )
-            if response.choices[0].message.content:
-                return response.choices[0].message.content
-        except Exception as e:
-            print(f"Groq failed: {e}")
+        nav a:hover {
+            background-color: #555;
+            border-radius: 4px;
+        }
 
-    # 3. Try Mistral
-    if clients.get("mistral"):
-        try:
-            print("DEBUG: Falling back to Mistral...")
-            response = clients["mistral"].chat.complete(
-                model="mistral-large-latest",
-                messages=[{"role": "user", "content": task_prompt}]
-            )
-            if response.choices[0].message.content:
-                return response.choices[0].message.content
-        except Exception as e:
-            print(f"Mistral failed: {e}")
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    print("CRITICAL: All AI providers failed. Injecting the hardcoded Enterprise Blueprint Architecture...")
-    return get_hardcoded_calendar_blueprint()
+        section {
+            background-color: #fff;
+            padding: 1.5em;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+        }
 
-def get_hardcoded_calendar_blueprint():
-    """Deterministic fallback to guarantee deployment success even if cloud APIs are dead."""
-    return """import os
-import tkinter as tk
-from tkinter import ttk, messagebox
-import sqlite3
-import subprocess
-from datetime import datetime
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
 
-DB_PATH = "enterprise_calendar.db"
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            attendees TEXT,
-            description TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+        li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
 
-def query_local_ai(prompt):
-    try:
-        result = subprocess.run(
-            ["ollama", "run", "llama3", prompt],
-            capture_output=True, text=True, check=True, encoding="utf-8"
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        return f"Local AI Assistant offline. Ensure Ollama is running 'llama3'. (Error: {e})"
+        li ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
 
-class EnterpriseCalendarApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Secure Intel-Calendar (Air-Gapped)")
-        self.root.geometry("900x600")
-        self.root.configure(bg="#2c3e50")
-        self.style = ttk.Style()
-        self.style.theme_use("clam")
-        self.create_widgets()
-        self.load_events()
+        li li {
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 15px;
+        }
 
-    def create_widgets(self):
-        left_panel = tk.Frame(self.root, bg="#34495e", width=350)
-        left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
-        
-        tk.Label(left_panel, text="Schedule Management", fg="white", bg="#34495e", font=("Arial", 14, "bold")).pack(pady=10)
-        
-        tk.Label(left_panel, text="Meeting Title:", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_title = ttk.Entry(left_panel, width=35)
-        self.ent_title.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Date (YYYY-MM-DD):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_date = ttk.Entry(left_panel, width=35)
-        self.ent_date.insert(0, datetime.today().strftime('%Y-%m-%d'))
-        self.ent_date.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Time (HH:MM):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_time = ttk.Entry(left_panel, width=35)
-        self.ent_time.pack(padx=10, pady=2)
+        li li:before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
 
-        tk.Label(left_panel, text="Attendees (Separated by commas):", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.ent_attendees = ttk.Entry(left_panel, width=35)
-        self.ent_attendees.pack(padx=10, pady=2)
-        
-        tk.Label(left_panel, text="Agenda / Context:", fg="lightgray", bg="#34495e").pack(anchor="w", padx=10)
-        self.txt_desc = tk.Text(left_panel, width=30, height=4, font=("Arial", 10))
-        self.txt_desc.pack(padx=10, pady=5)
-        
-        btn_save = tk.Button(left_panel, text="🔒 Save Secure Event", bg="#27ae60", fg="white", font=("Arial", 10, "bold"), command=self.save_event)
-        btn_save.pack(fill=tk.X, padx=10, pady=5)
-        
-        tk.Label(left_panel, text="AI Executive Assistant", fg="white", bg="#34495e", font=("Arial", 12, "bold")).pack(pady=15)
-        
-        btn_brief = tk.Button(left_panel, text="🧠 Generate Daily Executive Brief", bg="#2980b9", fg="white", command=self.generate_daily_brief)
-        btn_brief.pack(fill=tk.X, padx=10, pady=5)
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
 
-        right_panel = tk.Frame(self.root, bg="#2c3e50")
-        right_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        tk.Label(right_panel, text="Corporate Agenda Timeline", fg="white", bg="#2c3e50", font=("Arial", 14, "bold")).pack(pady=5)
-        
-        columns = ("id", "title", "date", "time", "attendees")
-        self.tree = ttk.Treeview(right_panel, columns=columns, show="headings", selectmode="browse")
-        self.tree.heading("id", text="ID")
-        self.tree.heading("title", text="Meeting Topic")
-        self.tree.heading("date", text="Scheduled Date")
-        self.tree.heading("time", text="Time")
-        self.tree.heading("attendees", text="Internal Personnel")
-        
-        self.tree.column("id", width=30, anchor="center")
-        self.tree.column("title", width=180)
-        self.tree.column("date", width=100, anchor="center")
-        self.tree.column("time", width=70, anchor="center")
-        self.tree.pack(fill=tk.BOTH, expand=True, pady=5)
+        button:hover {
+            background-color: #2980b9;
+        }
 
-    def save_event(self):
-        title = self.ent_title.get().strip()
-        date = self.ent_date.get().strip()
-        time = self.ent_time.get().strip()
-        attendees = self.ent_attendees.get().strip()
-        desc = self.txt_desc.get("1.0", tk.END).strip()
-        
-        if not title or not date or not time:
-            messagebox.showerror("Validation Error", "Topic, Date, and Time are mandatory.")
-            return
-            
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO events (title, date, time, attendees, description) VALUES (?, ?, ?, ?, ?)",
-                       (title, date, time, attendees, desc))
-        conn.commit()
-        conn.close()
-        
-        messagebox.showinfo("Success", "Event locked into local database.")
-        self.clear_form()
-        self.load_events()
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-    def load_events(self):
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, title, date, time, attendees FROM events ORDER BY date ASC, time ASC")
-        rows = cursor.fetchall()
-        for row in rows:
-            self.tree.insert("", tk.END, values=row)
-        conn.close()
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
 
-    def clear_form(self):
-        self.ent_title.delete(0, tk.END)
-        self.ent_time.delete(0, tk.END)
-        self.ent_attendees.delete(0, tk.END)
-        self.txt_desc.delete("1.0", tk.END)
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-    def generate_daily_brief(self):
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT title, time, attendees, description FROM events WHERE date = ?", (self.ent_date.get().strip(),))
-        meetings = cursor.fetchall()
-        conn.close()
-        
-        if not meetings:
-            messagebox.showinfo("AI Executive Brief", "No corporate items scheduled.")
-            return
-            
-        agenda_context = f"Date: {self.ent_date.get().strip()}\\n"
-        for i, m in enumerate(meetings, 1):
-            agenda_context += f"- Meeting {i}: Title: {m[0]} at {m[1]} | Staff: {m[2]} | Details: {m[3]}\\n"
-            
-        ai_prompt = f"Review these entries and give a bulleted summary briefing:\\n{agenda_context}"
-        messagebox.showinfo("Processing", "Analyzing data locally with Ollama...")
-        brief_result = query_local_ai(ai_prompt)
-        
-        brief_window = tk.Toplevel(self.root)
-        brief_window.title("AI Briefing")
-        brief_window.geometry("500x400")
-        txt_output = tk.Text(brief_window, wrap=tk.WORD)
-        txt_output.insert(tk.END, brief_result)
-        txt_output.config(state=tk.DISABLED)
-        txt_output.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        .close:hover {
+            color: #333;
+        }
 
-if __name__ == '__main__':
-    init_db()
-    if "DISPLAY" not in os.environ and os.name != "nt":
-        print("HEADLESS ENVIRONMENT DETECTED: Skipping GUI initialization.")
-        print("SUCCESS: Database initialized and code structural verification complete.")
-    else:
-        root = tk.Tk()
-        app = EnterpriseCalendarApp(root)
-        root.mainloop()
-"""
+        #audit-data {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
 
-def main():
-    clients = get_clients()
-    idea_file = "INPUT_IDEA.txt"
-    is_manual = False
-    
-    # Check for manual input
-    if os.path.exists(idea_file) and os.path.getsize(idea_file) > 10:
-        print("DEBUG: Found manual input. Processing...")
-        with open(idea_file, "r", encoding="utf-8") as f:
-            user_idea = f.read().strip()
-        task = f"Build a Python/Tkinter desktop app for: {user_idea}. Use subprocess to call Ollama. Output ONLY raw Python code."
-        is_manual = True
-    else:
-        # AUTONOMOUS SCOUTING MODE
-        print("DEBUG: No manual input. Triggering Enterprise Scout Model...")
-        scout_info = call_ai_with_fallback(clients, get_scout_prompt())
-        task = f"Build a comprehensive Python Tkinter desktop app based on this requirement: {scout_info}. Complete all logic code blocks completely without truncation or markdown syntax wrappers."
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
 
-    # Execute generation
-    code = call_ai_with_fallback(clients, task)
-    
-    # Clean output (remove markdown code blocks safely)
-    code = code.replace("```python", "").replace("```", "").strip()
-    
-    # Save output cleanly
-    product_name = f"desktop-tool-{int(time.time())}"
-    os.makedirs(f"products/{product_name}", exist_ok=True)
-    with open(f"products/{product_name}/assistant.py", "w", encoding="utf-8") as f:
-        f.write(code)
-        
-    print(f"SUCCESS: Desktop tool deployed to products/{product_name}/assistant.py")
+            nav li {
+                margin: 5px 0;
+            }
 
-    # Clear out input files safely upon verification completion
-    if is_manual:
-        with open(idea_file, "w", encoding="utf-8") as f: 
-            f.write("")
-        print("DEBUG: Input file cleared safely.")
+            section {
+                padding: 1em;
+            }
 
-if __name__ == "__main__":
-    main()
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#usa">USA Immigration</a></li>
+                <li><a href="#canada">Canada Immigration</a></li>
+                <li><a href="#australia">Australia Immigration</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="usa">
+            <h2>Immigration to the United States</h2>
+            <ul>
+                <li><strong>Work Visas (H-1B, L-1, O-1):</strong>
+                    <ul>
+                        <li>Petition for a Nonimmigrant Worker (Form I-129)</li>
+                        <li>Labor Condition Application (LCA)</li>
+                        <li>Valid passport</li>
+                    </ul>
+                </li>
+                <li><strong>Family Sponsorship:</strong>
+                    <ul>
+                        <li>Petition for Alien Relative (Form I-130)</li>
+                        <li>Application for Immigrant Visa and Alien Registration (Form DS-260)</li>
+                        <li>Supporting documents (birth and marriage certificates)</li>
+                    </ul>
+                </li>
+                <li><strong>Diversity Visa Lottery:</strong>
+                    <ul>
+                        <li>Application through the official DV lottery website</li>
+                        <li>Further documentation (valid passport, birth certificate, police certificates) if selected</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <section id="canada">
+            <h2>Immigration to Canada</h2>
+            <ul>
+                <li><strong>Express Entry:</strong>
+                    <ul>
+                        <li>Online profile through the Immigration, Refugees and Citizenship Canada (IRCC) website</li>
+                        <li>Language test results (e.g., IELTS, CELPIP)</li>
+                        <li>Educational Credential Assessment (ECA)</li>
+                        <li>Proof of work experience</li>
+                    </ul>
+                </li>
+                <li><strong>Provincial Nominee Programs (PNPs):</strong>
+                    <ul>
+                        <li>Application to the specific province</li>
+                        <li>Police certificates</li>
+                        <li>Medical examination</li>
+                        <li>Proof of language proficiency and education</li>
+                    </ul>
+                </li>
+                <li><strong>Family Sponsorship:</strong>
+                    <ul>
+                        <li>Application to sponsor a family member</li>
+                        <li>Proof of income (Notice of Assessment)</li>
+                        <li>Police certificates for the sponsored individual</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <section id="australia">
+            <h2>Immigration to Australia</h2>
+            <ul>
+                <li><strong>Skilled Independent Visa (Subclass 189):</strong>
+                    <ul>
+                        <li>Expression of Interest (EOI) through SkillSelect</li>
+                        <li>Skills assessment by the relevant assessing authority</li>
+                        <li>English language test results (e.g., IELTS, TOEFL)</li>
+                        <li>Police certificates</li>
+                    </ul>
+                </li>
+                <li><strong>Skilled Nominated Visa (Subclass 190):</strong>
+                    <ul>
+                        <li>Nomination by an Australian state or territory government</li>
+                        <li>Skills assessment</li>
+                        <li>Language test results</li>
+                        <li>Health insurance</li>
+                    </ul>
+                </li>
+                <li><strong>Family Sponsorship:</strong>
+                    <ul>
+                        <li>Application by the Australian citizen or permanent resident sponsor</li>
+                        <li>Proof of relationship (e.g., marriage certificate, birth certificate)</li>
+                        <li>Character certificates for the sponsor</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <button id="audit-button">Audit Processing</button>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Audit Processing</h2>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a>...</p>
+                <div id="audit-data">Waiting for data...</div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById("modal");
+            const auditButton = document.getElementById("audit-button");
+            const closeButton = document.querySelector(".close");
+            const auditData = document.getElementById("audit-data");
+            const storage = window.localStorage;
+
+            // Enhanced error handling for modal operations
+            function showModal() {
+                try {
+                    modal.style.display = "block";
+                    document.body.style.overflow = "hidden";
+                } catch (e) {
+                    console.error("Modal display error:", e);
+                    auditData.textContent = "Error displaying modal: " + e.message;
+                }
+            }
+
+            function hideModal() {
+                try {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "";
+                } catch (e) {
+                    console.error("Modal hide error:", e);
+                }
+            }
+
+            // Enhanced API fetch with timeout and error handling
+            function fetchAuditData() {
+                auditData.textContent = "Loading data...";
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                fetch('https://salarybit.in/api/v1/visa-brief', {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    try {
+                        auditData.textContent = JSON.stringify(data, null, 2);
+                        saveData("lastAudit", {
+                            timestamp: new Date().toISOString(),
+                            data: data
+                        });
+                    } catch (e) {
+                        auditData.textContent = "Error processing data: " + e.message;
+                    }
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error("Fetch error:", error);
+                    const lastAudit = loadData("lastAudit");
+                    if (lastAudit) {
+                        auditData.textContent = "Current data unavailable. Showing last cached data from " +
+                            new Date(lastAudit.timestamp).toLocaleString() + ":\n" +
+                            JSON.stringify(lastAudit.data, null, 2);
+                    } else {
+                        auditData.textContent = "Error loading data: " + error.message;
+                    }
+                });
+            }
+
+            // LocalStorage persistence with error handling
+            function saveData(key, value) {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error("LocalStorage save error:", e);
+                    return false;
+                }
+            }
+
+            function loadData(key) {
+                try {
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error("LocalStorage load error:", e);
+                    return null;
+                }
+            }
+
+            // Event listeners with error handling
+            auditButton.addEventListener('click', function() {
+                showModal();
+                fetchAuditData();
+            });
+
+            closeButton.addEventListener('click', hideModal);
+
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    hideModal();
+                }
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Initialize with example data if empty
+            if (!loadData("example")) {
+                const exampleData = {
+                    "usa": {
+                        "workVisas": ["H-1B", "L-1", "O-1"],
+                        "lastUpdated": new Date().toISOString()
+                    },
+                    "canada": {
+                        "expressEntry": ["IELTS", "ECA", "Work Experience"],
+                        "lastUpdated": new Date().toISOString()
+                    },
+                    "australia": {
+                        "skilledVisas": ["Subclass 189", "Subclass 190"],
+                        "lastUpdated": new Date().toISOString()
+                    }
+                };
+                saveData("example", exampleData);
+            }
+        });
+    </script>
+</body>
+</html>
