@@ -1,30 +1,3 @@
-Here is the updated **Multi-Model Orchestrator Script** configured for your specific AI stack.
-
-This agent script uses **Gemini** to run the heavy SEO trend analysis, **Groq** to build the high-speed responsive HTML user interface, and **Mistral** to perform final security code audits and compliance cross-checks.
-
-### Preparation
-
-Ensure you install the required orchestration libraries first:
-
-```bash
-pip install crewai google-genai groq mistralai
-
-```
-
-Set your respective API keys in your terminal session before launching the orchestrator:
-
-```bash
-export GEMINI_API_KEY="your-gemini-key"
-export GROQ_API_KEY="your-groq-key"
-export MISTRAL_API_KEY="your-mistral-key"
-
-```
-
----
-
-### The Triple-AI Orchestration Engine (`salarybit_agents.py`)
-
-```python
 import os
 from crewai import Agent, Task, Crew, Process, LLM
 
@@ -122,7 +95,7 @@ task_3_audit = Task(
     ),
     expected_output="Pure raw deployable HTML source code document text ready for production deployment.",
     agent=compliance_auditor,
-    output_file="products/salarybit_visa_tool.html"
+    output_file="salarybit_visa_tool.html"
 )
 
 # 4. Spin up the Collaborative Execution Engine
@@ -139,9 +112,7 @@ def main():
     orchestrator_crew.kickoff()
     
     print("\n=== PLATFORM ENGINES ALIGNED COMPLETED ===")
-    print("Success: Finalized enterprise asset successfully written to products/salarybit_visa_tool.html")
+    print("Success: Finalized enterprise asset successfully written to salarybit_visa_tool.html")
 
 if __name__ == "__main__":
     main()
-
-```
