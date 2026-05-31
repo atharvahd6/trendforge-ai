@@ -28,11 +28,11 @@ jobs:
       with:
         python-version: '3.11'
 
-    # 3. Install required framework SDKs (Added crewai and explicit setup prerequisites)
+  # 3. Install required framework SDKs
     - name: Install System Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install crewai groq google-genai mistralai
+        pip install "crewai[litellm]" groq google-genai mistralai
 
     # 4. Prepare local deployment matrix folders (Prevents filesystem write crashes)
     - name: Create Production Workspaces
