@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Tracking Workspace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0 20px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 1.5em;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #3498db;
+            margin-top: 1.5em;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li:before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
+
+        .visa-category {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .visa-category label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .visa-category input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        #audit-button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            margin: 20px 0;
+        }
+
+        #audit-button:hover {
+            background-color: #2980b9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        #submit-audit {
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        #submit-audit:hover {
+            background-color: #27ae60;
+        }
+
+        .audit-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav li {
+                margin: 5px 0;
+            }
+
+            section {
+                padding: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#usa">USA Immigration</a></li>
+                <li><a href="#canada">Canada Immigration</a></li>
+                <li><a href="#australia">Australia Immigration</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="usa">
+            <h2>Immigration to the United States</h2>
+            <p>The United States is a top destination for immigrants due to its economic opportunities, educational institutions, and cultural diversity. The primary search pathways for U.S. immigration include:</p>
+
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="usa" data-category="workVisas" checked>
+                    Work Visas (H1B, L1, etc.): For individuals with specialized skills or intracompany transfers.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="usa" data-category="familySponsorship">
+                    Family Sponsorship: For family members of U.S. citizens or permanent residents.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="usa" data-category="studyVisas" checked>
+                    Study Visas (F1, J1): For international students and exchange visitors.
+                </label>
+            </div>
+
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Visa application (DS-160 for non-immigrant visas)</li>
+                <li>Proof of financial support</li>
+                <li>Health insurance</li>
+                <li>Police certificate</li>
+                <li>Educational transcripts and diplomas (for work or study visas)</li>
+            </ul>
+        </section>
+
+        <section id="canada">
+            <h2>Immigration to Canada</h2>
+            <p>Canada is known for its welcoming immigration policies, high standard of living, and diverse culture. Key search pathways for Canadian immigration are:</p>
+
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="canada" data-category="expressEntry" checked>
+                    Express Entry: A points-based system for skilled workers.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="canada" data-category="provincialNomineePrograms">
+                    Provincial Nominee Programs (PNPs): For workers with skills needed by specific provinces.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="canada" data-category="familySponsorship" checked>
+                    Family Sponsorship: For family members of Canadian citizens or permanent residents.
+                </label>
+            </div>
+
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Language test results (English or French)</li>
+                <li>Educational credential assessment</li>
+                <li>Proof of work experience</li>
+                <li>Police certificate</li>
+                <li>Medical exam results</li>
+                <li>Proof of funds</li>
+            </ul>
+        </section>
+
+        <section id="australia">
+            <h2>Immigration to Australia</h2>
+            <p>Australia attracts immigrants with its strong economy, beautiful landscapes, and high quality of life. Primary search pathways for Australian immigration include:</p>
+
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="australia" data-category="skilledMigration" checked>
+                    Skilled Migration: For workers with skills in demand, using a points-based system.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="australia" data-category="familyVisa">
+                    Family Visa: For family members of Australian citizens or permanent residents.
+                </label>
+            </div>
+            <div class="visa-category">
+                <label>
+                    <input type="checkbox" data-country="australia" data-category="studentVisa" checked>
+                    Student Visa: For international students.
+                </label>
+            </div>
+
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Visa application</li>
+                <li>English language proficiency test results</li>
+                <li>Qualifications and transcripts</li>
+                <li>Work experience documents</li>
+                <li>Police certificate</li>
+                <li>Health insurance</li>
+                <li>Proof of sufficient funds</li>
+            </ul>
+        </section>
+
+        <button id="audit-button">Audit Processing</button>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Audit Processing</h2>
+                <p>Processing audit request for visa compliance pathways...</p>
+                <div id="audit-status" class="audit-status"></div>
+                <button id="submit-audit">Submit Audit</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Modal functionality
+        const modal = document.getElementById("modal");
+        const auditButton = document.getElementById("audit-button");
+        const submitAudit = document.getElementById("submit-audit");
+        const closeButton = document.querySelector(".close");
+        const auditStatus = document.getElementById("audit-status");
+
+        auditButton.onclick = function() {
+            modal.style.display = "block";
+            auditStatus.style.display = "none";
+        }
+
+        closeButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // LocalStorage persistence
+        let visaData = {
+            usa: {
+                workVisas: true,
+                familySponsorship: false,
+                studyVisas: true
+            },
+            canada: {
+                expressEntry: true,
+                provincialNomineePrograms: false,
+                familySponsorship: true
+            },
+            australia: {
+                skilledMigration: true,
+                familyVisa: false,
+                studentVisa: true
+            }
+        };
+
+        // Save data to LocalStorage
+        function saveData() {
+            try {
+                localStorage.setItem("visaData", JSON.stringify(visaData));
+            } catch (e) {
+                console.error("Error saving to localStorage:", e);
+            }
+        }
+
+        // Load data from LocalStorage
+        function loadData() {
+            try {
+                const storedData = localStorage.getItem("visaData");
+                if (storedData) {
+                    visaData = JSON.parse(storedData);
+                    // Update checkboxes based on loaded data
+                    for (const country in visaData) {
+                        for (const category in visaData[country]) {
+                            const checkbox = document.querySelector(`input[data-country="${country}"][data-category="${category}"]`);
+                            if (checkbox) {
+                                checkbox.checked = visaData[country][category];
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading from localStorage:", e);
+            }
+        }
+
+        // Initialize data
+        loadData();
+
+        // Update data when user interacts with checkboxes
+        document.addEventListener("change", function(event) {
+            if (event.target.type === "checkbox") {
+                const country = event.target.dataset.country;
+                const category = event.target.dataset.category;
+                if (country && category && visaData[country]) {
+                    visaData[country][category] = event.target.checked;
+                    saveData();
+                }
+            }
+        });
+
+        // Audit submission with error handling
+        submitAudit.onclick = function() {
+            auditStatus.style.display = "block";
+            auditStatus.textContent = "Processing audit request...";
+            auditStatus.className = "audit-status";
+
+            try {
+                fetch('https://salarybit.in/api/v1/visa-brief', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(visaData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    auditStatus.textContent = "Audit completed successfully!";
+                    auditStatus.className = "audit-status success";
+                    console.log("Audit response:", data);
+                })
+                .catch(error => {
+                    auditStatus.textContent = `Audit failed: ${error.message}`;
+                    auditStatus.className = "audit-status error";
+                    console.error("Audit error:", error);
+                });
+            } catch (error) {
+                auditStatus.textContent = `Audit failed: ${error.message}`;
+                auditStatus.className = "audit-status error";
+                console.error("Audit error:", error);
+            }
+        };
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
