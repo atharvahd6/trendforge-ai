@@ -95,7 +95,8 @@ task_3_audit = Task(
     ),
     expected_output="Pure raw deployable HTML source code document text ready for production deployment.",
     agent=compliance_auditor,
-    output_file="salarybit_visa_tool.html"
+    output_file="products/salarybit_visa_tool.html",
+    create_directory=True # <--- Injects dynamic directory validation natively inside CrewAI
 )
 
 # 4. Spin up the Collaborative Execution Engine
