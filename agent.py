@@ -1,9 +1,9 @@
 import os
 from crewai import Agent, Task, Crew, Process, LLM
 
-# 1. Verify and Initialize the Three AI Engines safely
+# 1. Verify and Initialize the Three AI Engines Safely
 if not all([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os.environ.get("MISTRAL_API_KEY")]):
-    raise ValueError("CRITICAL: One or more API keys (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY) are missing.")
+    raise ValueError("CRITICAL: One or more API keys (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY) are missing from your repository secrets.")
 
 # The Research Engine
 gemini_llm = LLM(
@@ -96,7 +96,7 @@ task_3_audit = Task(
     expected_output="Pure raw deployable HTML source code document text ready for production deployment.",
     agent=compliance_auditor,
     output_file="products/salarybit_visa_tool.html",
-    create_directory=True # <--- Injects dynamic directory validation natively inside CrewAI
+    create_directory=True  # Tells CrewAI to automatically generate the 'products/' workspace folder dynamically
 )
 
 # 4. Spin up the Collaborative Execution Engine
@@ -113,7 +113,7 @@ def main():
     orchestrator_crew.kickoff()
     
     print("\n=== PLATFORM ENGINES ALIGNED COMPLETED ===")
-    print("Success: Finalized enterprise asset successfully written to salarybit_visa_tool.html")
+    print("Success: Finalized enterprise asset successfully written to products/salarybit_visa_tool.html")
 
 if __name__ == "__main__":
     main()
