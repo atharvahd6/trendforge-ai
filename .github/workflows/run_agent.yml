@@ -22,20 +22,24 @@ jobs:
       with:
         ref: main
 
-# 2. Set up a secure Python runtime environment
-    - name: Set up Python 3.10
+    # 2. Set up a secure, stable Python runtime environment (Upgraded to 3.11 for CrewAI stability)
+    - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
-        # Removed the cache option to prevent scanning errors
+        python-version: '3.11'
 
-    # 3. Install required framework SDKs
+    # 3. Install required framework SDKs (Added crewai and explicit setup prerequisites)
     - name: Install System Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install google-genai groq mistralai
+        pip install crewai groq google-genai mistralai
 
-    # 4. Execute the Python agent with API environment variables injected safely
+    # 4. Prepare local deployment matrix folders (Prevents filesystem write crashes)
+    - name: Create Production Workspaces
+      run: |
+        mkdir -p products
+
+    # 5. Execute the Python agent with API environment variables injected safely
     - name: Run Autonomous Agent
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -44,7 +48,7 @@ jobs:
       run: |
         python agent.py
 
-    # 5. DELIVERY METHOD A: Commit and Push the code directly back into your main branch
+    # 6. DELIVERY METHOD A: Commit and Push the code directly back into your main branch
     - name: Commit and Push New Products to Repository
       run: |
         git config --global user.name "TrendForge Bot"
@@ -60,7 +64,7 @@ jobs:
           echo "No products folder found to commit."
         fi
 
-    # 6. DELIVERY METHOD B: Bundle the generated apps into a downloadable .zip archive
+    # 7. DELIVERY METHOD B: Bundle the generated apps into a downloadable .zip archive
     - name: Upload Desktop App as Downloadable Artifact
       uses: actions/upload-artifact@v4
       with:
