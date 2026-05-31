@@ -1,107 +1,107 @@
 import os
+import sys
+import time
 from crewai import Agent, Task, Crew, Process, LLM
 
-# 1. Verify and Initialize the Three AI Engines Safely
-if not all([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os.environ.get("MISTRAL_API_KEY")]):
-    raise ValueError("CRITICAL: One or more API keys (GEMINI_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY) are missing from your repository secrets.")
+# ==========================================
+# 1. ORCHESTRATION CONFIGURATION & BACKUPS
+# ==========================================
 
-# The Research Engine
-gemini_llm = LLM(
-    model="gemini/gemini-2.0-flash",
-    temperature=0.3
-)
+# Define model combinations in order of preference
+FALLBACK_STRATEGIES = [
+    {
+        "name": "Primary: Gemini-Flash + Groq",
+        "research_model": "gemini/gemini-2.0-flash",
+        "coding_model": "groq/llama-3.3-70b-versatile"
+    },
+    {
+        "name": "Secondary Fallback: Pure Groq Pipeline",
+        "research_model": "groq/llama-3.3-70b-versatile",
+        "coding_model": "groq/llama-3.3-70b-versatile"
+    },
+    {
+        "name": "Tertiary Fallback: Mistral + Groq Combination",
+        "research_model": "mistral/mistral-large-latest",
+        "coding_model": "groq/llama-3.3-70b-versatile"
+    }
+]
 
-# The High-Speed Coding Engine
-groq_llm = LLM(
-    model="groq/llama-3.3-70b-versatile",
-    temperature=0.1
-)
+def initialize_llm(model_string: str):
+    """Safely initializes an LLM object with basic error handling."""
+    return LLM(model=model_string, temperature=0.2)
 
-# The Security & Audit Engine
-mistral_llm = LLM(
-    model="mistral/mistral-large-latest",
-    temperature=0.2
-)
+# Verify foundational credentials exist before initiating factory sequence
+if not any([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os.environ.get("MISTRAL_API_KEY")]):
+    print("❌ CRITICAL ERROR: No API keys detected in environment variables.")
+    sys.exit(1)
 
-# 2. Assign Specialized Agents to their Best-Suited LLM Superpower
-seo_analyst = Agent(
-    role="Lead SEO Strategy & Global Mobility Analyst",
-    goal="Pinpoint high-volume, highly searched global visa and immigration keywords on Google.",
-    backstory=(
-        "You are an expert data miner specializing in global relocation trends. You leverage Gemini's "
-        "comprehensive analytical capabilities to find out exactly what moving expats are looking for."
-    ),
-    llm=gemini_llm,
-    allow_delegation=False,
-    verbose=True
-)
 
-ui_architect = Agent(
-    role="Senior Frontend Web Architecture Engineer",
-    goal="Transform abstract trend matrices into clean, dark-themed vanilla HTML/CSS/JS interface tools.",
-    backstory=(
-        "You are a frontend virtuoso running on Groq's high-speed engine. You craft modular web layouts "
-        "with robust localStorage persistence features in fractions of a second."
-    ),
-    llm=groq_llm,
-    allow_delegation=False,
-    verbose=True
-)
+# ==========================================
+# 2. RUNTIME CORE EXECUTION ENGINE
+# ==========================================
 
-compliance_auditor = Agent(
-    role="Principal System Security & Legal Compliance Auditor",
-    goal="Audit code output, implement error handlers, and optimize logic layers for production deployment.",
-    backstory=(
-        "You are an elite European software compliance engineer running on Mistral. You verify "
-        "frontend inputs, clean up syntax, ensure HTML code output contains zero markdown syntax wrappers, "
-        "and inject realistic fallback mocks matching high-performance standards."
-    ),
-    llm=mistral_llm,
-    allow_delegation=False,
-    verbose=True
-)
+def run_agent_pipeline(strategy):
+    """Attempts to construct and execute the Crew using specified models."""
+    print(f"\n⚙️ Initializing Pipeline using strategy: {strategy['name']}...")
+    
+    research_llm = initialize_llm(strategy["research_model"])
+    coding_llm = initialize_llm(strategy["coding_model"])
+    audit_llm = initialize_llm("mistral/mistral-large-latest")
 
-# 3. Chain the Cross-Model Workflow Sequence
-task_1_seo = Task(
-    description=(
-        "Analyze high-volume international immigration search paths. Identify the 3 top-searched "
-        "global visa streams (e.g., German Blue Card, Canada Express Entry, UK Skilled Worker) "
-        "along with their typical required document checkpoints (ECA verification, biometric steps, legal translations)."
-    ),
-    expected_output="Detailed markdown breakdown outlining high-traffic countries, programs, and visa tracking notes.",
-    agent=seo_analyst
-)
+    # Construct Agents
+    seo_analyst = Agent(
+        role="Lead SEO Strategy & Global Mobility Analyst",
+        goal="Pinpoint high-volume, highly searched global visa and immigration keywords on Google.",
+        backstory="Expert data miner tracking global immigration patterns and expat movement criteria.",
+        llm=research_llm,
+        allow_delegation=False,
+        verbose=True
+    )
 
-task_2_html = Task(
-    description=(
-        "Take the targeted visa parameters discovered by the analyst and build a standalone single-page responsive website. "
-        "Design constraints:\n"
-        "- Dark-slate aesthetics (#1a252f, #2c3e50, #27ae60) targeting professional corporate audiences.\n"
-        "- Left panel form setup to save inputs into a browser matrix table shown in the right panel.\n"
-        "- Use localStorage to initialize and display the 3 high-volume SEO visa pathways by default out-of-the-box.\n"
-        "- Include a 'Run Groq-Powered Compliance Audit' button linked to an async fetch container pointing "
-        "safely to 'https://salarybit.in/api/v1/visa-brief' with a responsive status modal framework built-in."
-    ),
-    expected_output="Comprehensive, structured HTML page source code containing embedded styling and JavaScript variables.",
-    agent=ui_architect
-)
+    ui_architect = Agent(
+        role="Senior Frontend Web Architecture Engineer",
+        goal="Transform abstract trend matrices into clean, dark-themed vanilla HTML/CSS/JS interface tools.",
+        backstory="UI layout virtuoso creating modular codebases with embedded browser state management features.",
+        llm=coding_llm,
+        allow_delegation=False,
+        verbose=True
+    )
 
-task_3_audit = Task(
-    description=(
-        "Perform a structural sanity audit on the code generated by the UI Architect. Ensure the client-side JavaScript "
-        "is fully secure and completely free from exposed API keys. Verify that the async fetch engine includes a flawless "
-        "fallback script to present realistic simulated metrics if the server endpoint is not active. "
-        "CRITICAL: Output ONLY the raw HTML source content file. Strip away any trailing markdown blocks or surrounding ```html syntax markers."
-    ),
-    expected_output="Pure raw deployable HTML source code document text ready for production deployment.",
-    agent=compliance_auditor,
-    output_file="products/salarybit_visa_tool.html",
-    create_directory=True  # Tells CrewAI to automatically generate the 'products/' workspace folder dynamically
-)
+    compliance_auditor = Agent(
+        role="Principal System Security & Legal Compliance Auditor",
+        goal="Audit code output, implement error handlers, and optimize logic layers for production deployment.",
+        backstory="Elite compliance inspector checking framework constraints and handling logic edge cases.",
+        llm=audit_llm,
+        allow_delegation=False,
+        verbose=True
+    )
 
-# 4. Spin up the Collaborative Execution Engine
-def main():
-    print("Assembling Triple-AI Team (Gemini -> Groq -> Mistral)...")
+    # Build Tasks
+    task_1_seo = Task(
+        description="Analyze 3 high-volume international immigration search pathways and outline core documentation tracking milestones.",
+        expected_output="Markdown summary listing target destinations and structural visa compliance paths.",
+        agent=seo_analyst
+    )
+
+    task_2_html = Task(
+        description=(
+            "Convert findings into a functional single-page responsive tracking workspace app layout. "
+            "Incorporate an dark corporate styling UI dashboard structure, localStorage persistence, and "
+            "an audit processing modal referencing 'https://salarybit.in/api/v1/visa-brief'."
+        ),
+        expected_output="Semantic HTML/JS structural application layouts.",
+        agent=ui_architect
+    )
+
+    task_3_audit = Task(
+        description="Perform syntax sanitation on code elements. Ensure ZERO markdown language tags exist. Enforce fallback mocks.",
+        expected_output="Pure deployable code file.",
+        agent=compliance_auditor,
+        output_file="products/salarybit_visa_tool.html",
+        create_directory=True
+    )
+
+    # Execute Assembly
     orchestrator_crew = Crew(
         agents=[seo_analyst, ui_architect, compliance_auditor],
         tasks=[task_1_seo, task_2_html, task_3_audit],
@@ -109,11 +109,35 @@ def main():
         verbose=True
     )
 
-    print("\n🚀 Kickoff: Initiating agent loop protocol. Writing production asset directly...")
     orchestrator_crew.kickoff()
+
+
+# ==========================================
+# 3. AUTO-HEALING FAULT-TOLERANT WRAPPER
+# ==========================================
+
+def main():
+    print("🤖 TrendForge Auto-Healing Factory Online.")
     
-    print("\n=== PLATFORM ENGINES ALIGNED COMPLETED ===")
-    print("Success: Finalized enterprise asset successfully written to products/salarybit_visa_tool.html")
+    for index, strategy in enumerate(FALLBACK_STRATEGIES):
+        try:
+            run_agent_pipeline(strategy)
+            print("\n✅ SUCCESS: Agent workflow executed successfully!")
+            print("Artifact correctly generated and deployed to products/salarybit_visa_tool.html")
+            return # Exit successfully, preventing further fallbacks from executing
+            
+        except Exception as error:
+            print(f"\n⚠️ WARNING: Run failed using strategy '{strategy['name']}'.")
+            print(f"Error Details: {str(error)}")
+            
+            remaining_attempts = len(FALLBACK_STRATEGIES) - (index + 1)
+            if remaining_attempts > 0:
+                print(f"🔄 Activating internal health recovery protocol... Shifting to next backup matrix profile.")
+                print("Cooldown buffer active: Waiting 5 seconds for rate limits to settle...")
+                time.sleep(5)
+            else:
+                print("\n❌ CRITICAL SYSTEM FAILURE: All configured fallback strategies exhausted.")
+                sys.exit(1)
 
 if __name__ == "__main__":
     main()
