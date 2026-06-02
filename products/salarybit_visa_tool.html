@@ -7,15 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: #333;
+            color: #fff;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #333;
-            color: #fff;
+            background-color: #444;
             padding: 1em;
             text-align: center;
         }
@@ -25,25 +24,25 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         nav li {
-            margin: 0 20px;
+            margin-right: 20px;
         }
 
         nav a {
             color: #fff;
             text-decoration: none;
-            font-weight: bold;
             padding: 5px 10px;
+            border-radius: 4px;
             transition: background-color 0.3s;
         }
 
         nav a:hover {
-            background-color: #444;
-            border-radius: 4px;
+            background-color: #555;
         }
 
         main {
@@ -51,76 +50,59 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         section {
-            background-color: #fff;
+            background-color: #444;
             padding: 1.5em;
             margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 800px;
         }
 
         h2 {
             margin-top: 0;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
+            color: #fff;
+            border-bottom: 2px solid #555;
             padding-bottom: 10px;
         }
 
         ul {
             list-style: none;
-            margin: 1em 0;
+            margin: 0;
             padding: 0;
         }
 
         li {
-            margin-bottom: 12px;
-            padding-left: 25px;
+            margin-bottom: 10px;
+            padding-left: 20px;
             position: relative;
-            line-height: 1.6;
         }
 
         li:before {
             content: "•";
-            color: #3498db;
-            font-weight: bold;
+            color: #4CAF50;
             position: absolute;
             left: 0;
         }
 
-        li.completed {
-            color: #27ae60;
-        }
-
-        li.completed:before {
-            content: "✓";
-            color: #27ae60;
-        }
-
-        button {
-            background-color: #3498db;
+        #audit-button {
+            background-color: #4CAF50;
             color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.3s;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
+        #audit-button:hover {
+            background-color: #45a049;
         }
 
         .modal {
@@ -132,26 +114,27 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
         }
 
         .modal-content {
             background-color: #fefefe;
             margin: 10% auto;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid #888;
-            width: 90%;
-            max-width: 500px;
+            width: 80%;
+            max-width: 600px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #333;
             position: relative;
         }
 
         .close {
             color: #aaa;
             position: absolute;
+            right: 20px;
             top: 10px;
-            right: 15px;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
@@ -161,47 +144,18 @@
             color: #333;
         }
 
-        .progress-container {
-            margin: 20px 0;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background-color: #ecf0f1;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            background-color: #2ecc71;
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .status-message {
-            margin: 15px 0;
-            padding: 10px;
+        #modal-data {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
             border-radius: 4px;
-            text-align: center;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
         }
 
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .loading {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             nav ul {
                 flex-direction: column;
                 align-items: center;
@@ -211,8 +165,9 @@
                 margin: 5px 0;
             }
 
-            section {
-                padding: 1em;
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
             }
         }
     </style>
@@ -221,244 +176,143 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#usa">USA Immigration</a></li>
-                <li><a href="#canada">Canada Immigration</a></li>
-                <li><a href="#australia">Australia Immigration</a></li>
+                <li><a href="#usa">USA</a></li>
+                <li><a href="#canada">Canada</a></li>
+                <li><a href="#australia">Australia</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is a top destination for immigrants worldwide, attracting people for its economic opportunities, educational institutions, and cultural diversity.</p>
-            <ul id="usa-steps">
-                <li data-step="visa-application">Visa Application</li>
-                <li data-step="background-checks">Background Checks</li>
-                <li data-step="interview">Interview at a U.S. Embassy/Consulate</li>
-                <li data-step="entry">Entry into the U.S.</li>
+            <ul>
+                <li>Visa Application</li>
+                <li>Background Checks</li>
+                <li>Medical Examination</li>
+                <li>Interview at a U.S. Embassy or Consulate</li>
             </ul>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div id="usa-progress" class="progress"></div>
-                </div>
-                <p>Progress: <span id="usa-progress-text">0%</span></p>
-            </div>
-            <button id="usa-btn">Track Progress</button>
         </section>
-
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, offering numerous pathways for permanent residence and temporary stays.</p>
-            <ul id="canada-steps">
-                <li data-step="express-entry">Express Entry Profile</li>
-                <li data-step="ita">Invitation to Apply (ITA)</li>
-                <li data-step="pr-application">Permanent Residence Application</li>
-                <li data-step="landing">Landing in Canada</li>
+            <ul>
+                <li>Expression of Interest (EOI)</li>
+                <li>Invitation to Apply (ITA)</li>
+                <li>Police Certificates</li>
+                <li>Medical Examination</li>
             </ul>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div id="canada-progress" class="progress"></div>
-                </div>
-                <p>Progress: <span id="canada-progress-text">0%</span></p>
-            </div>
-            <button id="canada-btn">Track Progress</button>
         </section>
-
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia offers a unique lifestyle and economic opportunities, making it a popular choice for immigrants.</p>
-            <ul id="australia-steps">
-                <li data-step="eoi">SkillSelect Expression of Interest (EOI)</li>
-                <li data-step="nomination">Nomination/Sponsorship</li>
-                <li data-step="visa-application">Visa Application</li>
-                <li data-step="visa-grant">Grant of Visa</li>
+            <ul>
+                <li>Skills Assessment</li>
+                <li>Expression of Interest (EOI)</li>
+                <li>Nomination or Sponsorship</li>
+                <li>Health and Character Checks</li>
             </ul>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div id="australia-progress" class="progress"></div>
-                </div>
-                <p>Progress: <span id="australia-progress-text">0%</span></p>
-            </div>
-            <button id="australia-btn">Track Progress</button>
         </section>
-
+        <button id="audit-button">Audit Processing</button>
         <div id="modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2 id="modal-title">Audit Processing</h2>
-                <div id="modal-status" class="status-message loading">
-                    Processing your visa application...
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div id="modal-progress" class="progress"></div>
-                    </div>
-                    <p>Progress: <span id="modal-progress-text">0%</span></p>
-                </div>
-                <button id="submit-btn">Submit</button>
+                <h2>Audit Processing</h2>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a></p>
+                <div id="modal-data">Loading...</div>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const usaBtn = document.getElementById('usa-btn');
-            const canadaBtn = document.getElementById('canada-btn');
-            const australiaBtn = document.getElementById('australia-btn');
-            const modal = document.getElementById('modal');
-            const submitBtn = document.getElementById('submit-btn');
-            const closeBtn = document.querySelector('.close');
-            const modalTitle = document.getElementById('modal-title');
-            const modalStatus = document.getElementById('modal-status');
+            const modal = document.getElementById("modal");
+            const auditButton = document.getElementById("audit-button");
+            const closeButton = document.querySelector(".close");
+            const modalData = document.getElementById("modal-data");
 
-            // Progress tracking
-            let currentCountry = '';
-            let currentSteps = [];
-            let completedSteps = {};
+            // Add event listeners
+            auditButton.addEventListener("click", openModal);
+            closeButton.addEventListener("click", closeModal);
+            window.addEventListener("click", outsideClick);
 
-            // Initialize from localStorage
-            function initStorage() {
-                const countries = ['usa', 'canada', 'australia'];
-                countries.forEach(country => {
-                    if (!localStorage.getItem(country)) {
-                        const steps = document.querySelectorAll(`#${country}-steps li`);
-                        const initialData = {};
-                        steps.forEach(step => {
-                            initialData[step.dataset.step] = false;
-                        });
-                        localStorage.setItem(country, JSON.stringify(initialData));
-                    }
-                });
+            // Function to open modal
+            function openModal() {
+                modal.style.display = "block";
+                modalData.textContent = "Loading...";
+
+                fetch('https://salarybit.in/api/v1/visa-brief')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        modalData.textContent = JSON.stringify(data, null, 2);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        modalData.innerHTML = `<div style="color: red;">Error: ${error.message}</div>
+                        <p>Please check your network connection and try again.</p>`;
+                    });
             }
 
-            // Update progress display
-            function updateProgress(country) {
-                const steps = document.querySelectorAll(`#${country}-steps li`);
-                const progressBar = document.getElementById(`${country}-progress`);
-                const progressText = document.getElementById(`${country}-progress-text`);
-
-                const data = JSON.parse(localStorage.getItem(country));
-                let completed = 0;
-
-                steps.forEach(step => {
-                    if (data[step.dataset.step]) {
-                        step.classList.add('completed');
-                        completed++;
-                    } else {
-                        step.classList.remove('completed');
-                    }
-                });
-
-                const progress = Math.round((completed / steps.length) * 100);
-                progressBar.style.width = `${progress}%`;
-                progressText.textContent = `${progress}%`;
+            // Function to close modal
+            function closeModal() {
+                modal.style.display = "none";
             }
 
-            // Open modal with country data
-            function openModal(country) {
-                currentCountry = country;
-                const steps = document.querySelectorAll(`#${country}-steps li`);
-                currentSteps = Array.from(steps).map(step => step.dataset.step);
-                completedSteps = JSON.parse(localStorage.getItem(country));
-
-                modalTitle.textContent = `Track ${country.toUpperCase()} Immigration Progress`;
-                modal.style.display = 'block';
-
-                // Update modal progress
-                updateModalProgress();
-            }
-
-            // Update modal progress display
-            function updateModalProgress() {
-                const modalProgressBar = document.getElementById('modal-progress');
-                const modalProgressText = document.getElementById('modal-progress-text');
-
-                const completed = Object.values(completedSteps).filter(Boolean).length;
-                const progress = Math.round((completed / currentSteps.length) * 100);
-
-                modalProgressBar.style.width = `${progress}%`;
-                modalProgressText.textContent = `${progress}%`;
-            }
-
-            // Handle step toggle
-            function toggleStep(step) {
-                completedSteps[step] = !completedSteps[step];
-                localStorage.setItem(currentCountry, JSON.stringify(completedSteps));
-                updateModalProgress();
-                updateProgress(currentCountry);
-            }
-
-            // Initialize
-            initStorage();
-            ['usa', 'canada', 'australia'].forEach(country => updateProgress(country));
-
-            // Event Listeners
-            usaBtn.addEventListener('click', () => openModal('usa'));
-            canadaBtn.addEventListener('click', () => openModal('canada'));
-            australiaBtn.addEventListener('click', () => openModal('australia'));
-
-            closeBtn.addEventListener('click', () => {
-                modal.style.display = 'none';
-            });
-
-            window.addEventListener('click', (event) => {
+            // Function to close modal when clicked outside
+            function outsideClick(event) {
                 if (event.target === modal) {
-                    modal.style.display = 'none';
+                    closeModal();
+                }
+            }
+
+            // LocalStorage persistence with error handling
+            try {
+                if (localStorage.getItem("modalOpen") === "true") {
+                    openModal();
+                }
+            } catch (e) {
+                console.error("LocalStorage error:", e);
+            }
+
+            auditButton.addEventListener("click", function() {
+                try {
+                    localStorage.setItem("modalOpen", "true");
+                } catch (e) {
+                    console.error("LocalStorage error:", e);
                 }
             });
 
-            submitBtn.addEventListener('click', () => {
-                modalStatus.className = 'status-message loading';
-                modalStatus.textContent = 'Submitting your progress...';
+            closeButton.addEventListener("click", function() {
+                try {
+                    localStorage.setItem("modalOpen", "false");
+                } catch (e) {
+                    console.error("LocalStorage error:", e);
+                }
+            });
 
-                // Simulate API call
-                setTimeout(() => {
+            window.addEventListener("click", function(event) {
+                if (event.target === modal) {
                     try {
-                        // In a real implementation, this would be the actual API call
-                        // fetch('https://salarybit.in/api/v1/visa-brief', {
-                        //     method: 'POST',
-                        //     headers: {
-                        //         'Content-Type': 'application/json',
-                        //     },
-                        //     body: JSON.stringify({
-                        //         country: currentCountry,
-                        //         progress: completedSteps
-                        //     })
-                        // })
-                        // .then(response => response.json())
-                        // .then(data => {
-                        //     modalStatus.className = 'status-message success';
-                        //     modalStatus.textContent = 'Progress submitted successfully!';
-                        //     setTimeout(() => {
-                        //         modal.style.display = 'none';
-                        //     }, 2000);
-                        // })
-                        // .catch(error => {
-                        //     modalStatus.className = 'status-message error';
-                        //     modalStatus.textContent = 'Error submitting progress. Please try again.';
-                        //     console.error('Error:', error);
-                        // });
-
-                        // Simulated success
-                        modalStatus.className = 'status-message success';
-                        modalStatus.textContent = 'Progress submitted successfully!';
-                        setTimeout(() => {
-                            modal.style.display = 'none';
-                        }, 2000);
-                    } catch (error) {
-                        modalStatus.className = 'status-message error';
-                        modalStatus.textContent = 'Error submitting progress. Please try again.';
-                        console.error('Error:', error);
+                        localStorage.setItem("modalOpen", "false");
+                    } catch (e) {
+                        console.error("LocalStorage error:", e);
                     }
-                }, 1500);
+                }
             });
 
-            // Add click handlers to steps in modal
-            document.addEventListener('click', (event) => {
-                if (event.target.tagName === 'LI' && event.target.closest(`#${currentCountry}-steps`)) {
-                    const step = event.target.dataset.step;
-                    toggleStep(step);
-                }
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
         });
     </script>
