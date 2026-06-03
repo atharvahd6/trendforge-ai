@@ -3,46 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immigration Tracker</title>
+    <title>Immigration Tracking Workspace</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #333;
-            color: #fff;
+            background-color: #f0f0f0;
+            color: #333;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #444;
+            background-color: #333;
+            color: #fff;
             padding: 1em;
             text-align: center;
         }
 
-        nav ul {
+        header nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: space-between;
-            max-width: 600px;
-            margin: 0 auto;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        nav li {
-            margin-right: 20px;
+        header nav ul li {
+            margin: 0 20px;
         }
 
-        nav a {
+        header nav a {
             color: #fff;
             text-decoration: none;
+            font-weight: bold;
             padding: 5px 10px;
-            border-radius: 4px;
             transition: background-color 0.3s;
         }
 
-        nav a:hover {
+        header nav a:hover {
             background-color: #555;
+            border-radius: 4px;
         }
 
         main {
@@ -50,30 +51,30 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         section {
-            background-color: #444;
+            background-color: #fff;
             padding: 1.5em;
             margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
+            border-radius: 8px;
         }
 
         h2 {
             margin-top: 0;
-            color: #fff;
-            border-bottom: 2px solid #555;
+            color: #333;
+            border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
 
         ul {
             list-style: none;
-            margin: 0;
             padding: 0;
+            margin: 15px 0;
         }
 
         li {
@@ -84,13 +85,22 @@
 
         li:before {
             content: "•";
-            color: #4CAF50;
+            color: #333;
             position: absolute;
             left: 0;
         }
 
+        ol {
+            padding: 0 0 0 20px;
+            margin: 15px 0;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+        }
+
         #audit-button {
-            background-color: #4CAF50;
+            background-color: #333;
             color: #fff;
             border: none;
             padding: 12px 24px;
@@ -102,10 +112,10 @@
         }
 
         #audit-button:hover {
-            background-color: #45a049;
+            background-color: #555;
         }
 
-        .modal {
+        #audit-modal {
             display: none;
             position: fixed;
             z-index: 1000;
@@ -114,23 +124,21 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
-        .modal-content {
+        #audit-modal .modal-content {
             background-color: #fefefe;
             margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 600px;
+            max-width: 500px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            color: #333;
             position: relative;
         }
 
-        .close {
+        #audit-modal .close {
             color: #aaa;
             position: absolute;
             right: 20px;
@@ -140,34 +148,55 @@
             cursor: pointer;
         }
 
-        .close:hover {
+        #audit-modal .close:hover {
             color: #333;
         }
 
-        #modal-data {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f5f5f5;
+        #submit-audit {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
             border-radius: 4px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: monospace;
+            margin-top: 15px;
+            transition: background-color 0.3s;
         }
 
-        @media (max-width: 600px) {
-            nav ul {
+        #submit-audit:hover {
+            background-color: #555;
+        }
+
+        #audit-modal p {
+            margin: 15px 0;
+        }
+
+        #audit-modal a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        #audit-modal a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            nav li {
+            header nav ul li {
                 margin: 5px 0;
             }
 
-            .modal-content {
-                width: 90%;
-                margin: 20% auto;
+            main {
+                padding: 1em;
+            }
+
+            section {
+                padding: 1em;
             }
         }
     </style>
@@ -176,68 +205,112 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#usa">USA</a></li>
-                <li><a href="#canada">Canada</a></li>
-                <li><a href="#australia">Australia</a></li>
+                <li><a href="#usa">USA Immigration</a></li>
+                <li><a href="#canada">Canada Immigration</a></li>
+                <li><a href="#australia">Australia Immigration</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section id="usa">
             <h2>Immigration to the United States</h2>
+            <p>The United States is a top destination for immigrants due to its economic opportunities, educational institutions, and cultural diversity.</p>
+            <h3>Key Search Pathways:</h3>
             <ul>
-                <li>Visa Application</li>
-                <li>Background Checks</li>
-                <li>Medical Examination</li>
-                <li>Interview at a U.S. Embassy or Consulate</li>
+                <li><strong>Work Visas (H1B, L1, etc.):</strong> Highly skilled workers often search for information on how to obtain work visas to enter the U.S. workforce.</li>
+                <li><strong>Family Sponsorship:</strong> U.S. citizens and permanent residents searching for ways to sponsor family members to immigrate to the U.S.</li>
+                <li><strong>Study Visas (F1, J1, etc.):</strong> International students looking to pursue higher education in the U.S.</li>
             </ul>
+            <h3>Core Documentation Tracking Milestones:</h3>
+            <ol>
+                <li>Application submission (e.g., DS-160 for non-immigrant visas)</li>
+                <li>Biometric data collection</li>
+                <li>Interview scheduling at a U.S. embassy or consulate</li>
+                <li>Approval and visa issuance</li>
+                <li>Entry into the United States and compliance with visa terms</li>
+            </ol>
         </section>
         <section id="canada">
             <h2>Immigration to Canada</h2>
+            <p>Canada is known for its welcoming immigration policies, diverse culture, and high standard of living, making it a highly sought-after destination.</p>
+            <h3>Key Search Pathways:</h3>
             <ul>
-                <li>Expression of Interest (EOI)</li>
-                <li>Invitation to Apply (ITA)</li>
-                <li>Police Certificates</li>
-                <li>Medical Examination</li>
+                <li><strong>Express Entry:</strong> Skilled workers seeking permanent residency through the Express Entry system.</li>
+                <li><strong>Study Permits:</strong> International students interested in studying in Canada.</li>
+                <li><strong>Work Permits:</strong> Individuals looking for temporary work opportunities in Canada.</li>
             </ul>
+            <h3>Core Documentation Tracking Milestones:</h3>
+            <ol>
+                <li>Creating an online profile and submitting an Express Entry profile</li>
+                <li>Receiving an Invitation to Apply (ITA) for permanent residence</li>
+                <li>Applying for a study or work permit</li>
+                <li>Biometric data collection</li>
+                <li>Approval and permit issuance</li>
+                <li>Entry into Canada and maintaining status</li>
+            </ol>
         </section>
         <section id="australia">
             <h2>Immigration to Australia</h2>
+            <p>Australia offers a unique blend of urban and outdoor lifestyles, attracting immigrants with its quality of life and job opportunities.</p>
+            <h3>Key Search Pathways:</h3>
             <ul>
-                <li>Skills Assessment</li>
-                <li>Expression of Interest (EOI)</li>
-                <li>Nomination or Sponsorship</li>
-                <li>Health and Character Checks</li>
+                <li><strong>Skilled Migration:</strong> Professionals looking to migrate through the General Skilled Migration program.</li>
+                <li><strong>Student Visas:</strong> Individuals wanting to study in Australia.</li>
+                <li><strong>Work and Holiday Visas:</strong> Young travelers seeking temporary work and travel experiences.</li>
             </ul>
+            <h3>Core Documentation Tracking Milestones:</h3>
+            <ol>
+                <li>Skills assessment by a relevant assessing authority</li>
+                <li>Submission of an Expression of Interest (EOI) through SkillSelect</li>
+                <li>Receiving an invitation to apply for a visa</li>
+                <li>Applying for a student or work visa</li>
+                <li>Health and character checks</li>
+                <li>Visa approval and entry into Australia</li>
+            </ol>
         </section>
         <button id="audit-button">Audit Processing</button>
-        <div id="modal" class="modal">
+        <div id="audit-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Audit Processing</h2>
-                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a></p>
-                <div id="modal-data">Loading...</div>
+                <p>Processing audit data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a></p>
+                <button id="submit-audit">Submit</button>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById("modal");
-            const auditButton = document.getElementById("audit-button");
-            const closeButton = document.querySelector(".close");
-            const modalData = document.getElementById("modal-data");
+            const auditButton = document.getElementById('audit-button');
+            const auditModal = document.getElementById('audit-modal');
+            const closeButton = document.querySelector('.close');
+            const submitAuditButton = document.getElementById('submit-audit');
+            const storage = window.localStorage;
 
-            // Add event listeners
-            auditButton.addEventListener("click", openModal);
-            closeButton.addEventListener("click", closeModal);
-            window.addEventListener("click", outsideClick);
+            // Modal functionality
+            auditButton.addEventListener('click', function() {
+                auditModal.style.display = 'block';
+            });
 
-            // Function to open modal
-            function openModal() {
-                modal.style.display = "block";
-                modalData.textContent = "Loading...";
+            closeButton.addEventListener('click', function() {
+                auditModal.style.display = 'none';
+            });
 
-                fetch('https://salarybit.in/api/v1/visa-brief')
+            window.addEventListener('click', function(event) {
+                if (event.target === auditModal) {
+                    auditModal.style.display = 'none';
+                }
+            });
+
+            // Audit submission with error handling
+            submitAuditButton.addEventListener('click', function() {
+                try {
+                    fetch('https://salarybit.in/api/v1/visa-brief', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -245,64 +318,61 @@
                         return response.json();
                     })
                     .then(data => {
-                        modalData.textContent = JSON.stringify(data, null, 2);
+                        console.log('Audit data received:', data);
+                        alert('Audit data processed successfully!');
+                        auditModal.style.display = 'none';
                     })
                     .catch(error => {
-                        console.error('Error fetching data:', error);
-                        modalData.innerHTML = `<div style="color: red;">Error: ${error.message}</div>
-                        <p>Please check your network connection and try again.</p>`;
+                        console.error('Error processing audit:', error);
+                        alert('Error processing audit. Please try again later.');
                     });
-            }
-
-            // Function to close modal
-            function closeModal() {
-                modal.style.display = "none";
-            }
-
-            // Function to close modal when clicked outside
-            function outsideClick(event) {
-                if (event.target === modal) {
-                    closeModal();
+                } catch (error) {
+                    console.error('Fetch operation failed:', error);
+                    alert('Failed to initiate audit. Please check your connection.');
                 }
-            }
+            });
 
             // LocalStorage persistence with error handling
-            try {
-                if (localStorage.getItem("modalOpen") === "true") {
-                    openModal();
+            function saveData(key, value) {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    return false;
                 }
-            } catch (e) {
-                console.error("LocalStorage error:", e);
             }
 
-            auditButton.addEventListener("click", function() {
+            function loadData(key) {
                 try {
-                    localStorage.setItem("modalOpen", "true");
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
                 } catch (e) {
-                    console.error("LocalStorage error:", e);
+                    console.error('Error loading from localStorage:', e);
+                    return null;
                 }
-            });
+            }
 
-            closeButton.addEventListener("click", function() {
-                try {
-                    localStorage.setItem("modalOpen", "false");
-                } catch (e) {
-                    console.error("LocalStorage error:", e);
-                }
-            });
+            // Example usage with error handling
+            const userData = {
+                name: 'John Doe',
+                email: 'john@example.com',
+                lastUpdated: new Date().toISOString()
+            };
 
-            window.addEventListener("click", function(event) {
-                if (event.target === modal) {
-                    try {
-                        localStorage.setItem("modalOpen", "false");
-                    } catch (e) {
-                        console.error("LocalStorage error:", e);
-                    }
-                }
-            });
+            if (!saveData('user', userData)) {
+                console.warn('Failed to save user data to localStorage');
+            }
+
+            const loadedData = loadData('user');
+            if (loadedData) {
+                console.log('Loaded user data:', loadedData);
+            } else {
+                console.warn('No user data found in localStorage or failed to load');
+            }
 
             // Smooth scrolling for navigation links
-            document.querySelectorAll('nav a').forEach(anchor => {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
