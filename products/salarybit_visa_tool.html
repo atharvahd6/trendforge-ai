@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visa Tracking Workspace</title>
+    <title>Immigration Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,71 +58,108 @@
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
             border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 0.5em;
         }
 
         h2 {
-            margin-top: 0;
             color: #2c3e50;
             border-bottom: 2px solid #3498db;
             padding-bottom: 0.5em;
+            margin-top: 0;
         }
 
-        ul, ol {
-            padding-left: 1.5em;
+        h3 {
+            color: #3498db;
+            margin-top: 1.5em;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.5em 0 0 0;
         }
 
         li {
-            margin-bottom: 0.5em;
-            line-height: 1.6;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
         }
 
-        #audit-processing-modal-button {
+        li:before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
+
+        #audit-button {
             background-color: #3498db;
             color: #fff;
             border: none;
-            padding: 0.8em 1.5em;
-            font-size: 1em;
-            border-radius: 5px;
+            padding: 12px 25px;
+            font-size: 16px;
             cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
             transition: background-color 0.3s;
-            margin-top: 1em;
         }
 
-        #audit-processing-modal-button:hover {
+        #audit-button:hover {
             background-color: #2980b9;
         }
 
-        #audit-processing-modal {
+        .modal {
+            display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 1.5em;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-            border-radius: 5px;
             z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
-        #close-audit-processing-modal-button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            margin-top: 1em;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            position: relative;
         }
 
-        #close-audit-processing-modal-button:hover {
-            background-color: #c0392b;
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        #audit-data {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
         }
 
         @media (max-width: 768px) {
@@ -135,8 +172,9 @@
                 margin: 5px 0;
             }
 
-            section {
-                padding: 1em;
+            .modal-content {
+                width: 90%;
+                margin: 15% auto;
             }
         }
     </style>
@@ -145,169 +183,176 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#migration-to-united-states">United States</a></li>
-                <li><a href="#migration-to-canada">Canada</a></li>
-                <li><a href="#migration-to-australia">Australia</a></li>
-                <li><a href="#structural-visa-compliance-paths">Compliance Paths</a></li>
+                <li><a href="#usa">USA Immigration</a></li>
+                <li><a href="#canada">Canada Immigration</a></li>
+                <li><a href="#australia">Australia Immigration</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="migration-to-united-states">
-            <h2>Migration to the United States</h2>
-            <p>The United States is a top destination for immigrants worldwide, attracting people for its economic opportunities, educational institutions, and cultural diversity.</p>
-            <h3>Key Search Pathways</h3>
-            <ul>
-                <li><strong>Work Visas (H1B, L1, etc.):</strong> Highly skilled workers often search for information on how to obtain work visas to enter the U.S. labor market.</li>
-                <li><strong>Family-Based Immigration:</strong> Individuals seeking to reunite with family members who are U.S. citizens or permanent residents.</li>
-                <li><strong>Study Visas (F1, J1, etc.):</strong> International students looking to pursue higher education in the U.S.</li>
-            </ul>
-            <h3>Core Documentation</h3>
+        <h1>High-Volume International Immigration Search Pathways Analysis</h1>
+
+        <section id="usa">
+            <h2>Immigration to the United States</h2>
+            <p>The United States is a top destination for immigrants seeking better economic opportunities, education, and political stability. The primary pathways for immigration to the U.S. include work visas, family sponsorship, and the diversity visa lottery.</p>
+
+            <h3>Work Visas (H-1B, L-1, O-1)</h3>
+            <p>These visas are for specialty occupations, intracompany transferees, and individuals with extraordinary abilities, respectively.</p>
             <ul>
                 <li>Passport</li>
-                <li>Visa application (DS-160 for non-immigrant visas)</li>
-                <li>Proof of financial support</li>
-                <li>Health insurance</li>
-                <li>Background check documents</li>
+                <li>Degree certificates</li>
+                <li>Experience letters</li>
+                <li>Sponsorship documents from a U.S. employer</li>
+            </ul>
+
+            <h3>Family Sponsorship</h3>
+            <p>U.S. citizens and permanent residents can sponsor family members for immigration.</p>
+            <ul>
+                <li>Proof of relationship (birth or marriage certificates)</li>
+                <li>Sponsor's income proof</li>
+                <li>Medical examination records</li>
+            </ul>
+
+            <h3>Diversity Visa Lottery</h3>
+            <p>An annual lottery for individuals from countries with low rates of immigration to the U.S.</p>
+            <ul>
+                <li>Passport</li>
+                <li>Birth certificate</li>
+                <li>Marriage certificate (if applicable)</li>
+                <li>Police certificates</li>
             </ul>
         </section>
-        <section id="migration-to-canada">
-            <h2>Migration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, bilingual culture, and high standard of living, making it a highly sought-after destination.</p>
-            <h3>Key Search Pathways</h3>
+
+        <section id="canada">
+            <h2>Immigration to Canada</h2>
+            <p>Canada offers a points-based system for skilled workers, making it an attractive option for those looking to immigrate based on their skills and education. The primary pathways include Express Entry, Provincial Nominee Programs (PNPs), and family sponsorship.</p>
+
+            <h3>Express Entry</h3>
+            <p>A points-based system for skilled workers.</p>
             <ul>
-                <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
-                <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers who have the skills, education, and work experience to contribute to a specific province or territory.</li>
-                <li><strong>Study Permits:</strong> For international students.</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ul>
-                <li>Passport</li>
                 <li>Language test results (English or French)</li>
                 <li>Educational credential assessment</li>
+                <li>Proof of work experience</li>
                 <li>Police certificates</li>
-                <li>Proof of funds</li>
+            </ul>
+
+            <h3>Provincial Nominee Programs (PNPs)</h3>
+            <p>Each province has its own criteria for nominating immigrants.</p>
+            <ul>
+                <li>Proof of education and work experience relevant to the province's needs</li>
+                <li>Language proficiency test results</li>
+                <li>Proof of sufficient funds</li>
+            </ul>
+
+            <h3>Family Sponsorship</h3>
+            <p>Canadian citizens and permanent residents can sponsor family members.</p>
+            <ul>
+                <li>Proof of relationship</li>
+                <li>Sponsor's income proof</li>
+                <li>Medical examination records</li>
             </ul>
         </section>
-        <section id="migration-to-australia">
-            <h2>Migration to Australia</h2>
-            <p>Australia attracts immigrants with its unique culture, high standard of living, and strong economy.</p>
-            <h3>Key Search Pathways</h3>
+
+        <section id="australia">
+            <h2>Immigration to Australia</h2>
+            <p>Australia's immigration policy focuses on skilled migration, with pathways like the Skilled Independent visa and the Skilled Nominated visa. Family sponsorship and the Temporary Skill Shortage visa are also popular options.</p>
+
+            <h3>Skilled Independent Visa (Subclass 189)</h3>
+            <p>For skilled workers who are not sponsored by an employer or family member.</p>
             <ul>
-                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For points-tested skilled workers.</li>
-                <li><strong>Skilled Nominated Visa (Subclass 190):</strong> For skilled workers nominated by an Australian state or territory.</li>
-                <li><strong>Student Visa (Subclass 500):</strong> For international students.</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Skills assessment</li>
+                <li>Skills assessment for the nominated occupation</li>
                 <li>English language proficiency test results</li>
-                <li>Qualifications and transcripts</li>
-                <li>Health and character certificates</li>
+                <li>Qualification certificates</li>
+                <li>Police certificates</li>
+            </ul>
+
+            <h3>Skilled Nominated Visa (Subclass 190)</h3>
+            <p>For skilled workers nominated by an Australian state or territory.</p>
+            <ul>
+                <li>Invitation to apply from the Department of Home Affairs</li>
+                <li>Skills assessment</li>
+                <li>Proof of nomination by a state or territory</li>
+            </ul>
+
+            <h3>Temporary Skill Shortage Visa (Subclass 482)</h3>
+            <p>For employers to sponsor workers for temporary positions.</p>
+            <ul>
+                <li>Sponsorship documents from the Australian employer</li>
+                <li>Nomination documents for the specific job</li>
+                <li>Skills and qualification certificates relevant to the nominated occupation</li>
             </ul>
         </section>
-        <section id="structural-visa-compliance-paths">
-            <h2>Structural Visa Compliance Paths</h2>
-            <p>Understanding the structural visa compliance paths is essential for a successful immigration process.</p>
-            <ol>
-                <li><strong>Initial Application:</strong> Submitting the visa application with all required documents.</li>
-                <li><strong>Application Review:</strong> The immigration authority reviews the application for completeness and eligibility.</li>
-                <li><strong>Interview or Assessment:</strong> In some cases, an interview or skills assessment may be required.</li>
-                <li><strong>Decision and Visa Issuance:</strong> The application is either approved, and a visa is issued, or it is rejected.</li>
-                <li><strong>Post-Arrival Compliance:</strong> For certain visas, there may be conditions that must be met after arriving in the destination country, such as studying full-time or working for a specific employer.</li>
-            </ol>
-        </section>
-        <button id="audit-processing-modal-button">Audit Processing</button>
-        <div id="audit-processing-modal" style="display: none;">
-            <h2>Audit Processing</h2>
-            <p>This feature is currently under development. Please check back later for updates.</p>
-            <button id="close-audit-processing-modal-button">Close</button>
+
+        <button id="audit-button">Audit Processing</button>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Audit Processing</h2>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a></p>
+                <div id="audit-data">Loading...</div>
+            </div>
         </div>
     </main>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const auditProcessingModalButton = document.getElementById('audit-processing-modal-button');
-            const auditProcessingModal = document.getElementById('audit-processing-modal');
-            const closeAuditProcessingModalButton = document.getElementById('close-audit-processing-modal-button');
+            const modal = document.getElementById("modal");
+            const auditButton = document.getElementById("audit-button");
+            const closeButton = document.querySelector(".close");
+            const auditData = document.getElementById("audit-data");
 
-            if (auditProcessingModalButton && auditProcessingModal && closeAuditProcessingModalButton) {
-                auditProcessingModalButton.addEventListener('click', () => {
-                    auditProcessingModal.style.display = 'block';
-                });
-
-                closeAuditProcessingModalButton.addEventListener('click', () => {
-                    auditProcessingModal.style.display = 'none';
-                });
-
-                window.addEventListener('click', (event) => {
-                    if (event.target === auditProcessingModal) {
-                        auditProcessingModal.style.display = 'none';
-                    }
-                });
+            // Load stored data if available
+            const storedData = localStorage.getItem("immigration-audit-data");
+            if (storedData) {
+                auditData.textContent = storedData;
             }
 
-            const visaData = {
-                unitedStates: {
-                    workVisas: true,
-                    familyBasedImmigration: false,
-                    studyVisas: true,
-                },
-                canada: {
-                    expressEntry: true,
-                    provincialNomineePrograms: false,
-                    studyPermits: true,
-                },
-                australia: {
-                    skilledIndependentVisa: true,
-                    skilledNominatedVisa: false,
-                    studentVisa: true,
-                },
-            };
+            auditButton.onclick = function() {
+                modal.style.display = "block";
+                auditData.textContent = "Loading...";
 
-            const saveVisaData = () => {
-                try {
-                    localStorage.setItem('visaData', JSON.stringify(visaData));
-                } catch (error) {
-                    console.error('Error saving to localStorage:', error);
-                }
-            };
-
-            const loadVisaData = () => {
-                try {
-                    const storedVisaData = localStorage.getItem('visaData');
-                    if (storedVisaData) {
-                        Object.assign(visaData, JSON.parse(storedVisaData));
-                    }
-                } catch (error) {
-                    console.error('Error loading from localStorage:', error);
-                }
-            };
-
-            loadVisaData();
-            saveVisaData();
-
-            const apiRequest = async () => {
-                try {
-                    const response = await fetch('https://salarybit.in/api/v1/visa-brief', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                fetch('https://salarybit.in/api/v1/visa-brief')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const formattedData = JSON.stringify(data, null, 2);
+                        auditData.textContent = formattedData;
+                        localStorage.setItem("immigration-audit-data", formattedData);
+                    })
+                    .catch(error => {
+                        auditData.textContent = "Error fetching data: " + error.message;
+                        console.error("Fetch error:", error);
                     });
+            };
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+            closeButton.onclick = function() {
+                modal.style.display = "none";
+            };
 
-                    const data = await response.json();
-                    console.log('API Response:', data);
-                } catch (error) {
-                    console.error('API Request Error:', error);
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
                 }
             };
 
-            apiRequest();
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>
