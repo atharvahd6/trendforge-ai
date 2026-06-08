@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visa Tracking Workspace</title>
+    <title>Immigration Tracking Workspace</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,18 +78,18 @@
             left: 0;
         }
 
-        #audit-button {
+        button {
             background-color: #333;
             color: #fff;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            margin-top: 15px;
             border-radius: 4px;
-            margin-top: 20px;
         }
 
-        #audit-button:hover {
+        button:hover {
             background-color: #444;
         }
 
@@ -112,15 +112,13 @@
             border: 1px solid #888;
             width: 80%;
             max-width: 500px;
-            border-radius: 4px;
-            position: relative;
+            border-radius: 8px;
+            text-align: center;
         }
 
         .close {
             color: #aaa;
-            position: absolute;
-            right: 20px;
-            top: 10px;
+            float: right;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
@@ -133,21 +131,10 @@
         }
 
         #submit-audit {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
             margin-top: 20px;
         }
 
-        #submit-audit:hover {
-            background-color: #444;
-        }
-
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             header nav ul {
                 flex-direction: column;
                 align-items: center;
@@ -157,9 +144,8 @@
                 margin: 5px 0;
             }
 
-            .modal-content {
-                width: 90%;
-                margin: 30% auto;
+            section {
+                padding: 15px;
             }
         }
     </style>
@@ -177,152 +163,161 @@
     <main>
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is a top destination for immigrants due to its strong economy, cultural diversity, and educational opportunities.</p>
+            <p>The primary pathways for immigration to the U.S. include:</p>
             <ul>
-                <li><strong>Work Visas (H1B, L1, etc.):</strong> Highly skilled workers often search for information on how to obtain work visas to enter the U.S. workforce.</li>
-                <li><strong>Family Sponsorship:</strong> U.S. citizens and permanent residents seeking to sponsor family members for immigration.</li>
-                <li><strong>Study Visas (F1, J1, etc.):</strong> International students looking to pursue higher education in the U.S.</li>
+                <li><strong>Work Visas (H-1B, L-1, O-1):</strong> For skilled workers, intra-company transferees, and individuals with extraordinary abilities.</li>
+                <li><strong>Family Sponsorship:</strong> U.S. citizens and permanent residents can sponsor family members for immigration.</li>
+                <li><strong>Diversity Visa Lottery:</strong> An annual lottery offering a limited number of visas to individuals from underrepresented countries.</li>
             </ul>
-            <h3>Core Documentation</h3>
+            <h3>Core Documentation:</h3>
             <ul>
                 <li>Passport</li>
-                <li>Visa application (DS-160 for non-immigrant visas)</li>
-                <li>Proof of financial support</li>
-                <li>Health insurance</li>
+                <li>Birth certificate</li>
+                <li>Marriage certificate (if applicable)</li>
+                <li>Divorce or death certificate (if applicable)</li>
                 <li>Police certificate</li>
-                <li>Educational transcripts and diplomas (for study and work visas)</li>
+                <li>Medical examination</li>
+                <li>Proof of financial support</li>
+                <li>Educational and work experience documents</li>
             </ul>
+            <button id="usa-audit">Audit</button>
         </section>
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, bilingual culture, and high standard of living.</p>
+            <p>Key pathways include:</p>
             <ul>
                 <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
-                <li><strong>Study Permits:</strong> For international students.</li>
-                <li><strong>Family Class Sponsorship:</strong> For family reunification.</li>
+                <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers with skills needed by specific provinces.</li>
+                <li><strong>Family Sponsorship:</strong> Canadian citizens and permanent residents can sponsor family members.</li>
             </ul>
-            <h3>Key Documents</h3>
+            <h3>Essential Documents:</h3>
             <ul>
                 <li>Passport</li>
+                <li>Birth certificate</li>
+                <li>Marriage certificate (if applicable)</li>
+                <li>Divorce or death certificate (if applicable)</li>
+                <li>Police certificate</li>
+                <li>Medical examination</li>
                 <li>Language test results (English or French)</li>
-                <li>Educational credential assessment</li>
-                <li>Police certificates</li>
-                <li>Medical exam results</li>
+                <li>Educational assessment report (ECA)</li>
                 <li>Proof of funds</li>
             </ul>
+            <button id="canada-audit">Audit</button>
         </section>
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia attracts immigrants with its unique culture, beautiful landscapes, and strong economy.</p>
+            <p>Primary pathways include:</p>
             <ul>
-                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For points-tested skilled workers.</li>
-                <li><strong>Student Visa (Subclass 500):</strong> For international students.</li>
-                <li><strong>Partner Visa (Subclass 309/100):</strong> For spouses or de facto partners of Australian citizens or permanent residents.</li>
+                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For skilled workers who do not require sponsorship.</li>
+                <li><strong>Skilled Nominated Visa (Subclass 190):</strong> For skilled workers nominated by an Australian state or territory.</li>
+                <li><strong>Family Sponsorship:</strong> Australian citizens, permanent residents, and eligible New Zealand citizens can sponsor family members.</li>
             </ul>
-            <h3>Core Documentation</h3>
+            <h3>Core Documentation:</h3>
             <ul>
                 <li>Passport</li>
+                <li>Birth certificate</li>
+                <li>Marriage certificate (if applicable)</li>
+                <li>Divorce or death certificate (if applicable)</li>
+                <li>Police certificate</li>
+                <li>Medical examination</li>
                 <li>English language proficiency test results</li>
-                <li>Skills assessment</li>
-                <li>Qualifications and transcripts</li>
-                <li>Police certificates</li>
-                <li>Health insurance</li>
-                <li>Proof of relationship (for partner visas)</li>
+                <li>Skills assessment report</li>
+                <li>Proof of qualifications and work experience</li>
             </ul>
+            <button id="australia-audit">Audit</button>
         </section>
-        <button id="audit-button">Audit Processing</button>
-        <div id="audit-modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Audit Processing</h2>
-                <p>Processing visa brief from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a></p>
-                <div id="audit-status"></div>
-                <button id="submit-audit">Submit</button>
-            </div>
-        </div>
     </main>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Audit Processing</h2>
+            <p>Please wait while we process your audit request...</p>
+            <button id="submit-audit">Submit</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const auditButton = document.getElementById('audit-button');
-            const auditModal = document.getElementById('audit-modal');
-            const closeButton = document.querySelector('.close');
-            const submitAuditButton = document.getElementById('submit-audit');
-            const auditStatus = document.getElementById('audit-status');
+            let modal = document.getElementById("modal");
+            let usaAuditButton = document.getElementById("usa-audit");
+            let canadaAuditButton = document.getElementById("canada-audit");
+            let australiaAuditButton = document.getElementById("australia-audit");
+            let submitAuditButton = document.getElementById("submit-audit");
+            let closeButton = document.querySelector(".close");
 
-            if (auditButton && auditModal && closeButton && submitAuditButton) {
-                auditButton.onclick = function() {
-                    auditModal.style.display = 'block';
-                    auditStatus.textContent = '';
-                };
-
-                closeButton.onclick = function() {
-                    auditModal.style.display = 'none';
-                };
-
-                window.onclick = function(event) {
-                    if (event.target == auditModal) {
-                        auditModal.style.display = 'none';
-                    }
-                };
-
-                submitAuditButton.onclick = function() {
-                    auditStatus.textContent = 'Processing...';
-                    auditStatus.style.color = '#333';
-
-                    fetch('https://salarybit.in/api/v1/visa-brief', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        auditStatus.textContent = 'Audit completed successfully!';
-                        auditStatus.style.color = 'green';
-                        console.log('Audit data:', data);
-
-                        // Store data in localStorage
-                        try {
-                            localStorage.setItem('visaAuditData', JSON.stringify(data));
-                        } catch (e) {
-                            console.error('Error saving to localStorage:', e);
-                        }
-                    })
-                    .catch(error => {
-                        auditStatus.textContent = 'Error processing audit: ' + error.message;
-                        auditStatus.style.color = 'red';
-                        console.error('Error:', error);
-                    });
-                };
+            function showModal() {
+                modal.style.display = "block";
             }
 
-            // Load persisted data on page load
-            try {
-                const persistedData = localStorage.getItem('visaAuditData');
-                if (persistedData) {
-                    console.log('Loaded persisted audit data:', JSON.parse(persistedData));
+            function hideModal() {
+                modal.style.display = "none";
+            }
+
+            usaAuditButton.addEventListener("click", showModal);
+            canadaAuditButton.addEventListener("click", showModal);
+            australiaAuditButton.addEventListener("click", showModal);
+            closeButton.addEventListener("click", hideModal);
+
+            window.addEventListener("click", function(event) {
+                if (event.target == modal) {
+                    hideModal();
                 }
-            } catch (e) {
-                console.error('Error loading from localStorage:', e);
-            }
+            });
 
-            // Smooth scrolling for navigation links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth'
-                        });
+            submitAuditButton.addEventListener("click", function() {
+                const apiEndpoint = "https://salarybit.in/api/v1/visa-brief";
+
+                fetch(apiEndpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Audit submitted successfully:', data);
+                    hideModal();
+                    alert('Audit submitted successfully!');
+                })
+                .catch(error => {
+                    console.error('Error submitting audit:', error);
+                    hideModal();
+                    alert('Error submitting audit. Please try again later.');
                 });
             });
+
+            function loadFromLocalStorage() {
+                try {
+                    const usaContent = localStorage.getItem("usa");
+                    const canadaContent = localStorage.getItem("canada");
+                    const australiaContent = localStorage.getItem("australia");
+
+                    if (usaContent) document.getElementById("usa").innerHTML = usaContent;
+                    if (canadaContent) document.getElementById("canada").innerHTML = canadaContent;
+                    if (australiaContent) document.getElementById("australia").innerHTML = australiaContent;
+                } catch (e) {
+                    console.error("Error loading from localStorage:", e);
+                }
+            }
+
+            function saveToLocalStorage() {
+                try {
+                    localStorage.setItem("usa", document.getElementById("usa").innerHTML);
+                    localStorage.setItem("canada", document.getElementById("canada").innerHTML);
+                    localStorage.setItem("australia", document.getElementById("australia").innerHTML);
+                } catch (e) {
+                    console.error("Error saving to localStorage:", e);
+                }
+            }
+
+            loadFromLocalStorage();
+
+            window.addEventListener('beforeunload', saveToLocalStorage);
         });
     </script>
 </body>
