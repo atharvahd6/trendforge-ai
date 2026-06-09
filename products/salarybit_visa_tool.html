@@ -7,19 +7,19 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #333;
+            color: #fff;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #333;
-            color: #fff;
+            background-color: #444;
             padding: 1em;
             text-align: center;
         }
 
-        header nav ul {
+        nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -29,13 +29,18 @@
             margin: 0 auto;
         }
 
-        header nav ul li {
+        nav li {
             margin-right: 20px;
         }
 
-        header nav a {
+        nav a {
             color: #fff;
             text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
         }
 
         main {
@@ -43,109 +48,123 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         section {
-            background-color: #fff;
-            padding: 1em;
+            background-color: #444;
+            padding: 1.5em;
             margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 800px;
+            box-sizing: border-box;
         }
 
         h2 {
             margin-top: 0;
-            color: #333;
+            color: #fff;
+            border-bottom: 2px solid #555;
+            padding-bottom: 0.5em;
         }
 
         ul {
             list-style: none;
+            margin: 1em 0;
             padding: 0;
-            margin: 0;
         }
 
         li {
             margin-bottom: 10px;
-            padding-left: 20px;
+            padding-left: 1em;
             position: relative;
         }
 
         li:before {
             content: "•";
-            color: #333;
+            color: #666;
             position: absolute;
             left: 0;
         }
 
         button {
-            background-color: #333;
+            background-color: #555;
             color: #fff;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 15px;
-            border-radius: 4px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 1em;
         }
 
         button:hover {
-            background-color: #444;
+            background-color: #666;
         }
 
-        .modal {
+        .progress-container {
+            margin-top: 20px;
             display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
         }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .progress-container label {
+            display: block;
+            margin: 10px 0;
             cursor: pointer;
         }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
+        .progress-container input[type="checkbox"] {
+            margin-right: 10px;
         }
 
-        #submit-audit {
-            margin-top: 20px;
+        #audit-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        #audit-modal h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        #audit-modal p {
+            margin: 1em 0;
+        }
+
+        #close-audit-modal {
+            display: block;
+            margin: 1em auto 0;
         }
 
         @media (max-width: 768px) {
-            header nav ul {
+            nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            header nav ul li {
+            nav li {
                 margin: 5px 0;
             }
 
+            main {
+                padding: 1em;
+            }
+
             section {
-                padding: 15px;
+                padding: 1em;
             }
         }
     </style>
@@ -154,170 +173,202 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#usa">USA</a></li>
-                <li><a href="#canada">Canada</a></li>
-                <li><a href="#australia">Australia</a></li>
+                <li><a href="#pathway-1">United States</a></li>
+                <li><a href="#pathway-2">Canada</a></li>
+                <li><a href="#pathway-3">Australia</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="usa">
-            <h2>Immigration to the United States</h2>
-            <p>The primary pathways for immigration to the U.S. include:</p>
+        <section id="pathway-1">
+            <h2>United States - Employment-Based Visas</h2>
             <ul>
-                <li><strong>Work Visas (H-1B, L-1, O-1):</strong> For skilled workers, intra-company transferees, and individuals with extraordinary abilities.</li>
-                <li><strong>Family Sponsorship:</strong> U.S. citizens and permanent residents can sponsor family members for immigration.</li>
-                <li><strong>Diversity Visa Lottery:</strong> An annual lottery offering a limited number of visas to individuals from underrepresented countries.</li>
+                <li>Labor Certification</li>
+                <li>Petition for Alien Worker</li>
+                <li>Visa Application</li>
+                <li>Adjustment of Status</li>
             </ul>
-            <h3>Core Documentation:</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Birth certificate</li>
-                <li>Marriage certificate (if applicable)</li>
-                <li>Divorce or death certificate (if applicable)</li>
-                <li>Police certificate</li>
-                <li>Medical examination</li>
-                <li>Proof of financial support</li>
-                <li>Educational and work experience documents</li>
-            </ul>
-            <button id="usa-audit">Audit</button>
+            <button id="us-button">Track Progress</button>
+            <div id="us-progress" class="progress-container">
+                <label for="us-labor-certification">
+                    <input type="checkbox" id="us-labor-certification"> Labor Certification
+                </label>
+                <label for="us-petition-for-alien-worker">
+                    <input type="checkbox" id="us-petition-for-alien-worker"> Petition for Alien Worker
+                </label>
+                <label for="us-visa-application">
+                    <input type="checkbox" id="us-visa-application"> Visa Application
+                </label>
+                <label for="us-adjustment-of-status">
+                    <input type="checkbox" id="us-adjustment-of-status"> Adjustment of Status
+                </label>
+            </div>
         </section>
-        <section id="canada">
-            <h2>Immigration to Canada</h2>
-            <p>Key pathways include:</p>
+        <section id="pathway-2">
+            <h2>Canada - Express Entry System</h2>
             <ul>
-                <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
-                <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers with skills needed by specific provinces.</li>
-                <li><strong>Family Sponsorship:</strong> Canadian citizens and permanent residents can sponsor family members.</li>
+                <li>Language Proficiency Tests</li>
+                <li>Educational Credential Assessment (ECA)</li>
+                <li>Express Entry Profile</li>
+                <li>Invitation to Apply (ITA)</li>
             </ul>
-            <h3>Essential Documents:</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Birth certificate</li>
-                <li>Marriage certificate (if applicable)</li>
-                <li>Divorce or death certificate (if applicable)</li>
-                <li>Police certificate</li>
-                <li>Medical examination</li>
-                <li>Language test results (English or French)</li>
-                <li>Educational assessment report (ECA)</li>
-                <li>Proof of funds</li>
-            </ul>
-            <button id="canada-audit">Audit</button>
+            <button id="canada-button">Track Progress</button>
+            <div id="canada-progress" class="progress-container">
+                <label for="canada-language-proficiency-tests">
+                    <input type="checkbox" id="canada-language-proficiency-tests"> Language Proficiency Tests
+                </label>
+                <label for="canada-eca">
+                    <input type="checkbox" id="canada-eca"> Educational Credential Assessment (ECA)
+                </label>
+                <label for="canada-express-entry-profile">
+                    <input type="checkbox" id="canada-express-entry-profile"> Express Entry Profile
+                </label>
+                <label for="canada-ita">
+                    <input type="checkbox" id="canada-ita"> Invitation to Apply (ITA)
+                </label>
+            </div>
         </section>
-        <section id="australia">
-            <h2>Immigration to Australia</h2>
-            <p>Primary pathways include:</p>
+        <section id="pathway-3">
+            <h2>Australia - Skilled Migration Visas</h2>
             <ul>
-                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For skilled workers who do not require sponsorship.</li>
-                <li><strong>Skilled Nominated Visa (Subclass 190):</strong> For skilled workers nominated by an Australian state or territory.</li>
-                <li><strong>Family Sponsorship:</strong> Australian citizens, permanent residents, and eligible New Zealand citizens can sponsor family members.</li>
+                <li>Skills Assessment</li>
+                <li>English Language Proficiency</li>
+                <li>Expression of Interest (EOI)</li>
+                <li>Visa Application</li>
             </ul>
-            <h3>Core Documentation:</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Birth certificate</li>
-                <li>Marriage certificate (if applicable)</li>
-                <li>Divorce or death certificate (if applicable)</li>
-                <li>Police certificate</li>
-                <li>Medical examination</li>
-                <li>English language proficiency test results</li>
-                <li>Skills assessment report</li>
-                <li>Proof of qualifications and work experience</li>
-            </ul>
-            <button id="australia-audit">Audit</button>
+            <button id="australia-button">Track Progress</button>
+            <div id="australia-progress" class="progress-container">
+                <label for="australia-skills-assessment">
+                    <input type="checkbox" id="australia-skills-assessment"> Skills Assessment
+                </label>
+                <label for="australia-english-language-proficiency">
+                    <input type="checkbox" id="australia-english-language-proficiency"> English Language Proficiency
+                </label>
+                <label for="australia-eoi">
+                    <input type="checkbox" id="australia-eoi"> Expression of Interest (EOI)
+                </label>
+                <label for="australia-visa-application">
+                    <input type="checkbox" id="australia-visa-application"> Visa Application
+                </label>
+            </div>
         </section>
-    </main>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+        <button id="audit-button">Audit Processing</button>
+        <div id="audit-modal">
             <h2>Audit Processing</h2>
-            <p>Please wait while we process your audit request...</p>
-            <button id="submit-audit">Submit</button>
+            <p id="audit-status">Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
+            <div id="audit-results" style="display: none; margin-top: 1em; padding: 1em; background-color: #555; border-radius: 5px; max-height: 300px; overflow-y: auto;"></div>
+            <button id="close-audit-modal">Close</button>
         </div>
-    </div>
-
+    </main>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let modal = document.getElementById("modal");
-            let usaAuditButton = document.getElementById("usa-audit");
-            let canadaAuditButton = document.getElementById("canada-audit");
-            let australiaAuditButton = document.getElementById("australia-audit");
-            let submitAuditButton = document.getElementById("submit-audit");
-            let closeButton = document.querySelector(".close");
+        document.addEventListener('DOMContentLoaded', () => {
+            const usButton = document.getElementById('us-button');
+            const usProgress = document.getElementById('us-progress');
+            const canadaButton = document.getElementById('canada-button');
+            const canadaProgress = document.getElementById('canada-progress');
+            const australiaButton = document.getElementById('australia-button');
+            const australiaProgress = document.getElementById('australia-progress');
+            const auditButton = document.getElementById('audit-button');
+            const auditModal = document.getElementById('audit-modal');
+            const closeAuditModal = document.getElementById('close-audit-modal');
+            const auditStatus = document.getElementById('audit-status');
+            const auditResults = document.getElementById('audit-results');
 
-            function showModal() {
-                modal.style.display = "block";
-            }
+            // Toggle progress visibility
+            usButton.addEventListener('click', () => {
+                usProgress.style.display = usProgress.style.display === 'block' ? 'none' : 'block';
+            });
 
-            function hideModal() {
-                modal.style.display = "none";
-            }
+            canadaButton.addEventListener('click', () => {
+                canadaProgress.style.display = canadaProgress.style.display === 'block' ? 'none' : 'block';
+            });
 
-            usaAuditButton.addEventListener("click", showModal);
-            canadaAuditButton.addEventListener("click", showModal);
-            australiaAuditButton.addEventListener("click", showModal);
-            closeButton.addEventListener("click", hideModal);
+            australiaButton.addEventListener('click', () => {
+                australiaProgress.style.display = australiaProgress.style.display === 'block' ? 'none' : 'block';
+            });
 
-            window.addEventListener("click", function(event) {
-                if (event.target == modal) {
-                    hideModal();
+            // Audit processing
+            auditButton.addEventListener('click', () => {
+                auditModal.style.display = 'block';
+                auditStatus.textContent = 'Loading data from https://salarybit.in/api/v1/visa-brief...';
+                auditResults.style.display = 'none';
+
+                fetch('https://salarybit.in/api/v1/visa-brief')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        auditStatus.textContent = 'Audit completed successfully.';
+                        auditResults.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        auditResults.style.display = 'block';
+                    })
+                    .catch(error => {
+                        auditStatus.textContent = `Error loading audit data: ${error.message}`;
+                        auditResults.innerHTML = `<p style="color: #ff6b6b;">Failed to load audit data. Please check the console for more details.</p>`;
+                        auditResults.style.display = 'block';
+                        console.error('Audit error:', error);
+                    });
+            });
+
+            closeAuditModal.addEventListener('click', () => {
+                auditModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === auditModal) {
+                    auditModal.style.display = 'none';
                 }
             });
 
-            submitAuditButton.addEventListener("click", function() {
-                const apiEndpoint = "https://salarybit.in/api/v1/visa-brief";
+            // LocalStorage persistence
+            const saveProgress = (prefix, checkboxes) => {
+                const progressData = {};
+                checkboxes.forEach((checkbox, index) => {
+                    progressData[`${prefix}-checkbox-${index}`] = checkbox.checked;
+                });
+                localStorage.setItem(`${prefix}Progress`, JSON.stringify(progressData));
+            };
 
-                fetch(apiEndpoint, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Audit submitted successfully:', data);
-                    hideModal();
-                    alert('Audit submitted successfully!');
-                })
-                .catch(error => {
-                    console.error('Error submitting audit:', error);
-                    hideModal();
-                    alert('Error submitting audit. Please try again later.');
+            const loadProgress = (prefix, checkboxes) => {
+                const progressData = localStorage.getItem(`${prefix}Progress`);
+                if (progressData) {
+                    const progressDataParsed = JSON.parse(progressData);
+                    checkboxes.forEach((checkbox, index) => {
+                        checkbox.checked = progressDataParsed[`${prefix}-checkbox-${index}`] || false;
+                    });
+                }
+            };
+
+            // US Progress
+            const usCheckboxes = document.querySelectorAll('#us-progress input[type="checkbox"]');
+            usCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    saveProgress('us', usCheckboxes);
                 });
             });
+            loadProgress('us', usCheckboxes);
 
-            function loadFromLocalStorage() {
-                try {
-                    const usaContent = localStorage.getItem("usa");
-                    const canadaContent = localStorage.getItem("canada");
-                    const australiaContent = localStorage.getItem("australia");
+            // Canada Progress
+            const canadaCheckboxes = document.querySelectorAll('#canada-progress input[type="checkbox"]');
+            canadaCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    saveProgress('canada', canadaCheckboxes);
+                });
+            });
+            loadProgress('canada', canadaCheckboxes);
 
-                    if (usaContent) document.getElementById("usa").innerHTML = usaContent;
-                    if (canadaContent) document.getElementById("canada").innerHTML = canadaContent;
-                    if (australiaContent) document.getElementById("australia").innerHTML = australiaContent;
-                } catch (e) {
-                    console.error("Error loading from localStorage:", e);
-                }
-            }
-
-            function saveToLocalStorage() {
-                try {
-                    localStorage.setItem("usa", document.getElementById("usa").innerHTML);
-                    localStorage.setItem("canada", document.getElementById("canada").innerHTML);
-                    localStorage.setItem("australia", document.getElementById("australia").innerHTML);
-                } catch (e) {
-                    console.error("Error saving to localStorage:", e);
-                }
-            }
-
-            loadFromLocalStorage();
-
-            window.addEventListener('beforeunload', saveToLocalStorage);
+            // Australia Progress
+            const australiaCheckboxes = document.querySelectorAll('#australia-progress input[type="checkbox"]');
+            australiaCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    saveProgress('australia', australiaCheckboxes);
+                });
+            });
+            loadProgress('australia', australiaCheckboxes);
         });
     </script>
 </body>
