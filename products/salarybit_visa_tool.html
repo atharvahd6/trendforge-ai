@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immigration Tracking Workspace</title>
+    <title>Immigration Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #333;
-            color: #fff;
+            background-color: #f0f0f0;
+            color: #333;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #444;
+            background-color: #333;
+            color: #fff;
             padding: 1em;
             text-align: center;
         }
@@ -24,23 +25,25 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: space-between;
-            max-width: 600px;
-            margin: 0 auto;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         nav li {
-            margin-right: 20px;
+            margin: 0 15px;
         }
 
         nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
         }
 
         nav a:hover {
-            text-decoration: underline;
+            background-color: #555;
+            border-radius: 4px;
         }
 
         main {
@@ -48,105 +51,110 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         section {
-            background-color: #444;
+            background-color: #fff;
             padding: 1.5em;
             margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            box-sizing: border-box;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 0.5em;
         }
 
         h2 {
-            margin-top: 0;
-            color: #fff;
-            border-bottom: 2px solid #555;
+            color: #444;
+            border-bottom: 2px solid #eee;
             padding-bottom: 0.5em;
+            margin-top: 0;
         }
 
-        ul {
-            list-style: none;
-            margin: 1em 0;
-            padding: 0;
+        h3 {
+            color: #555;
+            margin-top: 1.5em;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+            line-height: 1.6;
         }
 
         li {
-            margin-bottom: 10px;
-            padding-left: 1em;
-            position: relative;
+            margin-bottom: 8px;
         }
 
-        li:before {
-            content: "•";
-            color: #666;
-            position: absolute;
-            left: 0;
+        strong {
+            color: #333;
         }
 
-        button {
+        #audit-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+
+        #audit-button:hover {
             background-color: #555;
+        }
+
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 25px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            border-radius: 8px;
+        }
+
+        #modal-content {
+            margin: 20px 0;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        #close-modal {
+            background-color: #333;
             color: #fff;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 4px;
+            margin-top: 15px;
             transition: background-color 0.3s;
-            margin-top: 1em;
         }
 
-        button:hover {
-            background-color: #666;
-        }
-
-        .progress-container {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .progress-container label {
-            display: block;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        .progress-container input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        #audit-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #444;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 1000;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        #audit-modal h2 {
-            margin-top: 0;
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        #audit-modal p {
-            margin: 1em 0;
-        }
-
-        #close-audit-modal {
-            display: block;
-            margin: 1em auto 0;
+        #close-modal:hover {
+            background-color: #555;
         }
 
         @media (max-width: 768px) {
@@ -159,10 +167,6 @@
                 margin: 5px 0;
             }
 
-            main {
-                padding: 1em;
-            }
-
             section {
                 padding: 1em;
             }
@@ -171,129 +175,88 @@
 </head>
 <body>
     <header>
+        <h1>High-Volume International Immigration Search Pathways Analysis</h1>
         <nav>
             <ul>
-                <li><a href="#pathway-1">United States</a></li>
-                <li><a href="#pathway-2">Canada</a></li>
-                <li><a href="#pathway-3">Australia</a></li>
+                <li><a href="#usa">USA Immigration</a></li>
+                <li><a href="#canada">Canada Immigration</a></li>
+                <li><a href="#australia">Australia Immigration</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="pathway-1">
-            <h2>United States - Employment-Based Visas</h2>
+        <section id="usa">
+            <h2>Immigration to the United States</h2>
+            <p>The United States is a top destination for immigrants due to its strong economy, cultural diversity, and opportunities for education and career advancement. Key search pathways for U.S. immigration include:</p>
             <ul>
-                <li>Labor Certification</li>
-                <li>Petition for Alien Worker</li>
-                <li>Visa Application</li>
-                <li>Adjustment of Status</li>
+                <li><strong>H-1B Visa</strong>: For specialty occupations, requiring a bachelor's degree or higher.</li>
+                <li><strong>Green Card</strong>: Offering permanent residence, with pathways including family sponsorship, employment, and the diversity visa lottery.</li>
+                <li><strong>Student Visas (F-1)</strong>: For academic studies, requiring acceptance into a U.S. university or college.</li>
             </ul>
-            <button id="us-button">Track Progress</button>
-            <div id="us-progress" class="progress-container">
-                <label for="us-labor-certification">
-                    <input type="checkbox" id="us-labor-certification"> Labor Certification
-                </label>
-                <label for="us-petition-for-alien-worker">
-                    <input type="checkbox" id="us-petition-for-alien-worker"> Petition for Alien Worker
-                </label>
-                <label for="us-visa-application">
-                    <input type="checkbox" id="us-visa-application"> Visa Application
-                </label>
-                <label for="us-adjustment-of-status">
-                    <input type="checkbox" id="us-adjustment-of-status"> Adjustment of Status
-                </label>
-            </div>
+            <h3>Core Documentation Tracking Milestones for U.S. Immigration:</h3>
+            <ol>
+                <li><strong>Petition Approval</strong>: For employment-based visas, the employer must file a petition with U.S. Citizenship and Immigration Services (USCIS).</li>
+                <li><strong>Visa Application</strong>: Applicants must apply for a visa at a U.S. embassy or consulate abroad.</li>
+                <li><strong>Entry into the U.S.</strong>: Upon visa approval, the individual can enter the U.S. and must comply with the terms of their visa.</li>
+            </ol>
         </section>
-        <section id="pathway-2">
-            <h2>Canada - Express Entry System</h2>
+        <section id="canada">
+            <h2>Immigration to Canada</h2>
+            <p>Canada is known for its welcoming immigration policies, high standard of living, and diverse culture. High-volume search pathways for Canadian immigration include:</p>
             <ul>
-                <li>Language Proficiency Tests</li>
-                <li>Educational Credential Assessment (ECA)</li>
-                <li>Express Entry Profile</li>
-                <li>Invitation to Apply (ITA)</li>
+                <li><strong>Express Entry</strong>: A points-based system for skilled workers, including the Federal Skilled Worker Program, Federal Skilled Trades Program, and Canadian Experience Class.</li>
+                <li><strong>Provincial Nominee Programs (PNPs)</strong>: Many provinces have their own immigration programs, targeting specific skill sets or demographic needs.</li>
+                <li><strong>Study Permits</strong>: For international students, with opportunities for post-graduation work permits and potential pathways to permanent residence.</li>
             </ul>
-            <button id="canada-button">Track Progress</button>
-            <div id="canada-progress" class="progress-container">
-                <label for="canada-language-proficiency-tests">
-                    <input type="checkbox" id="canada-language-proficiency-tests"> Language Proficiency Tests
-                </label>
-                <label for="canada-eca">
-                    <input type="checkbox" id="canada-eca"> Educational Credential Assessment (ECA)
-                </label>
-                <label for="canada-express-entry-profile">
-                    <input type="checkbox" id="canada-express-entry-profile"> Express Entry Profile
-                </label>
-                <label for="canada-ita">
-                    <input type="checkbox" id="canada-ita"> Invitation to Apply (ITA)
-                </label>
-            </div>
+            <h3>Core Documentation Tracking Milestones for Canadian Immigration:</h3>
+            <ol>
+                <li><strong>Language Proficiency Tests</strong>: Applicants must demonstrate proficiency in English or French.</li>
+                <li><strong>Education Credential Assessment (ECA)</strong>: For certain immigration programs, applicants must have their foreign education credentials assessed.</li>
+                <li><strong>Biometrics and Medical Exams</strong>: Required for most immigration applications to ensure the applicant does not pose a health or security risk.</li>
+            </ol>
         </section>
-        <section id="pathway-3">
-            <h2>Australia - Skilled Migration Visas</h2>
+        <section id="australia">
+            <h2>Immigration to Australia</h2>
+            <p>Australia attracts immigrants with its unique culture, high quality of life, and strong economy. Key search pathways for Australian immigration include:</p>
             <ul>
-                <li>Skills Assessment</li>
-                <li>English Language Proficiency</li>
-                <li>Expression of Interest (EOI)</li>
-                <li>Visa Application</li>
+                <li><strong>Skilled Independent Visa (Subclass 189)</strong>: A points-based visa for skilled workers who do not require sponsorship.</li>
+                <li><strong>Skilled Nominated Visa (Subclass 190)</strong>: Requires nomination by an Australian state or territory government.</li>
+                <li><strong>Student Visa (Subclass 500)</strong>: For international students, with requirements including confirmation of enrollment and sufficient financial resources.</li>
             </ul>
-            <button id="australia-button">Track Progress</button>
-            <div id="australia-progress" class="progress-container">
-                <label for="australia-skills-assessment">
-                    <input type="checkbox" id="australia-skills-assessment"> Skills Assessment
-                </label>
-                <label for="australia-english-language-proficiency">
-                    <input type="checkbox" id="australia-english-language-proficiency"> English Language Proficiency
-                </label>
-                <label for="australia-eoi">
-                    <input type="checkbox" id="australia-eoi"> Expression of Interest (EOI)
-                </label>
-                <label for="australia-visa-application">
-                    <input type="checkbox" id="australia-visa-application"> Visa Application
-                </label>
-            </div>
+            <h3>Core Documentation Tracking Milestones for Australian Immigration:</h3>
+            <ol>
+                <li><strong>Skills Assessment</strong>: Applicants must have their skills and qualifications assessed by the relevant assessing authority.</li>
+                <li><strong>English Language Proficiency</strong>: Applicants must meet the required level of English language proficiency.</li>
+                <li><strong>Character and Health Checks</strong>: All applicants must undergo character and health checks as part of the visa application process.</li>
+            </ol>
         </section>
         <button id="audit-button">Audit Processing</button>
-        <div id="audit-modal">
+        <div id="modal">
             <h2>Audit Processing</h2>
-            <p id="audit-status">Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
-            <div id="audit-results" style="display: none; margin-top: 1em; padding: 1em; background-color: #555; border-radius: 5px; max-height: 300px; overflow-y: auto;"></div>
-            <button id="close-audit-modal">Close</button>
+            <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a>...</p>
+            <div id="modal-content"></div>
+            <button id="close-modal">Close</button>
         </div>
     </main>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const usButton = document.getElementById('us-button');
-            const usProgress = document.getElementById('us-progress');
-            const canadaButton = document.getElementById('canada-button');
-            const canadaProgress = document.getElementById('canada-progress');
-            const australiaButton = document.getElementById('australia-button');
-            const australiaProgress = document.getElementById('australia-progress');
+        document.addEventListener('DOMContentLoaded', function() {
             const auditButton = document.getElementById('audit-button');
-            const auditModal = document.getElementById('audit-modal');
-            const closeAuditModal = document.getElementById('close-audit-modal');
-            const auditStatus = document.getElementById('audit-status');
-            const auditResults = document.getElementById('audit-results');
+            const modal = document.getElementById('modal');
+            const closeModal = document.getElementById('close-modal');
+            const modalContent = document.getElementById('modal-content');
 
-            // Toggle progress visibility
-            usButton.addEventListener('click', () => {
-                usProgress.style.display = usProgress.style.display === 'block' ? 'none' : 'block';
-            });
+            if (auditButton && modal && closeModal && modalContent) {
+                auditButton.addEventListener('click', () => {
+                    modal.style.display = 'block';
+                    modalContent.innerHTML = '<p>Loading data...</p>';
 
-            canadaButton.addEventListener('click', () => {
-                canadaProgress.style.display = canadaProgress.style.display === 'block' ? 'none' : 'block';
-            });
-
-            australiaButton.addEventListener('click', () => {
-                australiaProgress.style.display = australiaProgress.style.display === 'block' ? 'none' : 'block';
-            });
-
-            // Audit processing
-            auditButton.addEventListener('click', () => {
-                auditModal.style.display = 'block';
-                auditStatus.textContent = 'Loading data from https://salarybit.in/api/v1/visa-brief...';
-                auditResults.style.display = 'none';
-
-                fetch('https://salarybit.in/api/v1/visa-brief')
+                    fetch('https://salarybit.in/api/v1/visa-brief', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    })
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -301,74 +264,73 @@
                         return response.json();
                     })
                     .then(data => {
-                        auditStatus.textContent = 'Audit completed successfully.';
-                        auditResults.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                        auditResults.style.display = 'block';
+                        try {
+                            modalContent.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        } catch (e) {
+                            modalContent.innerHTML = `<p>Error formatting data: ${e.message}</p>`;
+                        }
                     })
                     .catch(error => {
-                        auditStatus.textContent = `Error loading audit data: ${error.message}`;
-                        auditResults.innerHTML = `<p style="color: #ff6b6b;">Failed to load audit data. Please check the console for more details.</p>`;
-                        auditResults.style.display = 'block';
-                        console.error('Audit error:', error);
+                        console.error('Error fetching data:', error);
+                        modalContent.innerHTML = `<p>Error loading data: ${error.message}</p>`;
                     });
-            });
-
-            closeAuditModal.addEventListener('click', () => {
-                auditModal.style.display = 'none';
-            });
-
-            // Close modal when clicking outside
-            window.addEventListener('click', (event) => {
-                if (event.target === auditModal) {
-                    auditModal.style.display = 'none';
-                }
-            });
-
-            // LocalStorage persistence
-            const saveProgress = (prefix, checkboxes) => {
-                const progressData = {};
-                checkboxes.forEach((checkbox, index) => {
-                    progressData[`${prefix}-checkbox-${index}`] = checkbox.checked;
                 });
-                localStorage.setItem(`${prefix}Progress`, JSON.stringify(progressData));
-            };
 
-            const loadProgress = (prefix, checkboxes) => {
-                const progressData = localStorage.getItem(`${prefix}Progress`);
-                if (progressData) {
-                    const progressDataParsed = JSON.parse(progressData);
-                    checkboxes.forEach((checkbox, index) => {
-                        checkbox.checked = progressDataParsed[`${prefix}-checkbox-${index}`] || false;
-                    });
+                closeModal.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                window.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+
+            const storage = window.localStorage;
+
+            const saveData = (key, value) => {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    return false;
                 }
             };
 
-            // US Progress
-            const usCheckboxes = document.querySelectorAll('#us-progress input[type="checkbox"]');
-            usCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    saveProgress('us', usCheckboxes);
-                });
-            });
-            loadProgress('us', usCheckboxes);
+            const loadData = (key) => {
+                try {
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                    return null;
+                }
+            };
 
-            // Canada Progress
-            const canadaCheckboxes = document.querySelectorAll('#canada-progress input[type="checkbox"]');
-            canadaCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    saveProgress('canada', canadaCheckboxes);
-                });
-            });
-            loadProgress('canada', canadaCheckboxes);
+            const removeData = (key) => {
+                try {
+                    storage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.error('Error removing from localStorage:', e);
+                    return false;
+                }
+            };
 
-            // Australia Progress
-            const australiaCheckboxes = document.querySelectorAll('#australia-progress input[type="checkbox"]');
-            australiaCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    saveProgress('australia', australiaCheckboxes);
-                });
-            });
-            loadProgress('australia', australiaCheckboxes);
+            const exampleData = {
+                name: 'Immigration Tracker',
+                version: '1.0',
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (saveData('appMetadata', exampleData)) {
+                const loadedData = loadData('appMetadata');
+                if (loadedData) {
+                    console.log('Loaded metadata:', loadedData);
+                }
+            }
         });
     </script>
 </body>
