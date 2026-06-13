@@ -7,19 +7,20 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #333;
-            color: #fff;
+            background-color: #f0f0f0;
+            color: #333;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #444;
+            background-color: #333;
+            color: #fff;
             padding: 1em;
             text-align: center;
         }
 
-        nav ul {
+        header nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -28,21 +29,14 @@
             flex-wrap: wrap;
         }
 
-        nav li {
-            margin: 0 20px;
+        header nav ul li {
+            margin: 0 15px;
         }
 
-        nav a {
+        header nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #555;
         }
 
         main {
@@ -55,129 +49,128 @@
         }
 
         section {
-            background-color: #444;
+            background-color: #fff;
             padding: 1.5em;
             margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
+            box-sizing: border-box;
         }
 
         h2 {
             margin-top: 0;
-            color: #fff;
-            border-bottom: 2px solid #555;
-            padding-bottom: 10px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5em;
+        }
+
+        h3 {
+            color: #2980b9;
+            margin-top: 1.5em;
         }
 
         ul {
             list-style: none;
-            padding: 0;
             margin: 0;
+            padding: 0;
         }
 
         li {
             margin-bottom: 10px;
-            padding-left: 20px;
+            padding-left: 1.5em;
             position: relative;
         }
 
         li:before {
             content: "•";
-            color: #4CAF50;
+            color: #3498db;
             position: absolute;
             left: 0;
         }
 
-        button {
-            background-color: #4CAF50;
+        p {
+            line-height: 1.6;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1.5em;
+            text-align: center;
+            clear: both;
+        }
+
+        #audit-button {
+            background-color: #3498db;
             color: #fff;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 25px;
             font-size: 16px;
             cursor: pointer;
             border-radius: 4px;
-            margin-top: 20px;
             transition: background-color 0.3s;
         }
 
-        button:hover {
-            background-color: #45a049;
+        #audit-button:hover {
+            background-color: #2980b9;
         }
 
-        .modal {
-            display: none;
+        #modal {
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
         }
 
-        .modal-content {
-            background-color: #444;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
+        #modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 5px;
             width: 80%;
             max-width: 600px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-height: 80vh;
+            overflow-y: auto;
             position: relative;
         }
 
-        .close {
-            color: #fff;
+        #modal-close {
             position: absolute;
-            right: 20px;
             top: 10px;
-            font-size: 28px;
-            font-weight: bold;
+            right: 15px;
+            font-size: 24px;
             cursor: pointer;
+            color: #7f8c8d;
         }
 
-        .close:hover {
-            color: #ccc;
+        #modal h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
-        #audit-data {
-            margin-top: 20px;
+        pre {
+            background-color: #f5f5f5;
             padding: 15px;
-            background-color: #555;
             border-radius: 4px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        #audit-data p {
-            margin: 8px 0;
-            padding: 5px;
-            background-color: #666;
-            border-radius: 3px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .error {
-            color: #f44336;
-            text-align: center;
-            padding: 20px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         @media (max-width: 768px) {
-            nav ul {
+            header nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            nav li {
+            header nav ul li {
                 margin: 5px 0;
             }
 
@@ -194,162 +187,189 @@
                 <li><a href="#usa">USA Immigration</a></li>
                 <li><a href="#canada">Canada Immigration</a></li>
                 <li><a href="#australia">Australia Immigration</a></li>
+                <li><a href="#compliance">Visa Compliance</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section id="usa">
-            <h2>Migration to the United States</h2>
-            <p>The United States is a top destination for immigrants seeking better economic opportunities, education, and political stability.</p>
-            <h3>Core Documentation Tracking Milestones:</h3>
+            <h2>Immigration to the United States</h2>
+            <p>The United States is a top destination for immigrants due to its economic opportunities, educational institutions, and cultural diversity. The primary search pathways for U.S. immigration include:</p>
             <ul>
-                <li><strong>Visa Application:</strong> Submit through the U.S. Department of State's official website or USCIS for certain visa types</li>
-                <li><strong>Background Checks:</strong> Fingerprinting and database checks for all applicants</li>
-                <li><strong>Medical Examination:</strong> Required examination by a designated civil surgeon</li>
-                <li><strong>Interview:</strong> Mandatory interview at a U.S. Embassy or Consulate</li>
+                <li><strong>Work Visas (H1B, L1, etc.):</strong> For professionals and skilled workers.</li>
+                <li><strong>Family Sponsorship:</strong> For family members of U.S. citizens or permanent residents.</li>
+                <li><strong>Study Visas (F1, J1, etc.):</strong> For international students.</li>
+            </ul>
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Visa application form (DS-160 for non-immigrant visas)</li>
+                <li>Proof of financial support</li>
+                <li>Medical examination</li>
+                <li>Police certificate</li>
+                <li>Proof of relationship for family sponsorship</li>
             </ul>
         </section>
         <section id="canada">
-            <h2>Migration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, offering numerous pathways for permanent residence and temporary stays.</p>
-            <h3>Core Documentation Tracking Milestones:</h3>
+            <h2>Immigration to Canada</h2>
+            <p>Canada is known for its welcoming immigration policies, high standard of living, and diverse culture. Key search pathways for Canadian immigration are:</p>
             <ul>
-                <li><strong>Expression of Interest (EOI):</strong> Submit initial profile highlighting skills and experience</li>
-                <li><strong>Invitation to Apply (ITA):</strong> Complete permanent residence application upon receiving ITA</li>
-                <li><strong>Police Certificates:</strong> Required from all countries lived in for 6+ months since age 18</li>
-                <li><strong>Medical Examination:</strong> Required exam by IRCC-approved panel physician</li>
+                <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
+                <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers with skills needed by specific provinces.</li>
+                <li><strong>Family Sponsorship:</strong> For family members of Canadian citizens or permanent residents.</li>
+            </ul>
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Language test results (English or French)</li>
+                <li>Educational credential assessment</li>
+                <li>Proof of work experience</li>
+                <li>Police certificate</li>
+                <li>Medical examination</li>
+                <li>Proof of funds</li>
             </ul>
         </section>
         <section id="australia">
-            <h2>Migration to Australia</h2>
-            <p>Australia attracts immigrants with its high standard of living, diverse culture, and strong economy.</p>
-            <h3>Core Documentation Tracking Milestones:</h3>
+            <h2>Immigration to Australia</h2>
+            <p>Australia attracts immigrants with its unique culture, high standard of living, and beautiful landscapes. Primary search pathways for Australian immigration are:</p>
             <ul>
-                <li><strong>SkillSelect Expression of Interest (EOI):</strong> Points-based assessment for skilled migration</li>
-                <li><strong>Nomination/Sponsorship:</strong> May require state/territory nomination or family sponsorship</li>
-                <li><strong>Police Certificates:</strong> Required from all countries lived in for 12+ months in past 10 years</li>
-                <li><strong>Health Examinations:</strong> Medical exam by Australian Government-approved doctor</li>
+                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For skilled workers who do not require sponsorship.</li>
+                <li><strong>Skilled Nominated Visa (Subclass 190):</strong> For skilled workers nominated by an Australian state or territory.</li>
+                <li><strong>Family Sponsorship:</strong> For family members of Australian citizens or permanent residents.</li>
+            </ul>
+            <h3>Core Documentation</h3>
+            <ul>
+                <li>Passport</li>
+                <li>Skills assessment</li>
+                <li>English language proficiency test results</li>
+                <li>Qualifications and transcripts</li>
+                <li>Proof of work experience</li>
+                <li>Police certificate</li>
+                <li>Medical examination</li>
+                <li>Proof of financial capacity</li>
             </ul>
         </section>
-        <button id="audit-button">Run Compliance Audit</button>
-        <div id="audit-modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Visa Compliance Audit</h2>
-                <p>Processing compliance data from official sources...</p>
-                <div id="audit-data">
-                    <div class="loading">Loading audit data...</div>
-                </div>
+        <section id="compliance">
+            <h2>Structural Visa Compliance Paths</h2>
+            <p>Each of these countries has a structured process for visa compliance, including:</p>
+            <ul>
+                <li><strong>Application Submission:</strong> Submitting the visa application with all required documents.</li>
+                <li><strong>Background Checks:</strong> Undergoing medical examinations and police checks.</li>
+                <li><strong>Interviews:</strong> In some cases, applicants may be required to attend an interview at the embassy or consulate.</li>
+                <li><strong>Visa Approval:</strong> Receiving approval for the visa, which may include conditions such as health insurance requirements.</li>
+                <li><strong>Entry and Residency:</strong> Entering the country and complying with the terms of the visa, including any requirements for extending or changing visa status.</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <button id="audit-button">Audit Processing</button>
+        <div id="modal">
+            <div id="modal-content">
+                <span id="modal-close">&times;</span>
+                <h2>Audit Processing</h2>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
+                <div id="modal-data"></div>
             </div>
         </div>
-    </main>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const auditButton = document.getElementById('audit-button');
-            const auditModal = document.getElementById('audit-modal');
-            const closeButton = document.querySelector('.close');
-            const auditDataDiv = document.getElementById('audit-data');
+            const modal = document.getElementById('modal');
+            const modalClose = document.getElementById('modal-close');
+            const modalData = document.getElementById('modal-data');
 
-            // Enhanced error handling for API requests
-            const fetchAuditData = async () => {
-                try {
-                    auditDataDiv.innerHTML = '<div class="loading">Loading audit data...</div>';
+            // Show modal
+            auditButton.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modalData.innerHTML = '<p>Loading data...</p>';
 
-                    // Simulate API call with timeout for production safety
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-                    const response = await fetch('https://salarybit.in/api/v1/visa-brief', {
-                        method: 'GET',
-                        signal: controller.signal,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                fetch('https://salarybit.in/api/v1/visa-brief')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
+                        return response.json();
+                    })
+                    .then(data => {
+                        modalData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    })
+                    .catch(error => {
+                        modalData.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                        console.error('Error fetching data:', error);
                     });
+            });
 
-                    clearTimeout(timeoutId);
+            // Close modal
+            modalClose.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+            // Close modal when clicking outside
+            window.addEventListener('click', event => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // LocalStorage persistence with error handling
+            const storage = {
+                saveData: (key, value) => {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(value));
+                        return true;
+                    } catch (e) {
+                        console.error('Storage error:', e);
+                        return false;
                     }
+                },
 
-                    const data = await response.json();
-                    displayAuditData(data);
-                    saveToLocalStorage(data);
-                } catch (error) {
-                    console.error('Audit fetch error:', error);
-                    auditDataDiv.innerHTML = `<div class="error">Error loading compliance data: ${error.message}</div>`;
-                }
-            };
-
-            const displayAuditData = (data) => {
-                if (!data || Object.keys(data).length === 0) {
-                    auditDataDiv.innerHTML = '<div class="error">No compliance data available</div>';
-                    return;
-                }
-
-                let html = '<h3>Compliance Audit Results</h3>';
-                for (const [key, value] of Object.entries(data)) {
-                    html += `<p><strong>${sanitizeHTML(key)}:</strong> ${sanitizeHTML(value)}</p>`;
-                }
-                auditDataDiv.innerHTML = html;
-            };
-
-            const sanitizeHTML = (str) => {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            };
-
-            const saveToLocalStorage = (data) => {
-                try {
-                    localStorage.setItem('visa-compliance-data', JSON.stringify(data));
-                } catch (error) {
-                    console.error('LocalStorage error:', error);
-                }
-            };
-
-            const loadFromLocalStorage = () => {
-                try {
-                    const storedData = localStorage.getItem('visa-compliance-data');
-                    if (storedData) {
-                        const data = JSON.parse(storedData);
-                        displayAuditData(data);
+                loadData: key => {
+                    try {
+                        const data = localStorage.getItem(key);
+                        return data ? JSON.parse(data) : null;
+                    } catch (e) {
+                        console.error('Storage error:', e);
+                        return null;
                     }
-                } catch (error) {
-                    console.error('LocalStorage load error:', error);
+                },
+
+                removeData: key => {
+                    try {
+                        localStorage.removeItem(key);
+                        return true;
+                    } catch (e) {
+                        console.error('Storage error:', e);
+                        return false;
+                    }
                 }
             };
 
-            // Modal event handlers
-            auditButton.onclick = () => {
-                auditModal.style.display = 'block';
-                fetchAuditData();
+            // Example usage with error handling
+            const userData = {
+                name: 'John Doe',
+                email: 'johndoe@example.com',
+                lastUpdated: new Date().toISOString()
             };
 
-            closeButton.onclick = () => {
-                auditModal.style.display = 'none';
-            };
-
-            window.onclick = (event) => {
-                if (event.target === auditModal) {
-                    auditModal.style.display = 'none';
+            if (storage.saveData('user', userData)) {
+                const loadedData = storage.loadData('user');
+                if (loadedData) {
+                    console.log('User data loaded:', loadedData);
                 }
-            };
-
-            // Load any stored data on page load
-            loadFromLocalStorage();
+            }
 
             // Smooth scrolling for navigation links
-            document.querySelectorAll('nav a').forEach(anchor => {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
+
                     if (targetElement) {
                         targetElement.scrollIntoView({
-                            behavior: 'smooth'
+                            behavior: 'smooth',
+                            block: 'start'
                         });
                     }
                 });
