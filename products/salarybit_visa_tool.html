@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visa Tracking Workspace</title>
+    <title>Immigration Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,7 +20,7 @@
             text-align: center;
         }
 
-        header nav ul {
+        nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -29,14 +29,21 @@
             flex-wrap: wrap;
         }
 
-        header nav ul li {
+        nav li {
             margin: 0 15px;
         }
 
-        header nav a {
+        nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #444;
+            border-radius: 4px;
         }
 
         main {
@@ -52,21 +59,17 @@
             background-color: #fff;
             padding: 1.5em;
             margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             width: 100%;
-            box-sizing: border-box;
+            max-width: 800px;
         }
 
         h2 {
             margin-top: 0;
             color: #2c3e50;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5em;
-        }
-
-        h3 {
-            color: #2980b9;
-            margin-top: 1.5em;
+            padding-bottom: 10px;
         }
 
         ul {
@@ -76,28 +79,17 @@
         }
 
         li {
-            margin-bottom: 10px;
-            padding-left: 1.5em;
+            margin-bottom: 12px;
+            padding-left: 20px;
             position: relative;
         }
 
         li:before {
             content: "•";
             color: #3498db;
+            font-weight: bold;
             position: absolute;
             left: 0;
-        }
-
-        p {
-            line-height: 1.6;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 1.5em;
-            text-align: center;
-            clear: both;
         }
 
         #audit-button {
@@ -109,68 +101,69 @@
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.3s;
+            margin-top: 20px;
         }
 
         #audit-button:hover {
             background-color: #2980b9;
         }
 
-        #modal {
+        .modal {
+            display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
+            overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            display: none;
         }
 
-        #modal-content {
-            background-color: #fff;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
             padding: 25px;
-            border-radius: 5px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
             position: relative;
         }
 
-        #modal-close {
+        .close {
+            color: #aaa;
             position: absolute;
+            right: 20px;
             top: 10px;
-            right: 15px;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
-            color: #7f8c8d;
         }
 
-        #modal h2 {
-            margin-top: 0;
-            border-bottom: none;
-            padding-bottom: 0;
+        .close:hover {
+            color: #333;
         }
 
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
+        #modal-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
             border-radius: 4px;
-            overflow-x: auto;
+            margin-top: 15px;
+            font-family: monospace;
             white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
         @media (max-width: 768px) {
-            header nav ul {
+            nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            header nav ul li {
+            nav li {
                 margin: 5px 0;
             }
 
@@ -187,180 +180,158 @@
                 <li><a href="#usa">USA Immigration</a></li>
                 <li><a href="#canada">Canada Immigration</a></li>
                 <li><a href="#australia">Australia Immigration</a></li>
-                <li><a href="#compliance">Visa Compliance</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is a top destination for immigrants due to its economic opportunities, educational institutions, and cultural diversity. The primary search pathways for U.S. immigration include:</p>
             <ul>
-                <li><strong>Work Visas (H1B, L1, etc.):</strong> For professionals and skilled workers.</li>
-                <li><strong>Family Sponsorship:</strong> For family members of U.S. citizens or permanent residents.</li>
-                <li><strong>Study Visas (F1, J1, etc.):</strong> For international students.</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Visa application form (DS-160 for non-immigrant visas)</li>
-                <li>Proof of financial support</li>
-                <li>Medical examination</li>
-                <li>Police certificate</li>
-                <li>Proof of relationship for family sponsorship</li>
+                <li><strong>Work Visas (H-1B, L-1, O-1):</strong> Requires a job offer from a U.S. employer, approval of a labor condition application, and petition approval from U.S. Citizenship and Immigration Services (USCIS).</li>
+                <li><strong>Study Visas (F-1, M-1):</strong> Involves acceptance into a U.S. educational institution, proof of financial support, and obtaining an I-20 form.</li>
+                <li><strong>Family-Based Green Cards:</strong> Requires a sponsor who is a U.S. citizen or lawful permanent resident, filing of a petition, and going through the adjustment of status process.</li>
+                <li><strong>Refugee or Asylum Status:</strong> Involves applying for refugee status outside the U.S. or seeking asylum after arriving in the U.S., with the process managed by the U.S. Refugee Admissions Program or USCIS, respectively.</li>
             </ul>
         </section>
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, high standard of living, and diverse culture. Key search pathways for Canadian immigration are:</p>
             <ul>
-                <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
-                <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers with skills needed by specific provinces.</li>
-                <li><strong>Family Sponsorship:</strong> For family members of Canadian citizens or permanent residents.</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Language test results (English or French)</li>
-                <li>Educational credential assessment</li>
-                <li>Proof of work experience</li>
-                <li>Police certificate</li>
-                <li>Medical examination</li>
-                <li>Proof of funds</li>
+                <li><strong>Express Entry for Skilled Workers:</strong> Requires creating an online profile, scoring points based on education, language proficiency, work experience, and other factors, and receiving an Invitation to Apply (ITA) for permanent residence.</li>
+                <li><strong>Study Permits:</strong> Involves applying to a Canadian educational institution, receiving an acceptance letter, and applying for a study permit.</li>
+                <li><strong>Family Sponsorship:</strong> Requires the sponsor to be a Canadian citizen or permanent resident, meeting income requirements, and the sponsored family member applying for permanent residence.</li>
+                <li><strong>Provincial Nominee Programs (PNPs):</strong> Offers a pathway for skilled workers to immigrate based on the specific needs of Canadian provinces, with requirements varying by province.</li>
             </ul>
         </section>
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia attracts immigrants with its unique culture, high standard of living, and beautiful landscapes. Primary search pathways for Australian immigration are:</p>
             <ul>
-                <li><strong>Skilled Independent Visa (Subclass 189):</strong> For skilled workers who do not require sponsorship.</li>
-                <li><strong>Skilled Nominated Visa (Subclass 190):</strong> For skilled workers nominated by an Australian state or territory.</li>
-                <li><strong>Family Sponsorship:</strong> For family members of Australian citizens or permanent residents.</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Skills assessment</li>
-                <li>English language proficiency test results</li>
-                <li>Qualifications and transcripts</li>
-                <li>Proof of work experience</li>
-                <li>Police certificate</li>
-                <li>Medical examination</li>
-                <li>Proof of financial capacity</li>
+                <li><strong>Skilled Independent Visa (Subclass 189):</strong> Requires submitting an Expression of Interest (EOI), having a skills assessment, meeting the points test, and receiving an invitation to apply.</li>
+                <li><strong>Study Visas:</strong> Involves applying to an Australian educational institution, receiving a Confirmation of Enrolment (COE), and applying for a student visa.</li>
+                <li><strong>Family Visas:</strong> Includes partner visas, child visas, and other family visas, requiring a sponsor who is an Australian citizen, permanent resident, or eligible New Zealand citizen.</li>
+                <li><strong>Regional Sponsored Migration Scheme (RSMS):</strong> Allows employers in regional Australia to sponsor skilled workers for permanent residence, requiring a nomination by the employer and meeting specific eligibility criteria.</li>
             </ul>
         </section>
-        <section id="compliance">
-            <h2>Structural Visa Compliance Paths</h2>
-            <p>Each of these countries has a structured process for visa compliance, including:</p>
-            <ul>
-                <li><strong>Application Submission:</strong> Submitting the visa application with all required documents.</li>
-                <li><strong>Background Checks:</strong> Undergoing medical examinations and police checks.</li>
-                <li><strong>Interviews:</strong> In some cases, applicants may be required to attend an interview at the embassy or consulate.</li>
-                <li><strong>Visa Approval:</strong> Receiving approval for the visa, which may include conditions such as health insurance requirements.</li>
-                <li><strong>Entry and Residency:</strong> Entering the country and complying with the terms of the visa, including any requirements for extending or changing visa status.</li>
-            </ul>
-        </section>
-    </main>
-    <footer>
         <button id="audit-button">Audit Processing</button>
-        <div id="modal">
-            <div id="modal-content">
-                <span id="modal-close">&times;</span>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
                 <h2>Audit Processing</h2>
-                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
-                <div id="modal-data"></div>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a></p>
+                <div id="modal-content">Loading...</div>
             </div>
         </div>
-    </footer>
+    </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const auditButton = document.getElementById('audit-button');
-            const modal = document.getElementById('modal');
-            const modalClose = document.getElementById('modal-close');
-            const modalData = document.getElementById('modal-data');
+            const modal = document.getElementById("modal");
+            const auditButton = document.getElementById("audit-button");
+            const closeButton = document.querySelector(".close");
+            const modalContent = document.getElementById("modal-content");
 
-            // Show modal
-            auditButton.addEventListener('click', () => {
-                modal.style.display = 'flex';
-                modalData.innerHTML = '<p>Loading data...</p>';
+            function showModal() {
+                modal.style.display = "block";
+                modalContent.textContent = "Loading...";
 
-                fetch('https://salarybit.in/api/v1/visa-brief')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        modalData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                    })
-                    .catch(error => {
-                        modalData.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-                        console.error('Error fetching data:', error);
-                    });
-            });
+                fetch('https://salarybit.in/api/v1/visa-brief', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    modalContent.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    modalContent.innerHTML = `<div style="color: #e74c3c;">Error loading data: ${error.message}</div>
+                                            <p>Please try again later or check the API status.</p>`;
+                });
+            }
 
-            // Close modal
-            modalClose.addEventListener('click', () => {
-                modal.style.display = 'none';
-            });
+            function hideModal() {
+                modal.style.display = "none";
+            }
 
-            // Close modal when clicking outside
-            window.addEventListener('click', event => {
+            auditButton.onclick = showModal;
+            closeButton.onclick = hideModal;
+
+            window.onclick = function(event) {
                 if (event.target === modal) {
-                    modal.style.display = 'none';
+                    hideModal();
                 }
-            });
+            };
 
             // LocalStorage persistence with error handling
-            const storage = {
-                saveData: (key, value) => {
-                    try {
-                        localStorage.setItem(key, JSON.stringify(value));
-                        return true;
-                    } catch (e) {
-                        console.error('Storage error:', e);
-                        return false;
+            const storage = window.localStorage;
+
+            function saveData(key, value) {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    if (e.name === 'QuotaExceededError') {
+                        console.warn('Storage limit exceeded. Clearing old data...');
+                        storage.clear();
+                        try {
+                            storage.setItem(key, JSON.stringify(value));
+                            return true;
+                        } catch (e2) {
+                            console.error('Failed to save after clearing storage:', e2);
+                            return false;
+                        }
                     }
-                },
-
-                loadData: key => {
-                    try {
-                        const data = localStorage.getItem(key);
-                        return data ? JSON.parse(data) : null;
-                    } catch (e) {
-                        console.error('Storage error:', e);
-                        return null;
-                    }
-                },
-
-                removeData: key => {
-                    try {
-                        localStorage.removeItem(key);
-                        return true;
-                    } catch (e) {
-                        console.error('Storage error:', e);
-                        return false;
-                    }
-                }
-            };
-
-            // Example usage with error handling
-            const userData = {
-                name: 'John Doe',
-                email: 'johndoe@example.com',
-                lastUpdated: new Date().toISOString()
-            };
-
-            if (storage.saveData('user', userData)) {
-                const loadedData = storage.loadData('user');
-                if (loadedData) {
-                    console.log('User data loaded:', loadedData);
+                    return false;
                 }
             }
 
+            function loadData(key) {
+                try {
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                    return null;
+                }
+            }
+
+            function removeData(key) {
+                try {
+                    storage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.error('Error removing data:', e);
+                    return false;
+                }
+            }
+
+            // Example usage with error handling
+            const userData = {
+                name: "John Doe",
+                email: "john@example.com",
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (!saveData("user", userData)) {
+                console.warn("Failed to save user data");
+            }
+
+            const loadedData = loadData("user");
+            if (loadedData) {
+                console.log("Loaded user data:", loadedData);
+            } else {
+                console.warn("No user data found or error loading data");
+            }
+
             // Smooth scrolling for navigation links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
