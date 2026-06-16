@@ -37,13 +37,6 @@
             color: #fff;
             text-decoration: none;
             font-weight: bold;
-            padding: 5px 10px;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #555;
-            border-radius: 4px;
         }
 
         main {
@@ -61,37 +54,36 @@
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            border-radius: 8px;
+            box-sizing: border-box;
         }
 
         h2 {
             margin-top: 0;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5em;
         }
 
         h3 {
-            color: #2980b9;
+            color: #555;
             margin-top: 1.5em;
         }
 
         ul {
             list-style: none;
+            margin: 0;
             padding: 0;
-            margin: 1em 0;
         }
 
         li {
             margin-bottom: 10px;
-            padding-left: 20px;
+            padding-left: 1em;
             position: relative;
         }
 
         li:before {
             content: "•";
-            color: #3498db;
-            font-weight: bold;
+            color: #333;
             position: absolute;
             left: 0;
         }
@@ -101,22 +93,22 @@
         }
 
         #audit-button {
-            background-color: #3498db;
+            background-color: #333;
             color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
             border-radius: 4px;
+            margin: 20px 0;
             transition: background-color 0.3s;
-            margin-top: 20px;
         }
 
         #audit-button:hover {
-            background-color: #2980b9;
+            background-color: #555;
         }
 
-        #modal {
+        #audit-modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -124,46 +116,34 @@
             background-color: #fff;
             padding: 20px;
             border: 1px solid #ddd;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            width: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            width: 80%;
             max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
-            text-align: center;
-            border-radius: 8px;
-            display: none;
             z-index: 1000;
         }
 
-        #modal h2 {
+        #audit-modal h2 {
+            margin-top: 0;
             border-bottom: none;
-            margin-bottom: 15px;
+            padding-bottom: 0;
         }
 
-        #modal p {
-            text-align: left;
-            white-space: pre-wrap;
-            font-family: monospace;
-            background-color: #f8f9fa;
+        #audit-data {
+            margin-top: 15px;
             padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
             border-radius: 4px;
             overflow-x: auto;
         }
 
-        #close-modal {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-top: 15px;
-            transition: background-color 0.3s;
-        }
-
-        #close-modal:hover {
-            background-color: #c0392b;
+        #audit-data pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .modal-overlay {
@@ -206,148 +186,177 @@
     <main>
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is a top destination for immigrants due to its strong economy, cultural diversity, and educational opportunities.</p>
+            <p>The United States is one of the most popular destinations for immigrants, attracting people from all over the world due to its economic opportunities, educational institutions, and cultural diversity.</p>
             <ul>
-                <li><strong>Work Visas (H1B, L1, O1):</strong> For professionals, intra-company transferees, and individuals with extraordinary abilities.</li>
-                <li><strong>Family Sponsorship:</strong> For spouses, children, parents, and siblings of U.S. citizens and permanent residents.</li>
-                <li><strong>Study Visas (F1, J1):</strong> For international students and exchange visitors.</li>
+                <li><strong>Work Visas (H1B, L1, etc.):</strong> For individuals with specialized skills or intracompany transfers.</li>
+                <li><strong>Family Sponsorship:</strong> For family members of U.S. citizens or permanent residents.</li>
+                <li><strong>Study Visas (F1, J1, etc.):</strong> For international students and exchange visitors.</li>
             </ul>
-            <h3>Core Documentation:</h3>
+            <h3>Core Documentation</h3>
             <ul>
-                <li>Passport (valid for at least 6 months beyond intended stay)</li>
+                <li>Passport</li>
                 <li>Visa application (DS-160 for non-immigrant visas)</li>
-                <li>Proof of financial support (bank statements, affidavit of support)</li>
-                <li>Health insurance coverage</li>
-                <li>Police certificate from country of residence</li>
-                <li>Educational transcripts and diplomas (for student and work visas)</li>
-                <li>Employment verification letter (for work visas)</li>
-                <li>SEVIS fee receipt (for student visas)</li>
+                <li>Proof of financial support</li>
+                <li>Health insurance</li>
+                <li>Background check (in some cases)</li>
             </ul>
         </section>
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada offers a welcoming environment, social services, and a points-based immigration system that attracts skilled workers, entrepreneurs, and families.</p>
+            <p>Canada is known for its welcoming immigration policies, offering a range of programs for skilled workers, family reunification, and refugee protection.</p>
             <ul>
-                <li><strong>Express Entry:</strong> For skilled workers through the Federal Skilled Worker Program, Federal Skilled Trades Program, and Canadian Experience Class.</li>
+                <li><strong>Express Entry:</strong> A points-based system for skilled workers.</li>
                 <li><strong>Provincial Nominee Programs (PNPs):</strong> For workers with skills needed by specific provinces.</li>
-                <li><strong>Family Sponsorship:</strong> For spouses, common-law partners, children, parents, and grandparents of Canadian citizens and permanent residents.</li>
+                <li><strong>Family Sponsorship:</strong> For family members of Canadian citizens or permanent residents.</li>
             </ul>
-            <h3>Core Documentation:</h3>
+            <h3>Key Documents</h3>
             <ul>
-                <li>Valid passport</li>
-                <li>Language test results (IELTS for English or TEF for French)</li>
-                <li>Educational credential assessment (WES or other designated organizations)</li>
-                <li>Police certificates from all countries resided in for 6+ months</li>
-                <li>Medical exam from a panel physician</li>
-                <li>Proof of funds (bank statements, investment documents)</li>
-                <li>Job offer letter (if applicable)</li>
-                <li>Express Entry profile number (if applicable)</li>
-                <li>Provincial nomination certificate (if applicable)</li>
+                <li>Passport</li>
+                <li>Language proficiency test results (English or French)</li>
+                <li>Educational credential assessment</li>
+                <li>Police certificates</li>
+                <li>Medical exam results</li>
             </ul>
         </section>
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia is known for its high standard of living, diverse culture, and points-based immigration system, making it an attractive destination for immigrants.</p>
+            <p>Australia attracts immigrants with its high standard of living, diverse culture, and strong economy.</p>
             <ul>
-                <li><strong>Skilled Migration (Subclass 189, 190):</strong> For skilled workers who can contribute to the Australian economy.</li>
-                <li><strong>Work Visas (Subclass 482, 417):</strong> For temporary skilled workers and working holiday makers.</li>
-                <li><strong>Family Sponsorship:</strong> For partners, children, parents, and other family members of Australian citizens, permanent residents, and eligible New Zealand citizens.</li>
+                <li><strong>Skilled Migration:</strong> Points-based system for skilled workers.</li>
+                <li><strong>Family Visa:</strong> For family members of Australian citizens or permanent residents.</li>
+                <li><strong>Student Visa:</strong> For international students.</li>
             </ul>
-            <h3>Core Documentation:</h3>
+            <h3>Core Documentation</h3>
             <ul>
-                <li>Valid passport</li>
-                <li>Skills assessment from relevant assessing authority</li>
-                <li>English language proficiency test results (IELTS, PTE, or TOEFL)</li>
-                <li>Qualifications and academic transcripts</li>
-                <li>Police certificates from all countries resided in for 12+ months</li>
-                <li>Health insurance coverage</li>
-                <li>Proof of sufficient funds</li>
-                <li>Employment reference letters</li>
-                <li>Expression of Interest (EOI) submission proof</li>
-                <li>State or territory nomination (if applicable)</li>
+                <li>Passport</li>
+                <li>Visa application</li>
+                <li>English language proficiency test results</li>
+                <li>Qualifications and skills assessment</li>
+                <li>Health insurance</li>
+                <li>Police certificates</li>
             </ul>
         </section>
         <button id="audit-button">Audit Processing</button>
         <div class="modal-overlay" id="modal-overlay"></div>
-        <div id="modal">
+        <div id="audit-modal">
             <h2>Audit Processing</h2>
-            <p>Loading audit data...</p>
-            <button id="close-modal">Close</button>
+            <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a>...</p>
+            <div id="audit-data"></div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const auditButton = document.getElementById('audit-button');
-            const modal = document.getElementById('modal');
-            const closeModal = document.getElementById('close-modal');
+            const auditModal = document.getElementById('audit-modal');
+            const auditDataDiv = document.getElementById('audit-data');
             const modalOverlay = document.getElementById('modal-overlay');
-            const storage = window.localStorage;
 
-            // Show modal function
             function showModal() {
-                modal.style.display = 'block';
+                auditModal.style.display = 'block';
                 modalOverlay.style.display = 'block';
                 document.body.style.overflow = 'hidden';
             }
 
-            // Hide modal function
             function hideModal() {
-                modal.style.display = 'none';
+                auditModal.style.display = 'none';
                 modalOverlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                document.body.style.overflow = '';
             }
 
-            // Audit button click handler
             auditButton.addEventListener('click', () => {
                 showModal();
-                const modalContent = modal.querySelector('p');
-                modalContent.textContent = 'Processing audit...';
+                auditDataDiv.innerHTML = '<p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a>...</p>';
 
-                // Simulate API call with timeout
-                setTimeout(() => {
-                    fetch('https://salarybit.in/api/v1/visa-brief')
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            modalContent.textContent = JSON.stringify(data, null, 2);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching audit data:', error);
-                            modalContent.textContent = 'Audit Error: ' + error.message + '\n\nPlease check your network connection and try again.';
-                        });
-                }, 800);
-            });
-
-            // Close modal handlers
-            closeModal.addEventListener('click', hideModal);
-            modalOverlay.addEventListener('click', hideModal);
-
-            // LocalStorage persistence for selected country
-            const sections = {
-                usa: document.getElementById('usa'),
-                canada: document.getElementById('canada'),
-                australia: document.getElementById('australia')
-            };
-
-            // Add click handlers to sections
-            Object.keys(sections).forEach(country => {
-                sections[country].addEventListener('click', () => {
-                    storage.setItem('selectedCountry', country);
+                fetch('https://salarybit.in/api/v1/visa-brief', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    try {
+                        const auditDataHtml = `
+                            <h3>Audit Data</h3>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        `;
+                        auditDataDiv.innerHTML = auditDataHtml;
+                    } catch (e) {
+                        auditDataDiv.innerHTML = `<h3>Error</h3><p>Failed to parse response: ${e.message}</p>`;
+                    }
+                })
+                .catch(error => {
+                    auditDataDiv.innerHTML = `
+                        <h3>Error</h3>
+                        <p>Failed to fetch data: ${error.message}</p>
+                        <p>Please check your network connection and try again.</p>
+                    `;
                 });
             });
 
-            // Check for saved country selection
-            const selectedCountry = storage.getItem('selectedCountry');
-            if (selectedCountry && sections[selectedCountry]) {
-                setTimeout(() => {
-                    sections[selectedCountry].scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }, 100);
+            modalOverlay.addEventListener('click', hideModal);
+
+            window.addEventListener('click', event => {
+                if (event.target === auditModal) {
+                    hideModal();
+                }
+            });
+
+            // LocalStorage persistence with error handling
+            const storage = window.localStorage;
+
+            const saveData = (key, value) => {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return false;
+                }
+            };
+
+            const loadData = key => {
+                try {
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return null;
+                }
+            };
+
+            const removeData = key => {
+                try {
+                    storage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return false;
+                }
+            };
+
+            // Example usage with error handling
+            const userData = {
+                name: 'John Doe',
+                email: 'john.doe@example.com',
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (!saveData('user', userData)) {
+                console.warn('Failed to save user data to localStorage');
+            }
+
+            const loadedUserData = loadData('user');
+            if (loadedUserData) {
+                console.log('Loaded user data:', loadedUserData);
+            } else {
+                console.warn('No user data found in localStorage or failed to load');
             }
 
             // Smooth scrolling for navigation links
@@ -360,21 +369,9 @@
                         targetElement.scrollIntoView({
                             behavior: 'smooth'
                         });
-                        storage.setItem('selectedCountry', targetId.substring(1));
                     }
                 });
             });
-
-            // Error handling for localStorage
-            try {
-                // Test localStorage access
-                storage.setItem('test', 'test');
-                storage.removeItem('test');
-            } catch (e) {
-                console.warn('localStorage not available:', e);
-                // Fallback to sessionStorage if localStorage fails
-                window.storage = window.sessionStorage;
-            }
         });
     </script>
 </body>
