@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            color: #333;
             margin: 0;
             padding: 0;
         }
@@ -19,7 +20,7 @@
             text-align: center;
         }
 
-        nav ul {
+        header nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
@@ -28,17 +29,17 @@
             flex-wrap: wrap;
         }
 
-        nav li {
+        header nav ul li {
             margin: 0 20px;
         }
 
-        nav a {
+        header nav a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
         }
 
-        nav a:hover {
+        header nav a:hover {
             text-decoration: underline;
         }
 
@@ -61,131 +62,127 @@
         }
 
         h1 {
-            margin-top: 0;
-            color: #333;
             text-align: center;
+            color: #333;
+            margin-bottom: 0.5em;
         }
 
         h2 {
-            margin-top: 0;
-            color: #444;
-            border-bottom: 2px solid #eee;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
             padding-bottom: 0.5em;
+            margin-top: 0;
         }
 
         h3 {
-            color: #555;
+            color: #2980b9;
             margin-top: 1.5em;
-        }
-
-        p {
-            line-height: 1.6;
-            color: #666;
         }
 
         ul {
             list-style: none;
-            margin: 0;
             padding: 0;
+            margin: 0.5em 0 1.5em 0;
         }
 
         li {
             margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
+            line-height: 1.6;
         }
 
-        li:before {
-            content: "•";
-            color: #333;
-            position: absolute;
-            left: 0;
+        ol {
+            margin: 0.5em 0 1.5em 2em;
+            line-height: 1.6;
+        }
+
+        ol li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #333;
+            color: #fff;
+            margin-top: 2em;
         }
 
         #audit-button {
-            background-color: #333;
+            background-color: #3498db;
             color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
+            border-radius: 4px;
             transition: background-color 0.3s;
         }
 
         #audit-button:hover {
-            background-color: #555;
+            background-color: #2980b9;
         }
 
-        #modal {
+        .modal {
+            display: none;
             position: fixed;
-            top: 0;
+            z-index: 1000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
+            overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
         }
 
         .modal-content {
-            background-color: #fff;
+            background-color: #fefefe;
+            margin: 10% auto;
             padding: 20px;
-            border-radius: 5px;
+            border: 1px solid #888;
             width: 80%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+            max-width: 800px;
+            border-radius: 5px;
             position: relative;
         }
 
-        #modal-content {
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 3px;
-            margin-top: 15px;
-            white-space: pre-wrap;
-            font-family: monospace;
-        }
-
-        #close-modal {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 5px;
-            margin-top: 15px;
-            display: block;
         }
 
-        #close-modal:hover {
-            background-color: #555;
+        .close:hover {
+            color: #333;
         }
 
-        .compliance-paths {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #333;
+        #audit-data {
             margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
         }
 
         @media (max-width: 768px) {
-            nav ul {
+            header nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            nav li {
+            header nav ul li {
                 margin: 5px 0;
             }
 
-            section {
-                padding: 1em;
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
             }
         }
     </style>
@@ -197,7 +194,6 @@
                 <li><a href="#usa">USA Immigration</a></li>
                 <li><a href="#canada">Canada Immigration</a></li>
                 <li><a href="#australia">Australia Immigration</a></li>
-                <li><a href="#compliance">Compliance Paths</a></li>
             </ul>
         </nav>
     </header>
@@ -206,327 +202,201 @@
 
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is one of the most popular destinations for immigrants, attracting people from all over the world due to its economic opportunities, educational institutions, and cultural diversity.</p>
+            <p>The United States is a top destination for immigrants seeking better economic opportunities, education, and political stability. The primary pathways for immigration to the U.S. include work visas, family sponsorship, and the diversity visa lottery.</p>
 
-            <h3>High-Volume Search Pathways</h3>
+            <h3>Work Visas (H-1B, L-1, O-1)</h3>
             <ul>
-                <li><strong>Work Visas (H1B, L1, etc.)</strong>: Highly skilled workers often search for information on how to obtain work visas to enter the U.S. workforce.</li>
-                <li><strong>Family Sponsorship</strong>: U.S. citizens and permanent residents searching for ways to sponsor family members to immigrate to the U.S.</li>
-                <li><strong>Study Visas (F1, J1, etc.)</strong>: International students looking to pursue higher education in the U.S.</li>
+                <li><strong>Documentation:</strong> Bachelor's degree, relevant work experience, labor condition application, and a petition from a U.S. employer.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Employer Sponsorship:</strong> The U.S. employer must sponsor the applicant.</li>
+                        <li><strong>Labor Condition Application (LCA):</strong> The employer files an LCA with the U.S. Department of Labor.</li>
+                        <li><strong>Petition Filing:</strong> The employer files a petition (Form I-129) with U.S. Citizenship and Immigration Services (USCIS).</li>
+                        <li><strong>Visa Application:</strong> Once the petition is approved, the applicant applies for a visa at a U.S. embassy or consulate.</li>
+                    </ol>
+                </li>
             </ul>
 
-            <h3>Core Documentation</h3>
+            <h3>Family Sponsorship</h3>
             <ul>
-                <li>Passport (valid for at least 6 months beyond intended stay)</li>
-                <li>Visa application (DS-160 for non-immigrant visas)</li>
-                <li>Proof of financial support (bank statements, affidavit of support)</li>
-                <li>Health insurance coverage</li>
-                <li>Background check documents (FBI clearance certificate)</li>
-                <li>Passport-sized photographs meeting specific requirements</li>
-                <li>Employment offer letter (for work visas)</li>
-                <li>I-20 form (for student visas)</li>
+                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Petition Filing:</strong> The U.S. citizen or permanent resident files a petition (Form I-130) with USCIS.</li>
+                        <li><strong>Priority Date:</strong> A priority date is assigned based on the filing date of the petition.</li>
+                        <li><strong>Application for Visa:</strong> Once the priority date becomes current, the applicant applies for a visa.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>Diversity Visa Lottery</h3>
+            <ul>
+                <li><strong>Documentation:</strong> Online application, passport, and education/work experience documents.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Application Period:</strong> Applicants submit their entries during the specified annual period.</li>
+                        <li><strong>Selection:</strong> Applicants are randomly selected.</li>
+                        <li><strong>Interview:</strong> Selected applicants undergo an interview at a U.S. embassy or consulate.</li>
+                    </ol>
+                </li>
             </ul>
         </section>
 
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada is known for its welcoming immigration policies, attracting a large number of skilled workers, students, and family members of Canadian residents.</p>
+            <p>Canada offers a points-based system for skilled workers, making it an attractive destination for professionals. The primary pathways include Express Entry, family sponsorship, and provincial nominee programs.</p>
 
-            <h3>High-Volume Search Pathways</h3>
+            <h3>Express Entry</h3>
             <ul>
-                <li><strong>Express Entry</strong>: Skilled workers seeking permanent residency through Canada's Express Entry system.</li>
-                <li><strong>Study Permits</strong>: International students interested in studying in Canada.</li>
-                <li><strong>Family Class Sponsorship</strong>: Canadian citizens and permanent residents looking to sponsor family members.</li>
-                <li><strong>Provincial Nominee Program (PNP)</strong>: Applicants nominated by a Canadian province or territory.</li>
+                <li><strong>Documentation:</strong> Language test results, education credential assessment, and proof of work experience.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Profile Creation:</strong> Applicants create an online profile.</li>
+                        <li><strong>Invitation to Apply (ITA):</strong> Candidates with high-ranking profiles receive an ITA.</li>
+                        <li><strong>Permanent Residence Application:</strong> Applicants submit a complete application for permanent residence.</li>
+                    </ol>
+                </li>
             </ul>
 
-            <h3>Core Documentation</h3>
+            <h3>Family Sponsorship</h3>
             <ul>
-                <li>Valid passport</li>
-                <li>Language proficiency test results (IELTS, CELPIP, TEF, or TCF)</li>
-                <li>Educational credential assessment (ECA) from designated organizations</li>
-                <li>Police certificates from all countries where you've lived for 6+ months</li>
-                <li>Proof of funds (bank statements, investment statements)</li>
-                <li>Job offer letter (if applicable)</li>
-                <li>Medical examination results from panel physicians</li>
-                <li>Birth certificate</li>
-                <li>Marriage certificate (if applicable)</li>
+                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Sponsorship Application:</strong> The Canadian citizen or permanent resident applies to sponsor their family member.</li>
+                        <li><strong>Permanent Residence Application:</strong> The sponsored family member applies for permanent residence.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>Provincial Nominee Programs (PNPs)</h3>
+            <ul>
+                <li><strong>Documentation:</strong> Varies by province but often includes education, work experience, and language proficiency.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Application to PNP:</strong> Applicants apply to a specific province's program.</li>
+                        <li><strong>Nomination:</strong> Successful applicants are nominated by the province.</li>
+                        <li><strong>Permanent Residence Application:</strong> Nominees apply for permanent residence through the federal government.</li>
+                    </ol>
+                </li>
             </ul>
         </section>
 
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia is another highly sought-after destination, offering a high quality of life and strong economy.</p>
+            <p>Australia's immigration system is also points-based, focusing on skilled migration. The primary pathways include Skilled Independent visas, family sponsorship, and state/territory nomination.</p>
 
-            <h3>High-Volume Search Pathways</h3>
+            <h3>Skilled Independent Visas (Subclass 189)</h3>
             <ul>
-                <li><strong>Skilled Migration (Subclass 189, 190)</strong>: Skilled workers aiming for permanent residency through Australia's points-based system.</li>
-                <li><strong>Student Visas (Subclass 500)</strong>: Students planning to study in Australia.</li>
-                <li><strong>Partner Visas (Subclass 309/100, 820/801)</strong>: Australians and permanent residents seeking to sponsor partners.</li>
-                <li><strong>Employer Sponsored Visas (Subclass 482, 186)</strong>: Workers sponsored by Australian employers.</li>
+                <li><strong>Documentation:</strong> Skills assessment, language test results, and proof of work experience.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Expression of Interest (EOI):</strong> Applicants submit an EOI through SkillSelect.</li>
+                        <li><strong>Invitation to Apply:</strong> High-ranking applicants receive an invitation to apply.</li>
+                        <li><strong>Visa Application:</strong> Applicants submit a visa application within the specified timeframe.</li>
+                    </ol>
+                </li>
             </ul>
 
-            <h3>Core Documentation</h3>
+            <h3>Family Sponsorship</h3>
             <ul>
-                <li>Valid passport</li>
-                <li>Skill assessment certificate from relevant assessing authority</li>
-                <li>English language proficiency test results (IELTS, TOEFL, PTE Academic, etc.)</li>
-                <li>Qualification certificates (degrees, diplomas, transcripts)</li>
-                <li>Character certificates (police clearance certificates)</li>
-                <li>Proof of work experience (employment references, contracts)</li>
-                <li>Health examination results from panel doctors</li>
-                <li>Proof of relationship (for partner visas)</li>
-                <li>Nomination approval (for employer-sponsored visas)</li>
-            </ul>
-        </section>
-
-        <section id="compliance" class="compliance-paths">
-            <h2>Structural Visa Compliance Paths</h2>
-            <p>Understanding the structural compliance paths for each country involves recognizing the legal and administrative processes that applicants must follow:</p>
-
-            <h3>Application Submission</h3>
-            <ul>
-                <li>Online applications through official government portals (USCIS, IRCC, Home Affairs)</li>
-                <li>Paper applications for certain visa categories</li>
-                <li>Biometric data collection at designated centers</li>
-                <li>Payment of required visa application fees</li>
+                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>Sponsorship Application:</strong> The Australian citizen, permanent resident, or eligible New Zealand citizen applies to sponsor their family member.</li>
+                        <li><strong>Visa Application:</strong> The sponsored family member applies for a visa.</li>
+                    </ol>
+                </li>
             </ul>
 
-            <h3>Documentation Verification</h3>
+            <h3>State/Territory Nomination (Subclass 190)</h3>
             <ul>
-                <li>Authentication of documents through apostille or notarization</li>
-                <li>Verification of educational credentials</li>
-                <li>Validation of work experience claims</li>
-                <li>Cross-checking of financial documents</li>
-            </ul>
-
-            <h3>Interviews and Assessments</h3>
-            <ul>
-                <li>Visa interviews at consulates or embassies</li>
-                <li>Skills assessments for certain occupations</li>
-                <li>Language proficiency tests</li>
-                <li>Medical examinations by approved panel physicians</li>
-            </ul>
-
-            <h3>Background Checks</h3>
-            <ul>
-                <li>Criminal record checks from home country and countries of residence</li>
-                <li>Security clearances for certain visa categories</li>
-                <li>Verification of travel history</li>
-                <li>Social media and online presence screening</li>
-            </ul>
-
-            <h3>Health Examinations</h3>
-            <ul>
-                <li>Medical tests for tuberculosis, HIV, and other conditions</li>
-                <li>Vaccination records verification</li>
-                <li>Chest x-rays for applicants from certain countries</li>
-                <li>Health insurance requirements</li>
+                <li><strong>Documentation:</strong> Similar to Skilled Independent visas, with additional requirements set by the nominating state or territory.</li>
+                <li><strong>Milestones:</strong>
+                    <ol>
+                        <li><strong>EOI:</strong> Applicants submit an EOI indicating their interest in state/territory nomination.</li>
+                        <li><strong>Nomination:</strong> Successful applicants are nominated by a state or territory.</li>
+                        <li><strong>Visa Application:</strong> Nominees apply for a visa.</li>
+                    </ol>
+                </li>
             </ul>
         </section>
-
-        <button id="audit-button">Run Compliance Audit</button>
-
-        <div id="modal">
+    </main>
+    <footer>
+        <button id="audit-button">Audit Processing</button>
+        <div id="modal" class="modal">
             <div class="modal-content">
-                <h2>Compliance Audit Processing</h2>
-                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank" rel="noopener noreferrer">https://salarybit.in/api/v1/visa-brief</a>...</p>
-                <div id="modal-content"></div>
-                <button id="close-modal">Close</button>
+                <span class="close">&times;</span>
+                <h2>Audit Processing</h2>
+                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
+                <div id="audit-data">Fetching audit data...</div>
             </div>
         </div>
-    </main>
+    </footer>
     <script>
-        // Audit Processing Modal
-        const auditButton = document.getElementById('audit-button');
-        const modal = document.getElementById('modal');
-        const closeModal = document.getElementById('close-modal');
-        const modalContent = document.getElementById('modal-content');
+        // Modal functionality
+        let modal = document.getElementById("modal");
+        let auditButton = document.getElementById("audit-button");
+        let closeButton = document.getElementsByClassName("close")[0];
+        let auditData = document.getElementById("audit-data");
 
-        // Enhanced error handling for API fetch
-        auditButton.addEventListener('click', () => {
-            modal.style.display = 'block';
-            modalContent.innerHTML = '<p>Connecting to compliance database...</p>';
+        // Open modal and fetch data
+        auditButton.onclick = function() {
+            modal.style.display = "block";
+            auditData.textContent = "Fetching audit data...";
 
-            fetch('https://salarybit.in/api/v1/visa-brief', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                mode: 'cors',
-                cache: 'no-cache'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                try {
-                    // Validate API response structure
-                    if (!data || typeof data !== 'object') {
-                        throw new Error('Invalid API response format');
+            fetch('https://salarybit.in/api/v1/visa-brief')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    auditData.textContent = JSON.stringify(data, null, 2);
+                    localStorage.setItem("auditData", JSON.stringify(data, null, 2));
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    const errorMessage = `Error fetching audit data: ${error.message}\n\nPlease check your network connection and try again.`;
+                    auditData.textContent = errorMessage;
+                    localStorage.setItem("auditData", errorMessage);
+                });
+        }
 
-                    // Format the JSON output for better readability
-                    modalContent.innerHTML = `
-                        <h3>Audit Results</h3>
-                        <p><strong>Status:</strong> Success</p>
-                        <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-                        <pre>${JSON.stringify(data, null, 2)}</pre>
-                    `;
-                } catch (e) {
-                    modalContent.innerHTML = `
-                        <h3>Data Processing Error</h3>
-                        <p><strong>Error:</strong> ${e.message}</p>
-                        <p>Please check the API response format and try again.</p>
-                    `;
+        // Close modal
+        closeButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Load persisted data on page load
+        window.onload = function() {
+            const savedData = localStorage.getItem("auditData");
+            if (savedData) {
+                auditData.textContent = savedData;
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
-            })
-            .catch(error => {
-                modalContent.innerHTML = `
-                    <h3>Compliance Audit Error</h3>
-                    <p><strong>Error Type:</strong> ${error.name}</p>
-                    <p><strong>Message:</strong> ${error.message}</p>
-                    <p><strong>Possible Causes:</strong></p>
-                    <ul>
-                        <li>Network connectivity issues</li>
-                        <li>API service unavailable</li>
-                        <li>CORS restrictions</li>
-                        <li>Invalid API endpoint</li>
-                    </ul>
-                    <p>Please verify the API endpoint and try again later.</p>
-                `;
             });
         });
-
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside of it
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        // LocalStorage persistence with error handling
-        const storage = window.localStorage;
-
-        const saveData = (key, value) => {
-            try {
-                if (typeof value !== 'object' || value === null) {
-                    throw new Error('Value must be an object');
-                }
-                storage.setItem(key, JSON.stringify(value));
-                return true;
-            } catch (e) {
-                console.error('LocalStorage save error:', e);
-                return false;
-            }
-        };
-
-        const loadData = (key) => {
-            try {
-                const data = storage.getItem(key);
-                return data ? JSON.parse(data) : null;
-            } catch (e) {
-                console.error('LocalStorage load error:', e);
-                return null;
-            }
-        };
-
-        const removeData = (key) => {
-            try {
-                storage.removeItem(key);
-                return true;
-            } catch (e) {
-                console.error('LocalStorage remove error:', e);
-                return false;
-            }
-        };
-
-        // Example usage with error handling
-        const initializeStorage = () => {
-            try {
-                // Check if storage is available
-                if (!storage) {
-                    throw new Error('LocalStorage not available');
-                }
-
-                // Initialize default data if not present
-                if (!loadData('userPreferences')) {
-                    const defaultPrefs = {
-                        theme: 'light',
-                        notifications: true,
-                        lastAudit: null
-                    };
-                    saveData('userPreferences', defaultPrefs);
-                }
-
-                // Example audit log
-                const auditLog = loadData('auditLog') || [];
-                auditLog.push({
-                    timestamp: new Date().toISOString(),
-                    action: 'Application initialized',
-                    status: 'success'
-                });
-                saveData('auditLog', auditLog);
-
-            } catch (e) {
-                console.error('Storage initialization error:', e);
-            }
-        };
-
-        // Initialize storage when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeStorage();
-
-            // Smooth scrolling for navigation links
-            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        });
-
-        // Network status monitoring
-        window.addEventListener('online', () => {
-            console.log('Network connection restored');
-        });
-
-        window.addEventListener('offline', () => {
-            console.warn('Network connection lost');
-            // In a production environment, you might want to show a notification
-        });
-
-        // Input validation utility
-        const validateInput = (input, type) => {
-            switch(type) {
-                case 'email':
-                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
-                case 'phone':
-                    return /^[\d\s\-()+]{10,}$/.test(input);
-                case 'name':
-                    return /^[a-zA-Z\s\-']{2,50}$/.test(input);
-                case 'date':
-                    return !isNaN(Date.parse(input));
-                default:
-                    return input.length > 0;
-            }
-        };
     </script>
 </body>
 </html>
