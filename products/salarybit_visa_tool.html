@@ -61,65 +61,51 @@
             border-radius: 5px;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 0.5em;
-        }
-
         h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5em;
             margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5em;
         }
 
         h3 {
-            color: #2980b9;
+            color: #555;
             margin-top: 1.5em;
         }
 
         ul {
             list-style: none;
             padding: 0;
-            margin: 0.5em 0 1.5em 0;
+            margin: 0.5em 0 0 0;
         }
 
         li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        ol {
-            margin: 0.5em 0 1.5em 2em;
-            line-height: 1.6;
-        }
-
-        ol li {
             margin-bottom: 8px;
+            padding-left: 1em;
+            position: relative;
         }
 
-        footer {
-            text-align: center;
-            padding: 1em;
+        li:before {
+            content: "•";
+            color: #333;
+            position: absolute;
+            left: 0;
+        }
+
+        #audit-btn {
             background-color: #333;
-            color: #fff;
-            margin-top: 2em;
-        }
-
-        #audit-button {
-            background-color: #3498db;
             color: #fff;
             border: none;
             padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px;
+            margin-top: 20px;
             transition: background-color 0.3s;
         }
 
-        #audit-button:hover {
-            background-color: #2980b9;
+        #audit-btn:hover {
+            background-color: #555;
         }
 
         .modal {
@@ -136,11 +122,11 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 800px;
+            max-width: 500px;
             border-radius: 5px;
             position: relative;
         }
@@ -155,34 +141,36 @@
             cursor: pointer;
         }
 
-        .close:hover {
-            color: #333;
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
         }
 
-        #audit-data {
+        #submit-audit {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
             margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-family: monospace;
-            white-space: pre-wrap;
+            transition: background-color 0.3s;
+        }
+
+        #submit-audit:hover {
+            background-color: #555;
         }
 
         @media (max-width: 768px) {
-            header nav ul {
-                flex-direction: column;
-                align-items: center;
-            }
-
             header nav ul li {
-                margin: 5px 0;
+                margin: 0 10px;
             }
 
             .modal-content {
                 width: 90%;
-                margin: 20% auto;
+                margin: 30% auto;
             }
         }
     </style>
@@ -198,204 +186,264 @@
         </nav>
     </header>
     <main>
-        <h1>High-Volume International Immigration Search Pathways Analysis</h1>
-
         <section id="usa">
             <h2>Immigration to the United States</h2>
-            <p>The United States is a top destination for immigrants seeking better economic opportunities, education, and political stability. The primary pathways for immigration to the U.S. include work visas, family sponsorship, and the diversity visa lottery.</p>
-
             <h3>Work Visas (H-1B, L-1, O-1)</h3>
             <ul>
-                <li><strong>Documentation:</strong> Bachelor's degree, relevant work experience, labor condition application, and a petition from a U.S. employer.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Employer Sponsorship:</strong> The U.S. employer must sponsor the applicant.</li>
-                        <li><strong>Labor Condition Application (LCA):</strong> The employer files an LCA with the U.S. Department of Labor.</li>
-                        <li><strong>Petition Filing:</strong> The employer files a petition (Form I-129) with U.S. Citizenship and Immigration Services (USCIS).</li>
-                        <li><strong>Visa Application:</strong> Once the petition is approved, the applicant applies for a visa at a U.S. embassy or consulate.</li>
-                    </ol>
-                </li>
+                <li>Passport (valid for at least 6 months beyond intended stay)</li>
+                <li>Degree certificates (evaluated by a credential evaluation service if foreign)</li>
+                <li>Experience letters (from previous employers, detailing job responsibilities and duration)</li>
+                <li>Sponsorship documents from a U.S. employer (Form I-129 for H-1B, L-1 petition)</li>
+                <li>Labor Condition Application (LCA) for H-1B visas</li>
+                <li>Proof of specialty occupation (for H-1B)</li>
             </ul>
-
             <h3>Family Sponsorship</h3>
             <ul>
-                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Petition Filing:</strong> The U.S. citizen or permanent resident files a petition (Form I-130) with USCIS.</li>
-                        <li><strong>Priority Date:</strong> A priority date is assigned based on the filing date of the petition.</li>
-                        <li><strong>Application for Visa:</strong> Once the priority date becomes current, the applicant applies for a visa.</li>
-                    </ol>
-                </li>
+                <li>Proof of relationship (birth certificates for children, marriage certificates for spouses)</li>
+                <li>Sponsor's income proof (Form I-864, Affidavit of Support, tax returns)</li>
+                <li>Medical examination records (Form I-693, completed by an approved civil surgeon)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 6+ months since age 16)</li>
+                <li>Passport-style photographs (as per USCIS specifications)</li>
             </ul>
-
             <h3>Diversity Visa Lottery</h3>
             <ul>
-                <li><strong>Documentation:</strong> Online application, passport, and education/work experience documents.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Application Period:</strong> Applicants submit their entries during the specified annual period.</li>
-                        <li><strong>Selection:</strong> Applicants are randomly selected.</li>
-                        <li><strong>Interview:</strong> Selected applicants undergo an interview at a U.S. embassy or consulate.</li>
-                    </ol>
-                </li>
+                <li>Passport (valid for at least 6 months beyond intended entry to the U.S.)</li>
+                <li>Birth certificate (with English translation if necessary)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 6+ months since age 16)</li>
+                <li>Medical examination records (Form I-693, completed by an approved civil surgeon)</li>
+                <li>Proof of high school education or equivalent, or two years of work experience in a qualifying occupation</li>
+                <li>Diversity Visa Lottery confirmation page (from the official DV program website)</li>
             </ul>
         </section>
-
         <section id="canada">
             <h2>Immigration to Canada</h2>
-            <p>Canada offers a points-based system for skilled workers, making it an attractive destination for professionals. The primary pathways include Express Entry, family sponsorship, and provincial nominee programs.</p>
-
             <h3>Express Entry</h3>
             <ul>
-                <li><strong>Documentation:</strong> Language test results, education credential assessment, and proof of work experience.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Profile Creation:</strong> Applicants create an online profile.</li>
-                        <li><strong>Invitation to Apply (ITA):</strong> Candidates with high-ranking profiles receive an ITA.</li>
-                        <li><strong>Permanent Residence Application:</strong> Applicants submit a complete application for permanent residence.</li>
-                    </ol>
-                </li>
+                <li>Language proficiency test results (IELTS, CELPIP, or TEF, taken within the last 2 years)</li>
+                <li>Educational credential assessment (ECA) from a designated organization (e.g., WES)</li>
+                <li>Proof of work experience (reference letters from employers, detailing job duties and duration)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 6+ months since age 18)</li>
+                <li>Proof of funds (bank statements showing sufficient settlement funds)</li>
+                <li>Passport (valid for the duration of the application process)</li>
+                <li>Express Entry profile number and Job Seeker validation code</li>
             </ul>
-
             <h3>Family Sponsorship</h3>
             <ul>
-                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Sponsorship Application:</strong> The Canadian citizen or permanent resident applies to sponsor their family member.</li>
-                        <li><strong>Permanent Residence Application:</strong> The sponsored family member applies for permanent residence.</li>
-                    </ol>
-                </li>
+                <li>Proof of relationship (birth certificates, marriage certificates, or proof of common-law partnership)</li>
+                <li>Sponsor's income proof (Notice of Assessment from the Canada Revenue Agency)</li>
+                <li>Medical examination records (completed by a panel physician approved by IRCC)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 6+ months since age 18)</li>
+                <li>Passport (valid for the duration of the application process)</li>
+                <li>Proof of Canadian citizenship or permanent residency of the sponsor</li>
             </ul>
-
             <h3>Provincial Nominee Programs (PNPs)</h3>
             <ul>
-                <li><strong>Documentation:</strong> Varies by province but often includes education, work experience, and language proficiency.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Application to PNP:</strong> Applicants apply to a specific province's program.</li>
-                        <li><strong>Nomination:</strong> Successful applicants are nominated by the province.</li>
-                        <li><strong>Permanent Residence Application:</strong> Nominees apply for permanent residence through the federal government.</li>
-                    </ol>
-                </li>
+                <li>Educational certificates (with ECA if foreign)</li>
+                <li>Work experience letters (from employers, detailing job responsibilities and duration)</li>
+                <li>Language test results (IELTS, CELPIP, or TEF, taken within the last 2 years)</li>
+                <li>Proof of funds (bank statements showing sufficient settlement funds)</li>
+                <li>Provincial nomination certificate</li>
+                <li>Job offer letter (if applicable, from a Canadian employer)</li>
+                <li>Proof of ties to the province (e.g., previous work or study in the province)</li>
             </ul>
         </section>
-
         <section id="australia">
             <h2>Immigration to Australia</h2>
-            <p>Australia's immigration system is also points-based, focusing on skilled migration. The primary pathways include Skilled Independent visas, family sponsorship, and state/territory nomination.</p>
-
-            <h3>Skilled Independent Visas (Subclass 189)</h3>
+            <h3>General Skilled Migration (GSM)</h3>
             <ul>
-                <li><strong>Documentation:</strong> Skills assessment, language test results, and proof of work experience.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Expression of Interest (EOI):</strong> Applicants submit an EOI through SkillSelect.</li>
-                        <li><strong>Invitation to Apply:</strong> High-ranking applicants receive an invitation to apply.</li>
-                        <li><strong>Visa Application:</strong> Applicants submit a visa application within the specified timeframe.</li>
-                    </ol>
-                </li>
+                <li>Skill assessment from a relevant assessing authority (positive assessment in the nominated occupation)</li>
+                <li>English language proficiency test results (IELTS, TOEFL iBT, PTE Academic, or OET, taken within the last 3 years)</li>
+                <li>Educational certificates (with certified copies)</li>
+                <li>Proof of work experience (employment reference letters detailing job duties and duration)</li>
+                <li>Expression of Interest (EOI) submission confirmation</li>
+                <li>State or territory nomination (if applicable)</li>
+                <li>Health examination results (completed by a panel physician approved by the Australian government)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 12+ months in the last 10 years)</li>
             </ul>
-
+            <h3>Employer-Sponsored Visas</h3>
+            <ul>
+                <li>Sponsorship documents from the Australian employer (approved sponsorship status)</li>
+                <li>Nomination documents (approved nomination for the applicant's position)</li>
+                <li>Passport (valid for the duration of the visa)</li>
+                <li>Skill assessment (if required for the nominated occupation)</li>
+                <li>English language proficiency test results (if required)</li>
+                <li>Health examination results (completed by a panel physician approved by the Australian government)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 12+ months in the last 10 years)</li>
+            </ul>
             <h3>Family Sponsorship</h3>
             <ul>
-                <li><strong>Documentation:</strong> Proof of family relationship, financial support documents, and a medical examination.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>Sponsorship Application:</strong> The Australian citizen, permanent resident, or eligible New Zealand citizen applies to sponsor their family member.</li>
-                        <li><strong>Visa Application:</strong> The sponsored family member applies for a visa.</li>
-                    </ol>
-                </li>
-            </ul>
-
-            <h3>State/Territory Nomination (Subclass 190)</h3>
-            <ul>
-                <li><strong>Documentation:</strong> Similar to Skilled Independent visas, with additional requirements set by the nominating state or territory.</li>
-                <li><strong>Milestones:</strong>
-                    <ol>
-                        <li><strong>EOI:</strong> Applicants submit an EOI indicating their interest in state/territory nomination.</li>
-                        <li><strong>Nomination:</strong> Successful applicants are nominated by a state or territory.</li>
-                        <li><strong>Visa Application:</strong> Nominees apply for a visa.</li>
-                    </ol>
-                </li>
+                <li>Proof of relationship (birth certificates, marriage certificates, or proof of de facto relationship)</li>
+                <li>Sponsor's income proof (evidence of financial capacity to support the applicant)</li>
+                <li>Medical examination records (completed by a panel physician approved by the Australian government)</li>
+                <li>Police certificates (from all countries where the applicant has lived for 12+ months in the last 10 years)</li>
+                <li>Proof of Australian citizenship, permanent residency, or eligible New Zealand citizenship of the sponsor</li>
             </ul>
         </section>
-    </main>
-    <footer>
-        <button id="audit-button">Audit Processing</button>
+        <button id="audit-btn">Audit Processing</button>
         <div id="modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Audit Processing</h2>
-                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a>...</p>
-                <div id="audit-data">Fetching audit data...</div>
+                <p id="modal-message">Processing audit request for immigration documentation compliance...</p>
+                <div id="audit-status">
+                    <p>Checking document requirements for selected immigration pathways...</p>
+                </div>
+                <button id="submit-audit">Submit Audit</button>
             </div>
         </div>
-    </footer>
+    </main>
     <script>
-        // Modal functionality
-        let modal = document.getElementById("modal");
-        let auditButton = document.getElementById("audit-button");
-        let closeButton = document.getElementsByClassName("close")[0];
-        let auditData = document.getElementById("audit-data");
+        document.addEventListener('DOMContentLoaded', function() {
+            const auditBtn = document.getElementById('audit-btn');
+            const modal = document.getElementById('modal');
+            const closeBtn = document.querySelector('.close');
+            const submitAuditBtn = document.getElementById('submit-audit');
+            const modalMessage = document.getElementById('modal-message');
+            const auditStatus = document.getElementById('audit-status');
 
-        // Open modal and fetch data
-        auditButton.onclick = function() {
-            modal.style.display = "block";
-            auditData.textContent = "Fetching audit data...";
+            // LocalStorage persistence
+            const storage = window.localStorage;
 
-            fetch('https://salarybit.in/api/v1/visa-brief')
+            // Save data to LocalStorage
+            function saveData(key, value) {
+                try {
+                    storage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage save error:', e);
+                    return false;
+                }
+            }
+
+            // Load data from LocalStorage
+            function loadData(key) {
+                try {
+                    const data = storage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error('LocalStorage load error:', e);
+                    return null;
+                }
+            }
+
+            // Clear data from LocalStorage
+            function clearData(key) {
+                try {
+                    storage.removeItem(key);
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage clear error:', e);
+                    return false;
+                }
+            }
+
+            // Audit processing function
+            function processAudit() {
+                auditStatus.innerHTML = '<p>Initializing audit process...</p>';
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Validating document requirements for USA immigration pathways...</p>';
+                }, 500);
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Validating document requirements for Canada immigration pathways...</p>';
+                }, 1000);
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Validating document requirements for Australia immigration pathways...</p>';
+                }, 1500);
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Cross-referencing with official immigration guidelines...</p>';
+                }, 2000);
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Generating compliance report...</p>';
+                }, 2500);
+
+                setTimeout(() => {
+                    auditStatus.innerHTML += '<p>Audit completed successfully. Ready for submission.</p>';
+                    submitAuditBtn.disabled = false;
+                }, 3000);
+            }
+
+            // Modal event listeners
+            auditBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+                submitAuditBtn.disabled = true;
+                processAudit();
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Submit audit event listener
+            submitAuditBtn.addEventListener('click', () => {
+                modalMessage.textContent = 'Submitting audit request...';
+
+                // Simulate API call
+                fetch('https://salarybit.in/api/v1/visa-brief', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        auditType: 'immigration_documentation',
+                        timestamp: new Date().toISOString(),
+                        pathways: ['USA', 'Canada', 'Australia']
+                    })
+                })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    auditData.textContent = JSON.stringify(data, null, 2);
-                    localStorage.setItem("auditData", JSON.stringify(data, null, 2));
+                    modalMessage.textContent = 'Audit submitted successfully!';
+                    auditStatus.innerHTML = `<p>Audit ID: ${data.auditId || 'N/A'}</p>
+                                            <p>Status: ${data.status || 'Processing'}</p>
+                                            <p>Estimated completion: ${data.estimatedCompletion || '24-48 hours'}</p>`;
+                    submitAuditBtn.style.display = 'none';
+
+                    // Save audit data to localStorage
+                    const auditData = {
+                        auditId: data.auditId || 'N/A',
+                        timestamp: new Date().toISOString(),
+                        status: data.status || 'Processing',
+                        pathways: ['USA', 'Canada', 'Australia']
+                    };
+                    saveData('lastAudit', auditData);
                 })
                 .catch(error => {
-                    console.error('Error fetching data:', error);
-                    const errorMessage = `Error fetching audit data: ${error.message}\n\nPlease check your network connection and try again.`;
-                    auditData.textContent = errorMessage;
-                    localStorage.setItem("auditData", errorMessage);
+                    console.error('API Error:', error);
+                    modalMessage.textContent = 'Error submitting audit. Please try again.';
+                    auditStatus.innerHTML = `<p>Error details: ${error.message}</p>
+                                            <p>Please check your connection and try again.</p>`;
                 });
-        }
-
-        // Close modal
-        closeButton.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        // Load persisted data on page load
-        window.onload = function() {
-            const savedData = localStorage.getItem("auditData");
-            if (savedData) {
-                auditData.textContent = savedData;
-            }
-        }
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
             });
+
+            // Example usage of localStorage
+            const userData = {
+                name: 'Immigration Applicant',
+                email: 'applicant@example.com',
+                lastAudit: loadData('lastAudit') || null
+            };
+
+            saveData('user', userData);
+
+            // Load and display last audit if available
+            const lastAudit = loadData('lastAudit');
+            if (lastAudit) {
+                console.log('Last audit data:', lastAudit);
+            }
         });
     </script>
 </body>
