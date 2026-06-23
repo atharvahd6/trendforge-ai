@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immigration Tracking Workspace</title>
+    <title>Immigration Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,27 +20,30 @@
             text-align: center;
         }
 
-        header nav ul {
+        nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        header nav ul li {
-            margin: 0 20px;
+        nav li {
+            margin-right: 20px;
         }
 
-        header nav a {
+        nav a {
             color: #fff;
             text-decoration: none;
-            font-weight: bold;
+            padding: 0.5em 1em;
+            display: block;
         }
 
-        header nav a:hover {
-            text-decoration: underline;
+        nav a:hover {
+            background-color: #444;
+            border-radius: 4px;
         }
 
         main {
@@ -48,7 +51,7 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -58,18 +61,18 @@
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            border-radius: 5px;
+            border-radius: 8px;
         }
 
         h2 {
             margin-top: 0;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
+            color: #333;
+            border-bottom: 2px solid #333;
             padding-bottom: 0.5em;
         }
 
         h3 {
-            color: #3498db;
+            color: #555;
             margin-top: 1.5em;
         }
 
@@ -81,31 +84,39 @@
 
         li {
             margin-bottom: 10px;
-            padding-left: 20px;
+            padding-left: 1em;
             position: relative;
         }
 
         li:before {
             content: "•";
-            color: #3498db;
+            color: #333;
             position: absolute;
             left: 0;
         }
 
+        ol {
+            padding-left: 1.5em;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+        }
+
         #audit-button {
-            background-color: #3498db;
+            background-color: #333;
             color: #fff;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 4px;
             margin-top: 20px;
+            transition: background-color 0.3s;
         }
 
         #audit-button:hover {
-            background-color: #2980b9;
+            background-color: #444;
         }
 
         .modal {
@@ -126,8 +137,9 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 800px;
-            border-radius: 5px;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
         }
 
@@ -141,28 +153,35 @@
             cursor: pointer;
         }
 
-        .close:hover {
+        .close:hover,
+        .close:focus {
             color: black;
+            text-decoration: none;
         }
 
-        #audit-data {
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 15px;
-            white-space: pre-wrap;
-            font-family: monospace;
+        #submit-audit {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #submit-audit:hover {
+            background-color: #444;
         }
 
         @media (max-width: 768px) {
-            header nav ul {
+            nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            header nav ul li {
+            nav li {
                 margin: 5px 0;
             }
 
@@ -177,80 +196,76 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#usa">USA Immigration</a></li>
-                <li><a href="#canada">Canada Immigration</a></li>
-                <li><a href="#australia">Australia Immigration</a></li>
+                <li><a href="#pathway1">Work Visas for the United States</a></li>
+                <li><a href="#pathway2">Study Visas for Canada</a></li>
+                <li><a href="#pathway3">Skilled Migration Visas for Australia</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="usa" contenteditable="true">
-            <h2>Immigration to the United States</h2>
-            <h3>Work Visas (H-1B, L-1, O-1)</h3>
+        <section id="pathway1">
+            <h2>Work Visas for the United States</h2>
+            <p><strong>Target Destination:</strong> United States</p>
+            <h3>Visa Types:</h3>
             <ul>
-                <li>Passport</li>
-                <li>Degree certificates</li>
-                <li>Experience letters</li>
-                <li>Sponsorship documents from a U.S. employer</li>
+                <li>H-1B Visa for specialty occupations</li>
+                <li>L-1 Visa for intracompany transferees</li>
+                <li>O-1 Visa for individuals with extraordinary abilities</li>
             </ul>
-            <h3>Family Sponsorship</h3>
+            <h3>Core Documentation</h3>
+            <ol>
+                <li><strong>Petition Approval:</strong> Approval notice from U.S. Citizenship and Immigration Services (USCIS) for the specific visa type.</li>
+                <li><strong>Valid Passport:</strong> A passport with at least six months' validity beyond the planned departure date from the U.S.</li>
+                <li><strong>Visa Application:</strong> Completion of the DS-160 form and payment of the application fee.</li>
+                <li><strong>Supporting Documents:</strong> Depending on the visa type, this may include diplomas, transcripts, letters from current or prospective employers, and proof of qualifications.</li>
+            </ol>
+            <h3>Structural Visa Compliance Paths</h3>
             <ul>
-                <li>Proof of relationship (birth or marriage certificates)</li>
-                <li>Sponsor's income proof</li>
-                <li>Medical examination records</li>
-            </ul>
-            <h3>Diversity Visa Lottery</h3>
-            <ul>
-                <li>Passport</li>
-                <li>Birth certificate</li>
-                <li>Police certificates</li>
-                <li>Medical examination records</li>
-            </ul>
-        </section>
-        <section id="canada" contenteditable="true">
-            <h2>Immigration to Canada</h2>
-            <h3>Express Entry</h3>
-            <ul>
-                <li>Language proficiency test results (IELTS, CELPIP, or TEF)</li>
-                <li>Educational credential assessment (ECA) report</li>
-                <li>Proof of work experience</li>
-                <li>Police certificates</li>
-            </ul>
-            <h3>Family Sponsorship</h3>
-            <ul>
-                <li>Proof of relationship</li>
-                <li>Sponsor's income proof</li>
-                <li>Medical examination records</li>
-            </ul>
-            <h3>Provincial Nominee Programs (PNPs)</h3>
-            <ul>
-                <li>Educational certificates</li>
-                <li>Work experience letters</li>
-                <li>Language test results</li>
-                <li>Proof of funds</li>
+                <li><strong>Employer Sponsorship:</strong> Many work visas require a U.S. employer to sponsor the applicant.</li>
+                <li><strong>Labor Condition Application (LCA):</strong> For H-1B visas, the employer must file an LCA with the U.S. Department of Labor.</li>
             </ul>
         </section>
-        <section id="australia" contenteditable="true">
-            <h2>Immigration to Australia</h2>
-            <h3>Skilled Independent Visa (Subclass 189)</h3>
+        <section id="pathway2">
+            <h2>Study Visas for Canada</h2>
+            <p><strong>Target Destination:</strong> Canada</p>
+            <h3>Visa Types:</h3>
             <ul>
-                <li>Skills assessment report</li>
-                <li>English language proficiency test results</li>
-                <li>Qualification certificates</li>
-                <li>Police certificates</li>
+                <li>Study Permit for students</li>
+                <li>Temporary Resident Visa (TRV) or Electronic Travel Authorization (eTA) for entry into Canada</li>
             </ul>
-            <h3>Family Sponsorship</h3>
+            <h3>Core Documentation</h3>
+            <ol>
+                <li><strong>Letter of Acceptance:</strong> From a designated learning institution in Canada.</li>
+                <li><strong>Proof of Funds:</strong> Demonstrating sufficient financial resources to support oneself during the study period.</li>
+                <li><strong>Passport:</strong> A valid passport with sufficient validity.</li>
+                <li><strong>Study Permit Application:</strong> Submission of the application through the Immigration, Refugees and Citizenship Canada (IRCC) portal or a paper application, depending on the applicant's situation.</li>
+            </ol>
+            <h3>Structural Visa Compliance Paths</h3>
             <ul>
-                <li>Proof of relationship</li>
-                <li>Sponsor's income proof</li>
-                <li>Medical examination records</li>
+                <li><strong>Designated Learning Institution (DLI):</strong> The educational institution must be a DLI for the study permit application to be valid.</li>
+                <li><strong>Biometrics:</strong> Applicants may need to provide biometrics as part of the application process.</li>
             </ul>
-            <h3>State Nomination (Subclass 190)</h3>
+        </section>
+        <section id="pathway3">
+            <h2>Skilled Migration Visas for Australia</h2>
+            <p><strong>Target Destination:</strong> Australia</p>
+            <h3>Visa Types:</h3>
             <ul>
-                <li>Skills assessment report</li>
-                <li>Qualification certificates</li>
-                <li>English language proficiency test results</li>
-                <li>Proof of funds</li>
+                <li>Skilled Independent Visa (Subclass 189)</li>
+                <li>Skilled Nominated Visa (Subclass 190)</li>
+                <li>Skilled Regional (Provisional) Visa (Subclass 491)</li>
+            </ul>
+            <h3>Core Documentation</h3>
+            <ol>
+                <li><strong>Skills Assessment:</strong> Relevant to the applicant's occupation, from a recognized assessing authority.</li>
+                <li><strong>Expression of Interest (EOI):</strong> Submission through the SkillSelect system, outlining the applicant's skills, qualifications, and experience.</li>
+                <li><strong>Invitation to Apply:</strong> Receipt of an invitation to apply for the visa after the EOI has been assessed.</li>
+                <li><strong>Health and Character Checks:</strong> Applicants must undergo health examinations and provide police certificates.</li>
+            </ol>
+            <h3>Structural Visa Compliance Paths</h3>
+            <ul>
+                <li><strong>Points System:</strong> Applicants are assessed based on a points system that considers factors like age, English language proficiency, qualifications, and work experience.</li>
+                <li><strong>Nomination or Sponsorship:</strong> For certain visas, applicants need to be nominated by an Australian state or territory government agency or sponsored by an eligible relative.</li>
             </ul>
         </section>
         <button id="audit-button">Audit Processing</button>
@@ -258,54 +273,29 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Audit Processing</h2>
-                <p>Loading data from <a href="https://salarybit.in/api/v1/visa-brief" target="_blank">https://salarybit.in/api/v1/visa-brief</a></p>
-                <div id="audit-data">Loading...</div>
+                <p>Processing audit request...</p>
+                <button id="submit-audit">Submit</button>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById("modal");
-            const auditButton = document.getElementById("audit-button");
-            const closeButton = document.querySelector(".close");
-            const auditData = document.getElementById("audit-data");
-            const sections = {
-                usa: document.getElementById("usa"),
-                canada: document.getElementById("canada"),
-                australia: document.getElementById("australia")
-            };
+            let modal = document.getElementById("modal");
+            let auditButton = document.getElementById("audit-button");
+            let closeButton = document.getElementsByClassName("close")[0];
+            let submitAuditButton = document.getElementById("submit-audit");
 
-            // Audit button functionality
-            auditButton.onclick = function() {
-                modal.style.display = "block";
-                auditData.textContent = "Loading...";
+            if (auditButton) {
+                auditButton.onclick = function() {
+                    modal.style.display = "block";
+                };
+            }
 
-                fetch('https://salarybit.in/api/v1/visa-brief', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    auditData.textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    auditData.textContent = `Error loading audit data: ${error.message}\n\nPlease check your network connection and try again.`;
-                });
-            };
-
-            // Close modal functionality
-            closeButton.onclick = function() {
-                modal.style.display = "none";
-            };
+            if (closeButton) {
+                closeButton.onclick = function() {
+                    modal.style.display = "none";
+                };
+            }
 
             window.onclick = function(event) {
                 if (event.target == modal) {
@@ -313,50 +303,78 @@
                 }
             };
 
-            // LocalStorage persistence with error handling
-            function saveSection(sectionId) {
-                try {
-                    if (sections[sectionId]) {
-                        localStorage.setItem(sectionId, sections[sectionId].innerHTML);
-                    }
-                } catch (e) {
-                    console.error(`Error saving ${sectionId} section:`, e);
-                }
-            }
-
-            function loadSection(sectionId) {
-                try {
-                    if (localStorage.getItem(sectionId) && sections[sectionId]) {
-                        sections[sectionId].innerHTML = localStorage.getItem(sectionId);
-                    }
-                } catch (e) {
-                    console.error(`Error loading ${sectionId} section:`, e);
-                }
-            }
-
-            // Add event listeners for content changes
-            Object.keys(sections).forEach(sectionId => {
-                if (sections[sectionId]) {
-                    sections[sectionId].addEventListener("input", function() {
-                        saveSection(sectionId);
-                    });
-                    loadSection(sectionId);
-                }
-            });
-
-            // Smooth scrolling for navigation links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
+            if (submitAuditButton) {
+                submitAuditButton.onclick = function() {
+                    try {
+                        fetch('https://salarybit.in/api/v1/visa-brief', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                pathway1: JSON.parse(localStorage.getItem("pathway1")),
+                                pathway2: JSON.parse(localStorage.getItem("pathway2")),
+                                pathway3: JSON.parse(localStorage.getItem("pathway3"))
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Audit submitted successfully:', data);
+                            modal.style.display = "none";
+                            alert('Audit submitted successfully!');
+                        })
+                        .catch(error => {
+                            console.error('Error submitting audit:', error);
+                            alert('Error submitting audit. Please try again.');
                         });
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An unexpected error occurred. Please try again.');
                     }
-                });
-            });
+                };
+            }
+
+            let pathway1 = {
+                targetDestination: "United States",
+                visaTypes: ["H-1B Visa for specialty occupations", "L-1 Visa for intracompany transferees", "O-1 Visa for individuals with extraordinary abilities"],
+                coreDocumentation: ["Petition Approval", "Valid Passport", "Visa Application", "Supporting Documents"],
+                structuralVisaCompliancePaths: ["Employer Sponsorship", "Labor Condition Application (LCA)"]
+            };
+
+            let pathway2 = {
+                targetDestination: "Canada",
+                visaTypes: ["Study Permit for students", "Temporary Resident Visa (TRV) or Electronic Travel Authorization (eTA) for entry into Canada"],
+                coreDocumentation: ["Letter of Acceptance", "Proof of Funds", "Passport", "Study Permit Application"],
+                structuralVisaCompliancePaths: ["Designated Learning Institution (DLI)", "Biometrics"]
+            };
+
+            let pathway3 = {
+                targetDestination: "Australia",
+                visaTypes: ["Skilled Independent Visa (Subclass 189)", "Skilled Nominated Visa (Subclass 190)", "Skilled Regional (Provisional) Visa (Subclass 491)"],
+                coreDocumentation: ["Skills Assessment", "Expression of Interest (EOI)", "Invitation to Apply", "Health and Character Checks"],
+                structuralVisaCompliancePaths: ["Points System", "Nomination or Sponsorship"]
+            };
+
+            try {
+                localStorage.setItem("pathway1", JSON.stringify(pathway1));
+                localStorage.setItem("pathway2", JSON.stringify(pathway2));
+                localStorage.setItem("pathway3", JSON.stringify(pathway3));
+
+                let storedPathway1 = JSON.parse(localStorage.getItem("pathway1"));
+                let storedPathway2 = JSON.parse(localStorage.getItem("pathway2"));
+                let storedPathway3 = JSON.parse(localStorage.getItem("pathway3"));
+
+                console.log('Stored Pathway 1:', storedPathway1);
+                console.log('Stored Pathway 2:', storedPathway2);
+                console.log('Stored Pathway 3:', storedPathway3);
+            } catch (error) {
+                console.error('Error with localStorage:', error);
+            }
         });
     </script>
 </body>
