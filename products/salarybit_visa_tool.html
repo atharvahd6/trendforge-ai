@@ -20,30 +20,27 @@
             text-align: center;
         }
 
-        nav ul {
+        header nav ul {
             list-style: none;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: space-between;
-            max-width: 800px;
-            margin: 0 auto;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        nav li {
-            margin-right: 20px;
+        header nav ul li {
+            margin: 0 20px;
         }
 
-        nav a {
+        header nav a {
             color: #fff;
             text-decoration: none;
-            padding: 0.5em 1em;
-            display: block;
+            font-weight: bold;
         }
 
-        nav a:hover {
-            background-color: #444;
-            border-radius: 4px;
+        header nav a:hover {
+            text-decoration: underline;
         }
 
         main {
@@ -51,7 +48,7 @@
             flex-direction: column;
             align-items: center;
             padding: 2em;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -61,7 +58,7 @@
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            border-radius: 8px;
+            border-radius: 5px;
         }
 
         h2 {
@@ -71,15 +68,10 @@
             padding-bottom: 0.5em;
         }
 
-        h3 {
-            color: #555;
-            margin-top: 1.5em;
-        }
-
         ul {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 1em 0;
         }
 
         li {
@@ -91,16 +83,13 @@
         li:before {
             content: "•";
             color: #333;
+            font-weight: bold;
             position: absolute;
             left: 0;
         }
 
-        ol {
-            padding-left: 1.5em;
-        }
-
-        ol li {
-            margin-bottom: 10px;
+        p {
+            line-height: 1.6;
         }
 
         #audit-button {
@@ -110,13 +99,13 @@
             padding: 12px 24px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px;
             margin-top: 20px;
             transition: background-color 0.3s;
         }
 
         #audit-button:hover {
-            background-color: #444;
+            background-color: #555;
         }
 
         .modal {
@@ -138,8 +127,7 @@
             border: 1px solid #888;
             width: 80%;
             max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
             position: relative;
         }
 
@@ -153,10 +141,8 @@
             cursor: pointer;
         }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
+        .close:hover {
+            color: #333;
         }
 
         #submit-audit {
@@ -166,22 +152,24 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px;
             margin-top: 20px;
-            transition: background-color 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         #submit-audit:hover {
-            background-color: #444;
+            background-color: #555;
         }
 
         @media (max-width: 768px) {
-            nav ul {
+            header nav ul {
                 flex-direction: column;
                 align-items: center;
             }
 
-            nav li {
+            header nav ul li {
                 margin: 5px 0;
             }
 
@@ -196,185 +184,158 @@
     <header>
         <nav>
             <ul>
-                <li><a href="#pathway1">Work Visas for the United States</a></li>
-                <li><a href="#pathway2">Study Visas for Canada</a></li>
-                <li><a href="#pathway3">Skilled Migration Visas for Australia</a></li>
+                <li><a href="#united-states">United States</a></li>
+                <li><a href="#canada">Canada</a></li>
+                <li><a href="#australia">Australia</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="pathway1">
-            <h2>Work Visas for the United States</h2>
-            <p><strong>Target Destination:</strong> United States</p>
-            <h3>Visa Types:</h3>
+        <section id="united-states">
+            <h2>United States Immigration Pathway</h2>
+            <p>The United States is a top destination for immigrants seeking better opportunities. The primary pathways for immigration to the U.S. include work visas, family sponsorship, and the diversity visa lottery.</p>
             <ul>
-                <li>H-1B Visa for specialty occupations</li>
-                <li>L-1 Visa for intracompany transferees</li>
-                <li>O-1 Visa for individuals with extraordinary abilities</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ol>
-                <li><strong>Petition Approval:</strong> Approval notice from U.S. Citizenship and Immigration Services (USCIS) for the specific visa type.</li>
-                <li><strong>Valid Passport:</strong> A passport with at least six months' validity beyond the planned departure date from the U.S.</li>
-                <li><strong>Visa Application:</strong> Completion of the DS-160 form and payment of the application fee.</li>
-                <li><strong>Supporting Documents:</strong> Depending on the visa type, this may include diplomas, transcripts, letters from current or prospective employers, and proof of qualifications.</li>
-            </ol>
-            <h3>Structural Visa Compliance Paths</h3>
-            <ul>
-                <li><strong>Employer Sponsorship:</strong> Many work visas require a U.S. employer to sponsor the applicant.</li>
-                <li><strong>Labor Condition Application (LCA):</strong> For H-1B visas, the employer must file an LCA with the U.S. Department of Labor.</li>
+                <li><strong>Work Visas (H-1B, L-1, O-1):</strong> Petition for a Nonimmigrant Worker (Form I-129), Labor Condition Application (LCA), and a valid passport.</li>
+                <li><strong>Family Sponsorship:</strong> Petition for Alien Relative (Form I-130), Application for Adjustment of Status (Form I-485), and supporting documents like birth and marriage certificates.</li>
+                <li><strong>Diversity Visa Lottery:</strong> Online application through the official DV lottery website, passport, and education/work experience documents.</li>
             </ul>
         </section>
-        <section id="pathway2">
-            <h2>Study Visas for Canada</h2>
-            <p><strong>Target Destination:</strong> Canada</p>
-            <h3>Visa Types:</h3>
+        <section id="canada">
+            <h2>Canada Immigration Pathway</h2>
+            <p>Canada offers a points-based system for skilled workers, making it an attractive option for professionals. The core pathways include Express Entry, Provincial Nominee Programs (PNPs), and family sponsorship.</p>
             <ul>
-                <li>Study Permit for students</li>
-                <li>Temporary Resident Visa (TRV) or Electronic Travel Authorization (eTA) for entry into Canada</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ol>
-                <li><strong>Letter of Acceptance:</strong> From a designated learning institution in Canada.</li>
-                <li><strong>Proof of Funds:</strong> Demonstrating sufficient financial resources to support oneself during the study period.</li>
-                <li><strong>Passport:</strong> A valid passport with sufficient validity.</li>
-                <li><strong>Study Permit Application:</strong> Submission of the application through the Immigration, Refugees and Citizenship Canada (IRCC) portal or a paper application, depending on the applicant's situation.</li>
-            </ol>
-            <h3>Structural Visa Compliance Paths</h3>
-            <ul>
-                <li><strong>Designated Learning Institution (DLI):</strong> The educational institution must be a DLI for the study permit application to be valid.</li>
-                <li><strong>Biometrics:</strong> Applicants may need to provide biometrics as part of the application process.</li>
+                <li><strong>Express Entry:</strong> Language test results (IELTS, CELPIP, or TEF), Educational Credential Assessment (ECA), and a valid passport.</li>
+                <li><strong>Provincial Nominee Programs (PNPs):</strong> Varies by province but typically includes a nomination certificate, language test results, and education/work experience documents.</li>
+                <li><strong>Family Sponsorship:</strong> Application to Sponsor a Member of the Family Class (Form IMM 1344), Sponsorship Agreement and Undertaking (Form IMM 1344A), and proof of income.</li>
             </ul>
         </section>
-        <section id="pathway3">
-            <h2>Skilled Migration Visas for Australia</h2>
-            <p><strong>Target Destination:</strong> Australia</p>
-            <h3>Visa Types:</h3>
+        <section id="australia">
+            <h2>Australia Immigration Pathway</h2>
+            <p>Australia's immigration system is also points-based, focusing on skilled migration. The primary pathways include Skilled Independent visa (subclass 189), Skilled Nominated visa (subclass 190), and the Temporary Skilled Migration visa (subclass 457).</p>
             <ul>
-                <li>Skilled Independent Visa (Subclass 189)</li>
-                <li>Skilled Nominated Visa (Subclass 190)</li>
-                <li>Skilled Regional (Provisional) Visa (Subclass 491)</li>
-            </ul>
-            <h3>Core Documentation</h3>
-            <ol>
-                <li><strong>Skills Assessment:</strong> Relevant to the applicant's occupation, from a recognized assessing authority.</li>
-                <li><strong>Expression of Interest (EOI):</strong> Submission through the SkillSelect system, outlining the applicant's skills, qualifications, and experience.</li>
-                <li><strong>Invitation to Apply:</strong> Receipt of an invitation to apply for the visa after the EOI has been assessed.</li>
-                <li><strong>Health and Character Checks:</strong> Applicants must undergo health examinations and provide police certificates.</li>
-            </ol>
-            <h3>Structural Visa Compliance Paths</h3>
-            <ul>
-                <li><strong>Points System:</strong> Applicants are assessed based on a points system that considers factors like age, English language proficiency, qualifications, and work experience.</li>
-                <li><strong>Nomination or Sponsorship:</strong> For certain visas, applicants need to be nominated by an Australian state or territory government agency or sponsored by an eligible relative.</li>
+                <li><strong>Skilled Independent and Nominated Visas:</strong> Skills assessment from a relevant assessing authority, English language proficiency test results (IELTS, TOEFL, etc.), and a valid passport.</li>
+                <li><strong>Temporary Skilled Migration (TSM) visa:</strong> Nomination by an approved sponsor, skills assessment, and health insurance.</li>
             </ul>
         </section>
         <button id="audit-button">Audit Processing</button>
-        <div id="modal" class="modal">
+        <div id="audit-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Audit Processing</h2>
-                <p>Processing audit request...</p>
+                <p id="audit-message">Processing audit request...</p>
                 <button id="submit-audit">Submit</button>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let modal = document.getElementById("modal");
-            let auditButton = document.getElementById("audit-button");
-            let closeButton = document.getElementsByClassName("close")[0];
-            let submitAuditButton = document.getElementById("submit-audit");
+            const auditButton = document.getElementById('audit-button');
+            const auditModal = document.getElementById('audit-modal');
+            const closeButton = document.querySelector('.close');
+            const submitAuditButton = document.getElementById('submit-audit');
+            const auditMessage = document.getElementById('audit-message');
 
-            if (auditButton) {
+            if (auditButton && auditModal && closeButton && submitAuditButton) {
                 auditButton.onclick = function() {
-                    modal.style.display = "block";
+                    auditModal.style.display = 'block';
+                    auditMessage.textContent = 'Processing audit request...';
                 };
-            }
 
-            if (closeButton) {
                 closeButton.onclick = function() {
-                    modal.style.display = "none";
+                    auditModal.style.display = 'none';
                 };
-            }
 
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            };
-
-            if (submitAuditButton) {
-                submitAuditButton.onclick = function() {
-                    try {
-                        fetch('https://salarybit.in/api/v1/visa-brief', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                pathway1: JSON.parse(localStorage.getItem("pathway1")),
-                                pathway2: JSON.parse(localStorage.getItem("pathway2")),
-                                pathway3: JSON.parse(localStorage.getItem("pathway3"))
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Audit submitted successfully:', data);
-                            modal.style.display = "none";
-                            alert('Audit submitted successfully!');
-                        })
-                        .catch(error => {
-                            console.error('Error submitting audit:', error);
-                            alert('Error submitting audit. Please try again.');
-                        });
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('An unexpected error occurred. Please try again.');
+                window.onclick = function(event) {
+                    if (event.target === auditModal) {
+                        auditModal.style.display = 'none';
                     }
                 };
+
+                submitAuditButton.onclick = function() {
+                    auditMessage.textContent = 'Submitting audit request...';
+                    fetch('https://salarybit.in/api/v1/visa-brief', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action: 'audit' })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        auditMessage.textContent = 'Audit submitted successfully!';
+                        console.log('Audit response:', data);
+                        setTimeout(() => {
+                            auditModal.style.display = 'none';
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        console.error('Error during audit submission:', error);
+                        auditMessage.textContent = 'Error submitting audit. Please try again.';
+                    });
+                };
             }
 
-            let pathway1 = {
-                targetDestination: "United States",
-                visaTypes: ["H-1B Visa for specialty occupations", "L-1 Visa for intracompany transferees", "O-1 Visa for individuals with extraordinary abilities"],
-                coreDocumentation: ["Petition Approval", "Valid Passport", "Visa Application", "Supporting Documents"],
-                structuralVisaCompliancePaths: ["Employer Sponsorship", "Labor Condition Application (LCA)"]
-            };
-
-            let pathway2 = {
-                targetDestination: "Canada",
-                visaTypes: ["Study Permit for students", "Temporary Resident Visa (TRV) or Electronic Travel Authorization (eTA) for entry into Canada"],
-                coreDocumentation: ["Letter of Acceptance", "Proof of Funds", "Passport", "Study Permit Application"],
-                structuralVisaCompliancePaths: ["Designated Learning Institution (DLI)", "Biometrics"]
-            };
-
-            let pathway3 = {
-                targetDestination: "Australia",
-                visaTypes: ["Skilled Independent Visa (Subclass 189)", "Skilled Nominated Visa (Subclass 190)", "Skilled Regional (Provisional) Visa (Subclass 491)"],
-                coreDocumentation: ["Skills Assessment", "Expression of Interest (EOI)", "Invitation to Apply", "Health and Character Checks"],
-                structuralVisaCompliancePaths: ["Points System", "Nomination or Sponsorship"]
-            };
-
-            try {
-                localStorage.setItem("pathway1", JSON.stringify(pathway1));
-                localStorage.setItem("pathway2", JSON.stringify(pathway2));
-                localStorage.setItem("pathway3", JSON.stringify(pathway3));
-
-                let storedPathway1 = JSON.parse(localStorage.getItem("pathway1"));
-                let storedPathway2 = JSON.parse(localStorage.getItem("pathway2"));
-                let storedPathway3 = JSON.parse(localStorage.getItem("pathway3"));
-
-                console.log('Stored Pathway 1:', storedPathway1);
-                console.log('Stored Pathway 2:', storedPathway2);
-                console.log('Stored Pathway 3:', storedPathway3);
-            } catch (error) {
-                console.error('Error with localStorage:', error);
+            // LocalStorage persistence with error handling
+            function saveData(key, value) {
+                try {
+                    if (typeof value !== 'string') {
+                        value = JSON.stringify(value);
+                    }
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    return false;
+                }
             }
+
+            function loadData(key) {
+                try {
+                    const data = localStorage.getItem(key);
+                    if (data === null) return null;
+                    try {
+                        return JSON.parse(data);
+                    } catch {
+                        return data;
+                    }
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                    return null;
+                }
+            }
+
+            // Example usage with error handling
+            const userData = {
+                name: 'John Doe',
+                email: 'john.doe@example.com',
+                lastAccess: new Date().toISOString()
+            };
+
+            if (saveData('user', userData)) {
+                const loadedData = loadData('user');
+                if (loadedData) {
+                    console.log('Loaded user data:', loadedData);
+                }
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>
