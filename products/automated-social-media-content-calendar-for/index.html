@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Social Media Content Calendar for Solopreneurs</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1, h2 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        label {
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #666;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: none;
+            width: 80%;
+            max-width: 400px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Automated Social Media Content Calendar for Solopreneurs</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Get Started</h2>
+            <form id="user-inputs">
+                <label for="niche">Niche:</label>
+                <input type="text" id="niche" name="niche" required>
+                <label for="audience">Audience:</label>
+                <input type="text" id="audience" name="audience" required>
+                <label for="previous-engagement">Previous Engagement Metrics:</label>
+                <input type="text" id="previous-engagement" name="previous-engagement">
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+        </section>
+        <section>
+            <h2>Features</h2>
+            <ul>
+                <li>AI-driven content suggestions</li>
+                <li>Automated scheduling across multiple social media platforms</li>
+                <li>Integrated analytics to track performance</li>
+                <li>Content library and reuse functionality</li>
+                <li>Personalized alerts and recommendations</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Benefits</h2>
+            <ul>
+                <li>Saves time</li>
+                <li>Increases engagement</li>
+                <li>Enhances online presence</li>
+                <li>Contributes to business growth and success</li>
+            </ul>
+        </section>
+        <button id="lead-capture-btn">Get Started with Automated Social Media Content Calendar</button>
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div id="lead-capture-modal">
+            <button class="close-btn" id="close-modal-btn">&times;</button>
+            <h2>Get Started with Automated Social Media Content Calendar</h2>
+            <form id="lead-capture-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit" id="lead-capture-submit-btn">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userInputForm = document.getElementById('user-inputs');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const leadCaptureForm = document.getElementById('lead-capture-form');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            function showModal() {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            }
+
+            function hideModal() {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            }
+
+            userInputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                try {
+                    const niche = document.getElementById('niche').value;
+                    const audience = document.getElementById('audience').value;
+                    const previousEngagement = document.getElementById('previous-engagement').value;
+
+                    if (typeof Storage !== 'undefined') {
+                        localStorage.setItem('niche', niche);
+                        localStorage.setItem('audience', audience);
+                        localStorage.setItem('previousEngagement', previousEngagement);
+                    } else {
+                        console.warn('localStorage is not available');
+                    }
+                } catch (error) {
+                    console.error('Error saving to localStorage:', error);
+                }
+            });
+
+            leadCaptureBtn.addEventListener('click', showModal);
+
+            closeModalBtn.addEventListener('click', hideModal);
+
+            modalOverlay.addEventListener('click', hideModal);
+
+            leadCaptureForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+
+                    let niche = '';
+                    let audience = '';
+                    let previousEngagement = '';
+
+                    if (typeof Storage !== 'undefined') {
+                        niche = localStorage.getItem('niche') || '';
+                        audience = localStorage.getItem('audience') || '';
+                        previousEngagement = localStorage.getItem('previousEngagement') || '';
+                    }
+
+                    const payload = {
+                        name: name,
+                        email: email,
+                        productConcept: 'Automated Social Media Content Calendar for Solopreneurs',
+                        niche: niche,
+                        audience: audience,
+                        previousEngagement: previousEngagement
+                    };
+
+                    try {
+                        const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log('Success:', data);
+                        hideModal();
+                        alert('Thank you for your interest! We will contact you soon.');
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                        alert('There was an error submitting your information. Please try again later.');
+                    }
+                } catch (error) {
+                    console.error('Error processing form:', error);
+                    alert('There was an error processing your request.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
