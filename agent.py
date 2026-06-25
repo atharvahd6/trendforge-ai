@@ -69,7 +69,14 @@ def call_groq(prompt: str) -> str:
 
 
 def call_mistral(prompt: str) -> str:
-    from mistralai import Mistral
+    # mistralai changed its import path in v2.0 (from mistralai import Mistral ->
+    # from mistralai.client import Mistral). Support both so this works regardless
+    # of which version pip resolves.
+    try:
+        from mistralai import Mistral
+    except ImportError:
+        from mistralai.client import Mistral
+
     with Mistral(api_key=os.environ["MISTRAL_API_KEY"]) as client:
         response = client.chat.complete(
             model=MISTRAL_MODEL,
