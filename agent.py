@@ -3,41 +3,95 @@ import re
 import sys
 import time
 from datetime import datetime
-from crewai import Agent, Task, Crew, Process, LLM
 
 # ==========================================================
 # 1. ORCHESTRATION CONFIGURATION & AUTO-HEALING STRATEGIES
 # ==========================================================
-# Define model combinations in order of preference to bypass API downtime/quotas
+# Each strategy names which provider handles research vs coding vs audit.
+# No agent framework is used here on purpose — requirements.txt only ships
+# google-genai, groq, and mistralai, so this calls each SDK directly.
 
 FALLBACK_STRATEGIES = [
     {
-        "name": "Primary Strategy: Gemini-Flash + Groq",
-        "research_model": "gemini/gemini-2.0-flash",
-        "coding_model": "groq/llama-3.3-70b-versatile"
+        "name": "Primary Strategy: Gemini + Groq",
+        "research_provider": "gemini",
+        "coding_provider": "groq",
     },
     {
-        "name": "Secondary Fallback: Pure Groq Architecture",
-        "research_model": "groq/llama-3.3-70b-versatile",
-        "coding_model": "groq/llama-3.3-70b-versatile"
+        "name": "Secondary Fallback: Pure Groq",
+        "research_provider": "groq",
+        "coding_provider": "groq",
     },
     {
-        "name": "Tertiary Fallback: Mistral + Groq Combination",
-        "research_model": "mistral/mistral-large-latest",
-        "coding_model": "groq/llama-3.3-70b-versatile"
-    }
+        "name": "Tertiary Fallback: Mistral + Groq",
+        "research_provider": "mistral",
+        "coding_provider": "groq",
+    },
 ]
+
+GEMINI_MODEL = "gemini-2.0-flash"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+MISTRAL_MODEL = "mistral-large-latest"
 
 MANUAL_IDEAS_PATH = "manual_ideas.txt"
 PRODUCTS_DIR = "products"
 JOURNAL_PATH = "MASTER_TREND_JOURNAL.md"
+INDEX_PATH = "index.html"
+
+JOURNAL_HEADER = (
+    "# 📚 Master Autonomous Trend Journal\n\n"
+    "| Date Run | Discovered Startup Concept | Live Web App Link |\n"
+    "| :--- | :--- | :--- |\n"
+)
+
+GITHUB_PAGES_BASE = "https://atharvahd6.github.io/trendforge-ai/products"
 
 
-def initialize_llm(model_string: str):
-    """Safely initializes an LLM object with basic error handling."""
-    return LLM(model=model_string, temperature=0.2)
+# ==========================================================
+# 2. PROVIDER CALL WRAPPERS (direct SDK usage, no framework)
+# ==========================================================
+def call_gemini(prompt: str) -> str:
+    from google import genai
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+    return response.text
 
 
+def call_groq(prompt: str) -> str:
+    from groq import Groq
+    client = Groq(api_key=os.environ["GROQ_API_KEY"])
+    completion = client.chat.completions.create(
+        messages=[{"role": "user", "content": prompt}],
+        model=GROQ_MODEL,
+        temperature=0.2,
+    )
+    return completion.choices[0].message.content
+
+
+def call_mistral(prompt: str) -> str:
+    from mistralai import Mistral
+    with Mistral(api_key=os.environ["MISTRAL_API_KEY"]) as client:
+        response = client.chat.complete(
+            model=MISTRAL_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    return response.choices[0].message.content
+
+
+PROVIDER_CALLERS = {
+    "gemini": call_gemini,
+    "groq": call_groq,
+    "mistral": call_mistral,
+}
+
+
+def call_provider(provider: str, prompt: str) -> str:
+    return PROVIDER_CALLERS[provider](prompt)
+
+
+# ==========================================================
+# 3. MANUAL OVERRIDE HANDLING
+# ==========================================================
 def read_manual_idea():
     """
     Reads manual_ideas.txt if present. Returns the stripped content if it
@@ -53,9 +107,6 @@ def read_manual_idea():
     if not content:
         return None
 
-    # The template ships as "LABEL:" lines with nothing after the colon.
-    # Only treat this as a real idea if at least one label has an actual
-    # value filled in after it (or there's a freeform continuation line).
     has_real_value = False
     for line in content.splitlines():
         line = line.strip()
@@ -76,6 +127,17 @@ def read_manual_idea():
     return content
 
 
+def clear_manual_idea():
+    """After a manual idea has been consumed, blank the file so the next run
+    falls back to autonomous trend-scouting, as documented in the README."""
+    if os.path.exists(MANUAL_IDEAS_PATH):
+        with open(MANUAL_IDEAS_PATH, "w", encoding="utf-8") as f:
+            f.write("")
+
+
+# ==========================================================
+# 4. TEXT / FILE HELPERS
+# ==========================================================
 def slugify(text: str, max_words: int = 6) -> str:
     """Turns a freeform title/topic string into a filesystem-safe slug."""
     text = text.lower()
@@ -85,36 +147,148 @@ def slugify(text: str, max_words: int = 6) -> str:
     return slug[:60]
 
 
-def extract_title(markdown_text: str, fallback: str) -> str:
-    """Pulls a usable title out of the SEO/research agent's markdown output."""
-    for line in markdown_text.splitlines():
+def extract_title(text: str, fallback: str) -> str:
+    """Pulls a usable product title out of research output or a manual idea block."""
+    for line in text.splitlines():
         line = line.strip()
         if line.startswith("#"):
             return line.lstrip("#").strip()
         if line.upper().startswith("PRODUCT NAME:"):
-            return line.split(":", 1)[1].strip()
+            value = line.split(":", 1)[1].strip()
+            if value:
+                return value
     return fallback
 
 
-def append_to_journal(title: str, filename: str, source: str):
-    """Appends a dated entry to MASTER_TREND_JOURNAL.md so the archive is
-    actually a running index, instead of relying on the README's claim alone."""
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    entry = f"\n## {today} — {title}\n- Source: {source}\n- Output: `products/{filename}`\n"
-
-    mode = "a" if os.path.exists(JOURNAL_PATH) else "w"
-    with open(JOURNAL_PATH, mode, encoding="utf-8") as f:
-        if mode == "w":
-            f.write("# Master Trend Journal\n\nRunning archive of every concept TrendForge-AI has produced.\n")
-        f.write(entry)
+def strip_code_fences(html_text: str) -> str:
+    """Models sometimes wrap output in ```html ... ``` even when told not to."""
+    text = html_text.strip()
+    text = re.sub(r"^```(?:html)?\s*", "", text)
+    text = re.sub(r"\s*```$", "", text)
+    return text.strip()
 
 
-def clear_manual_idea():
-    """After a manual idea has been consumed, blank the file so the next run
-    falls back to autonomous trend-scouting, as documented in the README."""
-    if os.path.exists(MANUAL_IDEAS_PATH):
-        with open(MANUAL_IDEAS_PATH, "w", encoding="utf-8") as f:
-            f.write("")
+def ensure_journal_exists():
+    if not os.path.exists(JOURNAL_PATH):
+        with open(JOURNAL_PATH, "w", encoding="utf-8") as f:
+            f.write(JOURNAL_HEADER)
+
+
+def read_journal_rows():
+    """Parses existing markdown table rows out of MASTER_TREND_JOURNAL.md.
+    Returns a list of (date, concept, link) tuples, oldest first."""
+    ensure_journal_exists()
+    rows = []
+    with open(JOURNAL_PATH, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith("|"):
+                continue
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) != 3:
+                continue
+            if cells[0].lower() in ("date run", ":---"):
+                continue
+            rows.append(tuple(cells))
+    return rows
+
+
+def append_journal_row(date_str: str, title: str, link: str):
+    ensure_journal_exists()
+    with open(JOURNAL_PATH, "a", encoding="utf-8") as f:
+        f.write(f"| {date_str} | {title} | {link} |\n")
+
+
+def extract_link_url(link_markdown: str) -> str:
+    """Pulls the raw URL out of a markdown link cell like
+    '[Launch App Tool 🌐](https://...)' so it can be re-templated into HTML."""
+    match = re.search(r"\((https?://[^)]+)\)", link_markdown)
+    return match.group(1) if match else "#"
+
+
+def render_index_html(rows):
+    """Rebuilds index.html from journal rows, keeping the exact same dark
+    dashboard styling that was already hand-built — only the <tbody> changes."""
+    row_html_blocks = []
+    for date_str, title, link_markdown in rows:
+        url = extract_link_url(link_markdown)
+        row_html_blocks.append(f"""
+            <tr>
+                <td>{date_str}</td>
+                <td style="font-weight:600; color:#fff;">{title}</td>
+                <td><a href="{url}" target="_blank" style="color:#10B981; text-decoration:none; font-weight:bold;">Launch App Tool 🌐</a></td>
+            </tr>""")
+    rows_html = "".join(row_html_blocks)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendForge Venture Lab</title>
+    <style>
+        :root {{
+            --bg-main: #0B0F19;
+            --bg-card: #151D30;
+            --accent: #38BDF8;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+        }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0; padding: 0; line-height: 1.6;
+        }}
+        header {{
+            max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 2rem 2rem; text-align: center;
+        }}
+        h1 {{
+            font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #38BDF8, #818CF8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }}
+        .subtitle {{ color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 0 auto; }}
+        main {{ max-width: 1100px; margin: 0 auto; padding: 2rem; }}
+        .table-container {{
+            background-color: var(--bg-card); border-radius: 12px; padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05); overflow-x: auto;
+        }}
+        table {{ width: 100%; border-collapse: collapse; text-align: left; }}
+        th, td {{ padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }}
+        th {{ color: var(--accent); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; }}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TrendForge Venture Lab</h1>
+        <p class="subtitle">Every 24 hours, this lab deploys a 100% complete, functional, ready-to-use web tool to solve real digital constraints immediately.</p>
+    </header>
+    <main>
+        <h2 style="font-size:1.5rem; margin-bottom:1rem;">📚 Live Operational Product Ledger</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date Run</th>
+                        <th>Discovered Startup Concept</th>
+                        <th>Live Web App Link</th>
+                    </tr>
+                </thead>
+                <tbody>{rows_html}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>"""
+
+
+def rebuild_index_html():
+    rows = read_journal_rows()
+    html = render_index_html(rows)
+    with open(INDEX_PATH, "w", encoding="utf-8") as f:
+        f.write(html)
 
 
 # Verify foundational credentials exist before initiating the pipeline execution
@@ -124,143 +298,88 @@ if not any([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os
 
 
 # ==========================================================
-# 2. RUNTIME CORE EXECUTION ENGINE
+# 5. RUNTIME CORE EXECUTION ENGINE
 # ==========================================================
 def run_agent_pipeline(strategy):
-    """Constructs and executes the Crew using the chosen fallback profile."""
+    """Runs research -> code -> audit sequentially using direct SDK calls."""
     print(f"\n⚙️ Initializing Pipeline using strategy: {strategy['name']}...")
-
-    research_llm = initialize_llm(strategy["research_model"])
-    coding_llm = initialize_llm(strategy["coding_model"])
-    audit_llm = initialize_llm("mistral/mistral-large-latest")
 
     manual_idea = read_manual_idea()
     using_manual_idea = manual_idea is not None
 
     if using_manual_idea:
         print("📌 Manual override detected in manual_ideas.txt — using your idea instead of autonomous scouting.")
-        research_description = (
+        research_prompt = (
             "A human operator has supplied a specific product concept below. Do NOT invent a "
-            "different idea or search for trends. Analyze and structure the following concept "
-            "exactly as given, filling in target audience and core value proposition if missing:\n\n"
+            "different idea or search for trends. Restructure the following concept into a short "
+            "markdown brief that starts with a single '# Product Name' line as the title, followed "
+            "by target audience, core problem, and value proposition:\n\n"
             f"{manual_idea}"
         )
     else:
         print("🌐 No manual idea found — running fully autonomous trend-scouting mode.")
-        research_description = (
-            "Scan current digital and market trends broadly (not limited to any single industry) "
-            "to find one high-potential, underserved micro-SaaS or tool opportunity. Pick a concrete, "
-            "specific niche problem — not a generic category. Identify the target customer and core "
-            "value proposition."
+        research_prompt = (
+            "Identify one concrete, high-potential, underserved micro-SaaS or single-page tool "
+            "opportunity based on current digital trends (not limited to any single industry). "
+            "Pick a specific niche problem, not a generic category. Respond in markdown starting "
+            "with a single '# Product Name' line as the title, followed by target audience, core "
+            "problem, and value proposition."
         )
 
-    # Construct Specialized Agents
-    seo_analyst = Agent(
-        role="Lead Market & Trend Research Analyst",
-        goal="Identify one concrete, high-potential micro-SaaS or tool opportunity based on real current demand.",
-        backstory="Expert data miner who tracks market pain points, search demand, and emerging niches across any industry.",
-        llm=research_llm,
-        allow_delegation=False,
-        verbose=True
+    research_output = call_provider(strategy["research_provider"], research_prompt)
+
+    coding_prompt = (
+        "Convert the following product brief into a functional, responsive, single-page dark-themed "
+        "HTML/CSS/JS tool. Include localStorage persistence for user inputs and a lead-capture modal "
+        "that POSTs to 'https://salarybit.in/api/v1/lead-intake' with a JSON payload identifying the "
+        "product concept. CRITICAL CONSTRAINT: output ONLY the raw HTML document — a single file with "
+        "an internal <style> block and a single <script> block before the closing </body> tag. Do not "
+        "explain anything, do not output multiple files, and do not wrap the output in markdown code "
+        "fences.\n\nProduct brief:\n\n"
+        f"{research_output}"
     )
+    coded_html = call_provider(strategy["coding_provider"], coding_prompt)
 
-    ui_architect = Agent(
-        role="Senior Frontend Web Architecture Engineer",
-        goal="Transform the researched concept into a clean, dark-themed vanilla HTML/CSS/JS interface tool.",
-        backstory="UI layout virtuoso creating modular codebases with embedded browser state management features.",
-        llm=coding_llm,
-        allow_delegation=False,
-        verbose=True
+    audit_prompt = (
+        "Audit and clean up the following HTML document for production deployment: fix any broken "
+        "tags, add basic error handling around localStorage and fetch calls, and ensure it is a single "
+        "complete, valid HTML document. CRITICAL CONSTRAINT: output ONLY the raw, corrected HTML — no "
+        "explanation, no markdown code fences, no separate files.\n\nHTML to audit:\n\n"
+        f"{coded_html}"
     )
-
-    compliance_auditor = Agent(
-        role="Principal System Security & Legal Compliance Auditor",
-        goal="Audit code output, implement error handlers, and optimize logic layers for production deployment.",
-        backstory="Elite compliance inspector checking framework constraints and handling logic edge cases.",
-        llm=audit_llm,
-        allow_delegation=False,
-        verbose=True
-    )
-
-    # Build Tasks with Cross-Model Dependencies
-    task_1_research = Task(
-        description=research_description,
-        expected_output=(
-            "Markdown summary starting with a single '# Product Name' line as the title, "
-            "followed by target audience, core problem, and value proposition."
-        ),
-        agent=seo_analyst
-    )
-
-    task_2_html = Task(
-        description=(
-            "Convert the research findings into a functional single-page responsive tracking/utility "
-            "workspace app layout. Incorporate a dark corporate styling UI dashboard structure, "
-            "localStorage persistence for user inputs, and an audit/lead-capture modal that POSTs to "
-            "'https://salarybit.in/api/v1/lead-intake' with a JSON payload identifying which product "
-            "concept generated the lead."
-        ),
-        expected_output="Semantic HTML/JS structural application layout.",
-        agent=ui_architect
-    )
-
-    # CRITICAL: Explicitly constrains output to a SINGLE file, stopping split code generation
-    task_3_audit = Task(
-        description=(
-            "Combine the design layouts, inline CSS rules, and JavaScript modules into a SINGLE deployable "
-            "HTML template file. Embed all styling rules directly into an internal <style> block inside the "
-            "document header. Embed all execution logic scripts into a single <script> block right before the "
-            "closing body tag. CRITICAL CONSTRAINT: Do not explain the code, do not output distinct file blocks "
-            "like index.html or styles.css, and do not write separate files. Output ONLY the raw, unified HTML "
-            "layout content. Strip away all markdown code blocks or surrounding ```html syntax markers completely."
-        ),
-        expected_output="Pure raw single-file deployable HTML source code document text.",
-        agent=compliance_auditor
-        # NOTE: no fixed output_file here on purpose — the real filename is computed
-        # below from the research output, so every run produces a NEW file instead
-        # of overwriting the previous day's product.
-    )
-
-    # Assemble and trigger sequential execution loop
-    orchestrator_crew = Crew(
-        agents=[seo_analyst, ui_architect, compliance_auditor],
-        tasks=[task_1_research, task_2_html, task_3_audit],
-        process=Process.sequential,
-        verbose=True
-    )
-
-    result = orchestrator_crew.kickoff()
-
-    research_output = str(task_1_research.output) if task_1_research.output else ""
-    final_html = str(task_3_audit.output) if task_3_audit.output else str(result)
+    # Audit always runs on Mistral regardless of strategy, mirroring the original
+    # compliance-auditor role being a fixed model rather than part of the fallback swap.
+    final_html = call_provider("mistral", audit_prompt)
+    final_html = strip_code_fences(final_html)
 
     fallback_title = "untitled-concept"
     title = extract_title(manual_idea if using_manual_idea else research_output, fallback_title)
     slug = slugify(title)
     today_str = datetime.utcnow().strftime("%Y-%m-%d")
-    filename = f"{slug}-{today_str}.html"
 
-    os.makedirs(PRODUCTS_DIR, exist_ok=True)
-    output_path = os.path.join(PRODUCTS_DIR, filename)
+    product_dir = os.path.join(PRODUCTS_DIR, slug)
+    os.makedirs(product_dir, exist_ok=True)
+    output_path = os.path.join(product_dir, "index.html")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(final_html)
 
-    append_to_journal(
-        title=title,
-        filename=filename,
-        source="manual_ideas.txt" if using_manual_idea else "autonomous trend scan"
-    )
+    live_url = f"{GITHUB_PAGES_BASE}/{slug}/"
+    link_markdown = f"[Launch App Tool 🌐]({live_url})"
+    append_journal_row(today_str, title, link_markdown)
+    rebuild_index_html()
 
     if using_manual_idea:
         clear_manual_idea()
         print("🧹 manual_ideas.txt cleared — next run resumes autonomous trend-hunting unless you add a new idea.")
 
     print(f"\n✅ Wrote new product file: {output_path}")
+    print(f"✅ Updated journal and regenerated {INDEX_PATH}")
+    print(f"🔗 Will be live at: {live_url} (once GitHub Pages picks up the new commit)")
     return output_path
 
 
 # ==========================================================
-# 3. FAULT-TOLERANT EXECUTOR LOOP
+# 6. FAULT-TOLERANT EXECUTOR LOOP
 # ==========================================================
 def main():
     print("🤖 TrendForge Auto-Healing Autopilot Factory Online.")
