@@ -30,10 +30,8 @@ jobs:
 
       - name: Run TrendForge agent pipeline
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: python agent.py
 
@@ -41,7 +39,7 @@ jobs:
         run: |
           git config user.name "trendforge-bot"
           git config user.email "actions@github.com"
-          git add products/ MASTER_TREND_JOURNAL.md manual_ideas.txt
+          git add products/ MASTER_TREND_JOURNAL.md manual_ideas.txt index.html
           if git diff --staged --quiet; then
             echo "No new files generated — nothing to commit."
           else
