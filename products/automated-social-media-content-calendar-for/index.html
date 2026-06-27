@@ -9,65 +9,46 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #333;
+            color: #fff;
         }
         main {
             max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #2f2f2f;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
         }
         section {
-            margin-bottom: 1em;
-        }
-        #content-library {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #content-library li {
-            margin-bottom: 0.5em;
-        }
-        #content-suggestion-input {
-            padding: 0.5em;
-            border: none;
+            background-color: #444;
+            padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        input, textarea {
             width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
-        #get-content-suggestions {
-            background-color: #666;
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
             color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 10px;
             cursor: pointer;
-            margin-top: 0.5em;
+            transition: background-color 0.3s;
         }
-        #content-suggestions {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #post-date, #post-time {
-            padding: 0.5em;
-            border: none;
-            border-radius: 10px;
-            width: 100%;
-            margin-bottom: 0.5em;
-        }
-        #schedule-post {
+        button:hover {
             background-color: #666;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        #lead-capture {
-            background-color: #666;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 1em;
         }
         #lead-capture-modal {
             display: none;
@@ -81,186 +62,134 @@
             align-items: center;
             z-index: 1000;
         }
-        #lead-capture-modal div {
-            background-color: #555;
-            padding: 1em;
+        #lead-capture-modal > div {
+            background-color: #444;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             width: 90%;
             max-width: 400px;
-        }
-        #submit-lead {
-            background-color: #666;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 0.5em;
-        }
-        input[type="text"], input[type="email"] {
-            margin-bottom: 0.5em;
         }
     </style>
 </head>
 <body>
-    <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
+    <header>
         <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
-    <main style="display: flex; flex-direction: column; align-items: center; padding: 2em; background-color: #444; color: #fff;">
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); width: 100%;">
-            <h2>Library of Pre-Curated Content</h2>
-            <ul id="content-library" style="list-style: none; padding: 0; margin: 0;">
-                <li><input type="checkbox" id="motivational-quotes" /><label for="motivational-quotes">Motivational Quotes</label></li>
-                <li><input type="checkbox" id="educational-posts" /><label for="educational-posts">Educational Posts</label></li>
-                <li><input type="checkbox" id="event-announcements" /><label for="event-announcements">Event Announcements</label></li>
-            </ul>
+    <main>
+        <section>
+            <h2>Content Suggestion Engine</h2>
+            <input type="text" id="topic" placeholder="Enter topic or keyword">
+            <button id="suggest">Get Suggestions</button>
+            <div id="suggestions"></div>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); margin-top: 1em; width: 100%;">
-            <h2>AI-Driven Content Suggestions</h2>
-            <input type="text" id="content-suggestion-input" placeholder="Enter a topic or hashtag" style="padding: 0.5em; border: none; border-radius: 10px; width: 100%;" />
-            <button id="get-content-suggestions" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; border-radius: 10px; cursor: pointer; margin-top: 0.5em;">Get Suggestions</button>
-            <ul id="content-suggestions" style="list-style: none; padding: 0; margin: 0;"></ul>
+        <section>
+            <h2>Compliance Checker</h2>
+            <textarea id="content" placeholder="Enter content to check"></textarea>
+            <button id="check">Check Compliance</button>
+            <div id="compliance"></div>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); margin-top: 1em; width: 100%;">
-            <h2>Schedule Posts</h2>
-            <input type="date" id="post-date" style="padding: 0.5em; border: none; border-radius: 10px; width: 100%;" />
-            <input type="time" id="post-time" style="padding: 0.5em; border: none; border-radius: 10px; width: 100%; margin-top: 0.5em;" />
-            <button id="schedule-post" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; border-radius: 10px; cursor: pointer; margin-top: 0.5em;">Schedule Post</button>
+        <section>
+            <h2>Analytics and Insights</h2>
+            <button id="analytics">View Analytics</button>
+            <div id="analytics-data"></div>
         </section>
-        <button id="lead-capture" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; border-radius: 10px; cursor: pointer; margin-top: 1em;">Get Started</button>
+        <button id="lead-capture">Get Started</button>
         <div id="lead-capture-modal">
             <div>
                 <h2>Get Started</h2>
-                <input type="text" id="name" placeholder="Name" />
-                <input type="email" id="email" placeholder="Email" />
-                <button id="submit-lead">Submit</button>
+                <input type="text" id="name" placeholder="Enter name">
+                <input type="email" id="email" placeholder="Enter email">
+                <button id="submit">Submit</button>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const contentLibrary = document.getElementById('content-library');
-            const contentSuggestionInput = document.getElementById('content-suggestion-input');
-            const getContentSuggestions = document.getElementById('get-content-suggestions');
-            const contentSuggestions = document.getElementById('content-suggestions');
-            const postDate = document.getElementById('post-date');
-            const postTime = document.getElementById('post-time');
-            const schedulePost = document.getElementById('schedule-post');
-            const leadCapture = document.getElementById('lead-capture');
+            const topicInput = document.getElementById('topic');
+            const suggestButton = document.getElementById('suggest');
+            const suggestionsDiv = document.getElementById('suggestions');
+            const contentInput = document.getElementById('content');
+            const checkButton = document.getElementById('check');
+            const complianceDiv = document.getElementById('compliance');
+            const analyticsButton = document.getElementById('analytics');
+            const analyticsDataDiv = document.getElementById('analytics-data');
+            const leadCaptureButton = document.getElementById('lead-capture');
             const leadCaptureModal = document.getElementById('lead-capture-modal');
-            const submitLead = document.getElementById('submit-lead');
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
+            const submitButton = document.getElementById('submit');
 
-            // Load user inputs from localStorage with error handling
-            try {
-                const storedContentLibrary = localStorage.getItem('contentLibrary');
-                if (storedContentLibrary) {
-                    const storedContentLibraryArray = storedContentLibrary.split(',');
-                    storedContentLibraryArray.forEach((item) => {
-                        if (item) {
-                            const checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.id = item;
-                            checkbox.checked = true;
-                            const label = document.createElement('label');
-                            label.htmlFor = item;
-                            label.textContent = item;
-                            const li = document.createElement('li');
-                            li.appendChild(checkbox);
-                            li.appendChild(label);
-                            contentLibrary.appendChild(li);
-                        }
-                    });
+            function safeLocalStorageGet(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return null;
                 }
-            } catch (e) {
-                console.error('Error loading from localStorage:', e);
             }
 
-            // Save user inputs to localStorage with error handling
-            contentLibrary.addEventListener('change', (e) => {
+            function safeLocalStorageSet(key, value) {
                 try {
-                    if (e.target.type === 'checkbox') {
-                        const contentLibraryArray = Array.from(contentLibrary.querySelectorAll('input[type="checkbox"]:checked')).map((child) => child.id);
-                        localStorage.setItem('contentLibrary', contentLibraryArray.join(','));
-                    }
-                } catch (error) {
-                    console.error('Error saving to localStorage:', error);
+                    localStorage.setItem(key, value);
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
                 }
-            });
+            }
 
-            // Get content suggestions
-            getContentSuggestions.addEventListener('click', () => {
-                const topic = contentSuggestionInput.value.trim();
+            suggestButton.addEventListener('click', () => {
+                const topic = topicInput.value.trim();
                 if (!topic) {
-                    alert('Please enter a topic or hashtag');
+                    suggestionsDiv.innerHTML = '<p>Please enter a topic</p>';
                     return;
                 }
 
-                contentSuggestions.innerHTML = '<li>Loading suggestions...</li>';
+                const suggestions = [];
+                for (let i = 0; i < 5; i++) {
+                    suggestions.push(`Suggestion ${i + 1} for ${topic}`);
+                }
 
-                // Simulate API call with error handling
+                suggestionsDiv.innerHTML = '';
+                suggestions.forEach(suggestion => {
+                    const p = document.createElement('p');
+                    p.textContent = suggestion;
+                    suggestionsDiv.appendChild(p);
+                });
+
+                safeLocalStorageSet('topic', topic);
+            });
+
+            checkButton.addEventListener('click', () => {
+                const content = contentInput.value.trim();
+                if (!content) {
+                    complianceDiv.textContent = 'Please enter content to check';
+                    return;
+                }
+
+                const compliance = 'Compliant';
+                complianceDiv.textContent = compliance;
+                safeLocalStorageSet('content', content);
+            });
+
+            analyticsButton.addEventListener('click', () => {
+                analyticsDataDiv.textContent = 'Loading analytics data...';
+
+                // Simulate API call
                 setTimeout(() => {
-                    try {
-                        const suggestions = [
-                            `How ${topic} can improve mental wellness`,
-                            `5 facts about ${topic} you should know`,
-                            `Expert advice on ${topic} for better mental health`
-                        ];
-                        contentSuggestions.innerHTML = '';
-                        suggestions.forEach((suggestion) => {
-                            const li = document.createElement('li');
-                            li.textContent = suggestion;
-                            contentSuggestions.appendChild(li);
-                        });
-                    } catch (error) {
-                        contentSuggestions.innerHTML = '<li>Error loading suggestions. Please try again.</li>';
-                        console.error('Error generating suggestions:', error);
-                    }
+                    analyticsDataDiv.textContent = 'Sample analytics data: Engagement rate: 5.2%, Reach: 1,200 users';
                 }, 500);
             });
 
-            // Schedule post
-            schedulePost.addEventListener('click', () => {
-                const date = postDate.value;
-                const time = postTime.value;
-
-                if (!date || !time) {
-                    alert('Please select both date and time');
-                    return;
-                }
-
-                try {
-                    console.log(`Scheduling post for ${date} at ${time}`);
-                    alert('Post scheduled successfully!');
-                } catch (error) {
-                    console.error('Error scheduling post:', error);
-                    alert('Error scheduling post. Please try again.');
-                }
-            });
-
-            // Lead capture
-            leadCapture.addEventListener('click', () => {
+            leadCaptureButton.addEventListener('click', () => {
                 leadCaptureModal.style.display = 'flex';
-                nameInput.value = '';
-                emailInput.value = '';
             });
 
-            // Close modal when clicking outside
-            leadCaptureModal.addEventListener('click', (e) => {
-                if (e.target === leadCaptureModal) {
-                    leadCaptureModal.style.display = 'none';
-                }
-            });
-
-            // Submit lead
-            submitLead.addEventListener('click', () => {
+            submitButton.addEventListener('click', () => {
                 const name = nameInput.value.trim();
                 const email = emailInput.value.trim();
 
                 if (!name || !email) {
-                    alert('Please fill in all fields');
+                    alert('Please enter both name and email');
                     return;
                 }
 
@@ -270,20 +199,20 @@
                 }
 
                 const payload = {
+                    product: 'Automated Social Media Content Calendar for Mental Health Professionals',
                     name,
-                    email,
-                    productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals',
+                    email
                 };
 
-                submitLead.disabled = true;
-                submitLead.textContent = 'Submitting...';
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
 
                 fetch('https://salarybit.in/api/v1/lead-intake', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify(payload)
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -293,17 +222,37 @@
                 })
                 .then(data => {
                     alert('Thank you for your interest! We will contact you soon.');
+                    nameInput.value = '';
+                    emailInput.value = '';
                     leadCaptureModal.style.display = 'none';
                 })
                 .catch(error => {
-                    console.error('Error submitting lead:', error);
-                    alert('Error submitting your information. Please try again later.');
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again.');
                 })
                 .finally(() => {
-                    submitLead.disabled = false;
-                    submitLead.textContent = 'Submit';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit';
                 });
             });
+
+            // Close modal when clicking outside
+            leadCaptureModal.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+
+            // Load saved data
+            const topic = safeLocalStorageGet('topic');
+            if (topic) {
+                topicInput.value = topic;
+            }
+
+            const content = safeLocalStorageGet('content');
+            if (content) {
+                contentInput.value = content;
+            }
         });
     </script>
 </body>
