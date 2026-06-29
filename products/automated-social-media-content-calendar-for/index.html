@@ -7,53 +7,30 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #333;
-            color: #fff;
             margin: 0;
             padding: 0;
         }
         main {
-            background-color: #f0f0f0;
-            color: #333;
             max-width: 800px;
-            margin: 2em auto;
-            padding: 1em;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 0 auto;
         }
         section {
             margin-bottom: 1em;
         }
-        ul {
+        h1, h2 {
+            margin-top: 0;
+        }
+        #content-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        li {
-            margin-bottom: 0.5em;
-        }
-        input[type="text"],
-        input[type="email"],
-        textarea,
-        select {
-            width: 100%;
+        #content-list li {
             padding: 0.5em;
-            margin-bottom: 0.5em;
-            box-sizing: border-box;
+            border-bottom: 1px solid #666;
         }
-        button {
-            width: 100%;
-            padding: 0.5em;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
-        button:hover {
-            background-color: #555;
+        #content-list li:last-child {
+            border-bottom: none;
         }
         #lead-capture-modal {
             display: none;
@@ -62,19 +39,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
         }
-        #lead-capture-modal > div {
-            background-color: #f0f0f0;
-            padding: 1em;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 90%;
+        #lead-capture-modal div {
             max-width: 400px;
+            margin: 0 auto;
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
@@ -82,147 +57,120 @@
     <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
         <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
-    <main>
-        <section>
-            <h2>Library of Pre-approved Content</h2>
-            <ul>
-                <li><input type="checkbox" id="motivational-quotes" /> <label for="motivational-quotes">Motivational Quotes</label></li>
-                <li><input type="checkbox" id="mental-health-tips" /> <label for="mental-health-tips">Mental Health Tips</label></li>
-                <li><input type="checkbox" id="educational-resources" /> <label for="educational-resources">Educational Resources</label></li>
-            </ul>
+    <main style="display: flex; flex-direction: column; align-items: center; padding: 2em; background-color: #444; color: #fff;">
+        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
+            <h2>Library of Pre-Approved Content</h2>
+            <input type="text" id="content-library" placeholder="Search for content" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
+            <button id="add-content" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Add Content</button>
+            <ul id="content-list" style="list-style: none; padding: 0; margin: 0;"></ul>
         </section>
-        <section>
-            <h2>Content Suggestion Algorithm</h2>
-            <select id="area-of-specialty">
-                <option value="">Select Area of Specialty</option>
-                <option value="anxiety">Anxiety</option>
-                <option value="depression">Depression</option>
-                <option value="trauma">Trauma</option>
-            </select>
-            <button id="suggest-content">Suggest Content</button>
+        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
+            <h2>Scheduling Tool</h2>
+            <input type="date" id="schedule-date" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
+            <input type="time" id="schedule-time" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
+            <button id="schedule-post" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Schedule Post</button>
         </section>
-        <section>
-            <h2>Compliance Checker</h2>
-            <textarea id="post-content" placeholder="Enter your post content here..."></textarea>
-            <button id="check-compliance">Check Compliance</button>
-        </section>
-        <section>
-            <h2>Integration with Social Media Management Tools</h2>
-            <select id="social-media-platform">
-                <option value="">Select Social Media Platform</option>
-                <option value="facebook">Facebook</option>
-                <option value="twitter">Twitter</option>
-                <option value="instagram">Instagram</option>
-            </select>
-            <button id="schedule-post">Schedule Post</button>
-        </section>
-        <section>
+        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
             <h2>Analytics</h2>
-            <button id="view-analytics">View Analytics</button>
+            <canvas id="analytics-chart" style="width: 100%; height: 200px;"></canvas>
         </section>
-        <button id="get-started">Get Started</button>
-    </main>
-    <div id="lead-capture-modal">
-        <div>
-            <h2>Get Started with Automated Social Media Content Calendar</h2>
-            <input type="text" id="name" placeholder="Name" required />
-            <input type="email" id="email" placeholder="Email" required />
-            <button id="submit-lead">Submit</button>
+        <button id="lead-capture" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Get Started</button>
+        <div id="lead-capture-modal">
+            <div>
+                <h2>Get Started</h2>
+                <input type="text" id="name" placeholder="Name" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
+                <input type="email" id="email" placeholder="Email" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
+                <button id="submit-lead" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Submit</button>
+            </div>
         </div>
-    </div>
+    </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const suggestContentButton = document.getElementById('suggest-content');
-            const checkComplianceButton = document.getElementById('check-compliance');
+            const contentLibrary = document.getElementById('content-library');
+            const addContentButton = document.getElementById('add-content');
+            const contentList = document.getElementById('content-list');
+            const scheduleDate = document.getElementById('schedule-date');
+            const scheduleTime = document.getElementById('schedule-time');
             const schedulePostButton = document.getElementById('schedule-post');
-            const viewAnalyticsButton = document.getElementById('view-analytics');
-            const getStartedButton = document.getElementById('get-started');
+            const analyticsChart = document.getElementById('analytics-chart');
+            const leadCaptureButton = document.getElementById('lead-capture');
             const leadCaptureModal = document.getElementById('lead-capture-modal');
-            const submitLeadButton = document.getElementById('submit-lead');
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
+            const submitLeadButton = document.getElementById('submit-lead');
 
-            // Load saved checkboxes from localStorage
-            try {
-                const savedCheckboxes = JSON.parse(localStorage.getItem('checkedCheckboxes')) || [];
-                savedCheckboxes.forEach(id => {
-                    const checkbox = document.getElementById(id);
-                    if (checkbox) checkbox.checked = true;
-                });
-            } catch (e) {
-                console.error('Error loading saved checkboxes:', e);
+            let content = [];
+            let scheduledPosts = [];
+
+            function loadFromLocalStorage() {
+                try {
+                    const storedContent = localStorage.getItem('content');
+                    if (storedContent) {
+                        content = JSON.parse(storedContent);
+                        content.forEach(item => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = item;
+                            contentList.appendChild(listItem);
+                        });
+                    }
+                    const storedScheduledPosts = localStorage.getItem('scheduledPosts');
+                    if (storedScheduledPosts) {
+                        scheduledPosts = JSON.parse(storedScheduledPosts);
+                    }
+                } catch (error) {
+                    console.error('Error loading from localStorage:', error);
+                }
             }
 
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    try {
-                        const checkedCheckboxes = Array.from(checkboxes)
-                            .filter(checkbox => checkbox.checked)
-                            .map(checkbox => checkbox.id);
-                        localStorage.setItem('checkedCheckboxes', JSON.stringify(checkedCheckboxes));
-                    } catch (e) {
-                        console.error('Error saving checkboxes:', e);
-                    }
-                });
-            });
-
-            suggestContentButton.addEventListener('click', () => {
-                const areaOfSpecialty = document.getElementById('area-of-specialty').value;
-                if (!areaOfSpecialty) {
-                    alert('Please select an area of specialty');
-                    return;
+            function saveToLocalStorage(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (error) {
+                    console.error('Error saving to localStorage:', error);
                 }
-                console.log(`Suggesting content for ${areaOfSpecialty}`);
-                // TO DO: implement content suggestion algorithm
-            });
+            }
 
-            checkComplianceButton.addEventListener('click', () => {
-                const postContent = document.getElementById('post-content').value.trim();
-                if (!postContent) {
-                    alert('Please enter post content');
-                    return;
-                }
-                console.log(`Checking compliance for: ${postContent}`);
-                // TO DO: implement compliance checker
+            addContentButton.addEventListener('click', () => {
+                if (!contentLibrary.value.trim()) return;
+
+                const newContent = contentLibrary.value.trim();
+                content.push(newContent);
+                const listItem = document.createElement('li');
+                listItem.textContent = newContent;
+                contentList.appendChild(listItem);
+                contentLibrary.value = '';
+                saveToLocalStorage('content', content);
             });
 
             schedulePostButton.addEventListener('click', () => {
-                const socialMediaPlatform = document.getElementById('social-media-platform').value;
-                if (!socialMediaPlatform) {
-                    alert('Please select a social media platform');
+                if (!scheduleDate.value || !scheduleTime.value || contentList.children.length === 0) {
+                    alert('Please select a date, time, and add content to schedule');
                     return;
                 }
-                console.log(`Scheduling post on ${socialMediaPlatform}`);
-                // TO DO: implement scheduling post
+
+                const scheduledPost = {
+                    date: scheduleDate.value,
+                    time: scheduleTime.value,
+                    content: contentList.children[0].textContent
+                };
+                scheduledPosts.push(scheduledPost);
+                saveToLocalStorage('scheduledPosts', scheduledPosts);
+                alert('Post scheduled successfully!');
             });
 
-            viewAnalyticsButton.addEventListener('click', () => {
-                console.log('Viewing analytics');
-                // TO DO: implement analytics
-            });
-
-            getStartedButton.addEventListener('click', () => {
+            leadCaptureButton.addEventListener('click', () => {
                 leadCaptureModal.style.display = 'flex';
             });
 
             submitLeadButton.addEventListener('click', () => {
-                const name = nameInput.value.trim();
-                const email = emailInput.value.trim();
-
-                if (!name || !email) {
+                if (!nameInput.value.trim() || !emailInput.value.trim()) {
                     alert('Please fill in all fields');
                     return;
                 }
 
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    alert('Please enter a valid email address');
-                    return;
-                }
-
-                const payload = {
-                    name,
-                    email,
+                const lead = {
+                    name: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
                     productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals'
                 };
 
@@ -231,7 +179,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(lead)
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -240,7 +188,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Success:', data);
                     alert('Thank you for your interest! We will contact you soon.');
                     nameInput.value = '';
                     emailInput.value = '';
@@ -252,12 +199,13 @@
                 });
             });
 
-            // Close modal when clicking outside
             leadCaptureModal.addEventListener('click', (e) => {
                 if (e.target === leadCaptureModal) {
                     leadCaptureModal.style.display = 'none';
                 }
             });
+
+            loadFromLocalStorage();
         });
     </script>
 </body>
