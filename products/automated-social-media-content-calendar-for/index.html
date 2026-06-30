@@ -6,180 +6,247 @@
     <title>Automated Social Media Content Calendar</title>
     <style>
         body {
+            background-color: #2f2f2f;
+            color: #ffffff;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
         main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
         section {
-            margin-bottom: 1em;
+            background-color: #5f5f5f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
         }
         h1, h2 {
-            margin-top: 0;
+            color: #ffffff;
+            margin-bottom: 10px;
         }
-        #content-list {
+        p {
+            margin-bottom: 20px;
+        }
+        ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        #content-list li {
-            padding: 0.5em;
-            border-bottom: 1px solid #666;
+        li {
+            margin-bottom: 10px;
         }
-        #content-list li:last-child {
-            border-bottom: none;
+        input[type="text"], input[type="email"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
         }
-        #lead-capture-modal {
+        button {
+            background-color: #7f7f7f;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #9f9f9f;
+        }
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #5f5f5f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             display: none;
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        #lead-capture-modal div {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #555;
-            padding: 1em;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
-    <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
+    <header>
         <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
-    <main style="display: flex; flex-direction: column; align-items: center; padding: 2em; background-color: #444; color: #fff;">
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
-            <h2>Library of Pre-Approved Content</h2>
-            <input type="text" id="content-library" placeholder="Search for content" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
-            <button id="add-content" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Add Content</button>
-            <ul id="content-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+    <main>
+        <section>
+            <h2>Core Problem</h2>
+            <p>Creating and scheduling engaging social media content that resonates with your audience and aligns with your professional brand can be time-consuming and takes away from the time you can dedicate to your clients.</p>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
-            <h2>Scheduling Tool</h2>
-            <input type="date" id="schedule-date" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
-            <input type="time" id="schedule-time" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
-            <button id="schedule-post" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Schedule Post</button>
+        <section>
+            <h2>Value Proposition</h2>
+            <p>An automated social media content calendar specifically designed for mental health professionals would offer a library of pre-approved, engaging content (posts, stories, tweets) that is both informative and respectful of mental health issues.</p>
+            <ul>
+                <li>Easily schedule content in advance across multiple social media platforms.</li>
+                <li>Access a curated library of mental health-related content, including infographics, quotes, and educational posts.</li>
+                <li>Customize the content to fit your personal brand and client base.</li>
+                <li>Receive alerts and suggestions for timely and relevant content opportunities (e.g., Mental Health Awareness Month, World Suicide Prevention Day).</li>
+                <li>Monitor analytics to understand engagement and adjust your content strategy accordingly.</li>
+            </ul>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); margin-bottom: 1em;">
-            <h2>Analytics</h2>
-            <canvas id="analytics-chart" style="width: 100%; height: 200px;"></canvas>
-        </section>
-        <button id="lead-capture" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Get Started</button>
-        <div id="lead-capture-modal">
+        <section>
+            <h2>Get Started</h2>
+            <input type="text" id="name" placeholder="Name" aria-label="Name">
+            <input type="email" id="email" placeholder="Email" aria-label="Email">
             <div>
-                <h2>Get Started</h2>
-                <input type="text" id="name" placeholder="Name" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
-                <input type="email" id="email" placeholder="Email" style="width: 100%; padding: 0.5em; margin-bottom: 0.5em;">
-                <button id="submit-lead" style="background-color: #666; color: #fff; border: none; padding: 0.5em 1em; cursor: pointer;">Submit</button>
+                <button id="submit">Submit</button>
+                <button id="schedule">Schedule Content</button>
+                <button id="customize">Customize Content</button>
             </div>
+        </section>
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div id="modal">
+            <h2>Lead Capture</h2>
+            <p>Thank you for your interest in our automated social media content calendar. Please provide some information about yourself.</p>
+            <input type="text" id="modal-name" placeholder="Name" aria-label="Modal Name">
+            <input type="email" id="modal-email" placeholder="Email" aria-label="Modal Email">
+            <button id="modal-submit">Submit</button>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const contentLibrary = document.getElementById('content-library');
-            const addContentButton = document.getElementById('add-content');
-            const contentList = document.getElementById('content-list');
-            const scheduleDate = document.getElementById('schedule-date');
-            const scheduleTime = document.getElementById('schedule-time');
-            const schedulePostButton = document.getElementById('schedule-post');
-            const analyticsChart = document.getElementById('analytics-chart');
-            const leadCaptureButton = document.getElementById('lead-capture');
-            const leadCaptureModal = document.getElementById('lead-capture-modal');
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
-            const submitLeadButton = document.getElementById('submit-lead');
+            const submitButton = document.getElementById('submit');
+            const scheduleButton = document.getElementById('schedule');
+            const customizeButton = document.getElementById('customize');
+            const modal = document.getElementById('modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalNameInput = document.getElementById('modal-name');
+            const modalEmailInput = document.getElementById('modal-email');
+            const modalSubmitButton = document.getElementById('modal-submit');
 
-            let content = [];
-            let scheduledPosts = [];
-
-            function loadFromLocalStorage() {
-                try {
-                    const storedContent = localStorage.getItem('content');
-                    if (storedContent) {
-                        content = JSON.parse(storedContent);
-                        content.forEach(item => {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = item;
-                            contentList.appendChild(listItem);
-                        });
-                    }
-                    const storedScheduledPosts = localStorage.getItem('scheduledPosts');
-                    if (storedScheduledPosts) {
-                        scheduledPosts = JSON.parse(storedScheduledPosts);
-                    }
-                } catch (error) {
-                    console.error('Error loading from localStorage:', error);
-                }
+            function showModal() {
+                modal.style.display = 'block';
+                modalOverlay.style.display = 'block';
             }
 
-            function saveToLocalStorage(key, data) {
-                try {
-                    localStorage.setItem(key, JSON.stringify(data));
-                } catch (error) {
-                    console.error('Error saving to localStorage:', error);
-                }
+            function hideModal() {
+                modal.style.display = 'none';
+                modalOverlay.style.display = 'none';
             }
 
-            addContentButton.addEventListener('click', () => {
-                if (!contentLibrary.value.trim()) return;
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
 
-                const newContent = contentLibrary.value.trim();
-                content.push(newContent);
-                const listItem = document.createElement('li');
-                listItem.textContent = newContent;
-                contentList.appendChild(listItem);
-                contentLibrary.value = '';
-                saveToLocalStorage('content', content);
-            });
+            submitButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
 
-            schedulePostButton.addEventListener('click', () => {
-                if (!scheduleDate.value || !scheduleTime.value || contentList.children.length === 0) {
-                    alert('Please select a date, time, and add content to schedule');
+                if (!name || !email) {
+                    alert('Please provide both name and email.');
                     return;
                 }
 
-                const scheduledPost = {
-                    date: scheduleDate.value,
-                    time: scheduleTime.value,
-                    content: contentList.children[0].textContent
-                };
-                scheduledPosts.push(scheduledPost);
-                saveToLocalStorage('scheduledPosts', scheduledPosts);
-                alert('Post scheduled successfully!');
-            });
-
-            leadCaptureButton.addEventListener('click', () => {
-                leadCaptureModal.style.display = 'flex';
-            });
-
-            submitLeadButton.addEventListener('click', () => {
-                if (!nameInput.value.trim() || !emailInput.value.trim()) {
-                    alert('Please fill in all fields');
+                if (!validateEmail(email)) {
+                    alert('Please provide a valid email address.');
                     return;
                 }
 
-                const lead = {
-                    name: nameInput.value.trim(),
-                    email: emailInput.value.trim(),
-                    productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals'
+                try {
+                    localStorage.setItem('name', name);
+                    localStorage.setItem('email', email);
+                    showModal();
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('There was an error saving your information. Please try again.');
+                }
+            });
+
+            scheduleButton.addEventListener('click', () => {
+                try {
+                    const name = localStorage.getItem('name');
+                    const email = localStorage.getItem('email');
+
+                    if (name && email) {
+                        console.log('Scheduling content for', name, email);
+                    } else {
+                        alert('Please provide your name and email first.');
+                    }
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                    alert('There was an error accessing your information. Please try again.');
+                }
+            });
+
+            customizeButton.addEventListener('click', () => {
+                try {
+                    const name = localStorage.getItem('name');
+                    const email = localStorage.getItem('email');
+
+                    if (name && email) {
+                        console.log('Customizing content for', name, email);
+                    } else {
+                        alert('Please provide your name and email first.');
+                    }
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                    alert('There was an error accessing your information. Please try again.');
+                }
+            });
+
+            modalSubmitButton.addEventListener('click', () => {
+                const modalName = modalNameInput.value.trim();
+                const modalEmail = modalEmailInput.value.trim();
+
+                if (!modalName || !modalEmail) {
+                    alert('Please provide both name and email.');
+                    return;
+                }
+
+                if (!validateEmail(modalEmail)) {
+                    alert('Please provide a valid email address.');
+                    return;
+                }
+
+                const payload = {
+                    productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals',
+                    name: modalName,
+                    email: modalEmail
                 };
+
+                modalSubmitButton.disabled = true;
+                modalSubmitButton.textContent = 'Submitting...';
 
                 fetch('https://salarybit.in/api/v1/lead-intake', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(lead)
+                    body: JSON.stringify(payload)
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -188,24 +255,21 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Success:', data);
                     alert('Thank you for your interest! We will contact you soon.');
-                    nameInput.value = '';
-                    emailInput.value = '';
-                    leadCaptureModal.style.display = 'none';
+                    hideModal();
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('There was an error submitting your information. Please try again later.');
+                    alert('There was an error submitting your information. Please try again.');
+                })
+                .finally(() => {
+                    modalSubmitButton.disabled = false;
+                    modalSubmitButton.textContent = 'Submit';
                 });
             });
 
-            leadCaptureModal.addEventListener('click', (e) => {
-                if (e.target === leadCaptureModal) {
-                    leadCaptureModal.style.display = 'none';
-                }
-            });
-
-            loadFromLocalStorage();
+            modalOverlay.addEventListener('click', hideModal);
         });
     </script>
 </body>
