@@ -6,325 +6,194 @@
     <title>Automated Social Media Content Calendar</title>
     <style>
         body {
-            background-color: #333;
-            color: #fff;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-        }
-        header {
             background-color: #444;
-            padding: 20px;
-            text-align: center;
+            color: #fff;
         }
         main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 2em;
         }
         section {
             background-color: #555;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 1em;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 800px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1em;
         }
-        h1, h2 {
+        header {
+            background-color: #333;
             color: #fff;
-            margin-bottom: 10px;
+            padding: 1em;
+            text-align: center;
         }
-        input, textarea, button {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #666;
-            color: #fff;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        input[type="date"], input[type="time"] {
-            width: auto;
-        }
-        textarea {
-            height: 100px;
-            resize: none;
+        label {
+            margin-left: 0.5em;
         }
         button {
-            background-color: #777;
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            margin-top: 0.5em;
         }
-        button:hover {
-            background-color: #888;
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 1em;
         }
         #lead-capture-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #555;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 400px;
-            z-index: 1000;
-        }
-        .modal-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 999;
-            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 5px;
+        #lead-capture-modal > div {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
         }
     </style>
 </head>
 <body>
-    <div class="modal-overlay" id="modal-overlay"></div>
     <header>
         <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
     <main>
         <section>
             <h2>Library of Pre-Approved Content</h2>
-            <ul id="content-library">
-                <li>Motivational Quotes</li>
-                <li>Infographics</li>
-                <li>Educational Resources</li>
+            <ul>
+                <li>
+                    <input type="checkbox" id="awareness-days" checked>
+                    <label for="awareness-days">Awareness Days</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="motivational-quotes" checked>
+                    <label for="motivational-quotes">Motivational Quotes</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="educational-resources" checked>
+                    <label for="educational-resources">Educational Resources</label>
+                </li>
             </ul>
         </section>
         <section>
-            <h2>Scheduling Feature</h2>
-            <input type="date" id="schedule-date" />
-            <input type="time" id="schedule-time" />
-            <button id="schedule-button">Schedule Post</button>
+            <h2>Compliance Checker</h2>
+            <p>Ensure your posts adhere to professional ethics and guidelines.</p>
+            <button id="compliance-checker">Check Compliance</button>
         </section>
         <section>
-            <h2>Content Suggestion Algorithm</h2>
-            <input type="text" id="hashtag-input" placeholder="Enter a hashtag" />
-            <button id="suggest-button">Get Suggestions</button>
-            <ul id="suggestions-list"></ul>
+            <h2>Analytics</h2>
+            <p>Track engagement and understand your audience better.</p>
+            <button id="analytics">View Analytics</button>
         </section>
         <section>
-            <h2>Review and Approval Process</h2>
-            <textarea id="content-review" placeholder="Enter content to review"></textarea>
-            <button id="approve-button">Approve Content</button>
+            <h2>Customization</h2>
+            <p>Customize content to fit your individual brand and voice.</p>
+            <input type="text" id="customization" placeholder="Enter your customization">
         </section>
         <section>
-            <h2>Integration with Social Media Platforms</h2>
-            <button id="facebook-button">Connect to Facebook</button>
-            <button id="twitter-button">Connect to Twitter</button>
-            <button id="instagram-button">Connect to Instagram</button>
+            <h2>Integration</h2>
+            <p>Integrate with major social media platforms for seamless scheduling.</p>
+            <select id="integration">
+                <option value="facebook">Facebook</option>
+                <option value="twitter">Twitter</option>
+                <option value="instagram">Instagram</option>
+            </select>
         </section>
-        <section>
-            <h2>Dashboard</h2>
-            <button id="performance-button">View Performance Metrics</button>
-            <ul id="performance-metrics"></ul>
-        </section>
-        <button id="lead-capture-button">Get Started</button>
-        <div id="lead-capture-modal" style="display: none;">
-            <h2>Get Started with Automated Social Media Content Calendar</h2>
-            <input type="text" id="name-input" placeholder="Enter your name" />
-            <input type="email" id="email-input" placeholder="Enter your email" />
-            <button id="submit-lead-button">Submit</button>
-        </div>
+        <button id="save">Save</button>
+        <button id="lead-capture">Get Started</button>
     </main>
+    <div id="lead-capture-modal">
+        <div>
+            <h2>Get Started</h2>
+            <input type="text" id="name" placeholder="Enter your name">
+            <input type="email" id="email" placeholder="Enter your email">
+            <button id="submit-lead">Submit</button>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const scheduleDateInput = document.getElementById('schedule-date');
-            const scheduleTimeInput = document.getElementById('schedule-time');
-            const scheduleButton = document.getElementById('schedule-button');
-            const suggestButton = document.getElementById('suggest-button');
-            const hashtagInput = document.getElementById('hashtag-input');
-            const suggestionsList = document.getElementById('suggestions-list');
-            const approveButton = document.getElementById('approve-button');
-            const contentReviewInput = document.getElementById('content-review');
-            const facebookButton = document.getElementById('facebook-button');
-            const twitterButton = document.getElementById('twitter-button');
-            const instagramButton = document.getElementById('instagram-button');
-            const performanceButton = document.getElementById('performance-button');
-            const performanceMetricsList = document.getElementById('performance-metrics');
-            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const awarenessDays = document.getElementById('awareness-days');
+            const motivationalQuotes = document.getElementById('motivational-quotes');
+            const educationalResources = document.getElementById('educational-resources');
+            const complianceChecker = document.getElementById('compliance-checker');
+            const analytics = document.getElementById('analytics');
+            const customization = document.getElementById('customization');
+            const integration = document.getElementById('integration');
+            const save = document.getElementById('save');
+            const leadCapture = document.getElementById('lead-capture');
             const leadCaptureModal = document.getElementById('lead-capture-modal');
-            const modalOverlay = document.getElementById('modal-overlay');
-            const nameInput = document.getElementById('name-input');
-            const emailInput = document.getElementById('email-input');
-            const submitLeadButton = document.getElementById('submit-lead-button');
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const submitLead = document.getElementById('submit-lead');
 
-            // Set default date and time
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const currentTime = now.toTimeString().slice(0, 5);
-            scheduleDateInput.value = today;
-            scheduleTimeInput.value = currentTime;
+            try {
+                awarenessDays.checked = localStorage.getItem('awarenessDays') === 'true';
+                motivationalQuotes.checked = localStorage.getItem('motivationalQuotes') === 'true';
+                educationalResources.checked = localStorage.getItem('educationalResources') === 'true';
+                customization.value = localStorage.getItem('customization') || '';
+                integration.value = localStorage.getItem('integration') || 'facebook';
+            } catch (e) {
+                console.error('Error accessing localStorage:', e);
+            }
 
-            scheduleButton.addEventListener('click', () => {
+            save.addEventListener('click', () => {
                 try {
-                    const scheduleDate = scheduleDateInput.value;
-                    const scheduleTime = scheduleTimeInput.value;
-
-                    if (!scheduleDate || !scheduleTime) {
-                        alert('Please select both date and time');
-                        return;
-                    }
-
-                    localStorage.setItem('scheduleDate', scheduleDate);
-                    localStorage.setItem('scheduleTime', scheduleTime);
-                    alert('Post scheduled successfully!');
-                } catch (error) {
-                    console.error('Error scheduling post:', error);
-                    alert('Failed to schedule post. Please try again.');
+                    localStorage.setItem('awarenessDays', awarenessDays.checked);
+                    localStorage.setItem('motivationalQuotes', motivationalQuotes.checked);
+                    localStorage.setItem('educationalResources', educationalResources.checked);
+                    localStorage.setItem('customization', customization.value);
+                    localStorage.setItem('integration', integration.value);
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
                 }
             });
 
-            suggestButton.addEventListener('click', () => {
-                try {
-                    const hashtag = hashtagInput.value.trim();
+            leadCapture.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
 
-                    if (!hashtag) {
-                        alert('Please enter a hashtag');
-                        return;
-                    }
-
-                    const suggestions = [];
-                    for (let i = 0; i < 5; i++) {
-                        suggestions.push(`Suggestion ${i + 1} for #${hashtag}`);
-                    }
-
-                    suggestionsList.innerHTML = '';
-                    suggestions.forEach(suggestion => {
-                        const li = document.createElement('li');
-                        li.textContent = suggestion;
-                        suggestionsList.appendChild(li);
-                    });
-                } catch (error) {
-                    console.error('Error getting suggestions:', error);
-                    alert('Failed to get suggestions. Please try again.');
+            submitLead.addEventListener('click', async () => {
+                if (!name.value || !email.value) {
+                    alert('Please fill in all fields');
+                    return;
                 }
-            });
 
-            approveButton.addEventListener('click', () => {
                 try {
-                    const content = contentReviewInput.value.trim();
-
-                    if (!content) {
-                        alert('Please enter content to approve');
-                        return;
-                    }
-
-                    localStorage.setItem('approvedContent', content);
-                    alert('Content approved and saved!');
-                } catch (error) {
-                    console.error('Error approving content:', error);
-                    alert('Failed to approve content. Please try again.');
-                }
-            });
-
-            facebookButton.addEventListener('click', () => {
-                try {
-                    alert('Facebook connection feature would be implemented here');
-                } catch (error) {
-                    console.error('Error connecting to Facebook:', error);
-                }
-            });
-
-            twitterButton.addEventListener('click', () => {
-                try {
-                    alert('Twitter connection feature would be implemented here');
-                } catch (error) {
-                    console.error('Error connecting to Twitter:', error);
-                }
-            });
-
-            instagramButton.addEventListener('click', () => {
-                try {
-                    alert('Instagram connection feature would be implemented here');
-                } catch (error) {
-                    console.error('Error connecting to Instagram:', error);
-                }
-            });
-
-            performanceButton.addEventListener('click', () => {
-                try {
-                    const metrics = [
-                        'Engagement Rate: 5.2%',
-                        'Follower Growth: +120 this month',
-                        'Top Performing Post: "Mental Health Tips"',
-                        'Average Reach: 1,245 per post',
-                        'Best Posting Time: 3 PM'
-                    ];
-
-                    performanceMetricsList.innerHTML = '';
-                    metrics.forEach(metric => {
-                        const li = document.createElement('li');
-                        li.textContent = metric;
-                        performanceMetricsList.appendChild(li);
-                    });
-                } catch (error) {
-                    console.error('Error loading performance metrics:', error);
-                    alert('Failed to load performance metrics. Please try again.');
-                }
-            });
-
-            leadCaptureButton.addEventListener('click', () => {
-                try {
-                    modalOverlay.style.display = 'block';
-                    leadCaptureModal.style.display = 'block';
-                } catch (error) {
-                    console.error('Error showing lead capture modal:', error);
-                }
-            });
-
-            modalOverlay.addEventListener('click', () => {
-                modalOverlay.style.display = 'none';
-                leadCaptureModal.style.display = 'none';
-            });
-
-            submitLeadButton.addEventListener('click', async () => {
-                try {
-                    const name = nameInput.value.trim();
-                    const email = emailInput.value.trim();
-
-                    if (!name || !email) {
-                        alert('Please enter both name and email');
-                        return;
-                    }
-
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        alert('Please enter a valid email address');
-                        return;
-                    }
-
-                    const payload = {
-                        name,
-                        email,
-                        productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals'
-                    };
-
-                    submitLeadButton.disabled = true;
-                    submitLeadButton.textContent = 'Submitting...';
-
                     const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({
+                            productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals',
+                            name: name.value,
+                            email: email.value
+                        })
                     });
 
                     if (!response.ok) {
@@ -332,34 +201,21 @@
                     }
 
                     const data = await response.json();
-                    console.log('Lead submitted successfully:', data);
-                    alert('Thank you for your interest! We will contact you soon.');
-
-                    nameInput.value = '';
-                    emailInput.value = '';
-                    modalOverlay.style.display = 'none';
+                    console.log('Success:', data);
                     leadCaptureModal.style.display = 'none';
+                    name.value = '';
+                    email.value = '';
                 } catch (error) {
                     console.error('Error submitting lead:', error);
-                    alert('Failed to submit your information. Please try again.');
-                } finally {
-                    submitLeadButton.disabled = false;
-                    submitLeadButton.textContent = 'Submit';
+                    alert('There was an error submitting your information. Please try again.');
                 }
             });
 
-            // Load saved data if available
-            try {
-                const savedDate = localStorage.getItem('scheduleDate');
-                const savedTime = localStorage.getItem('scheduleTime');
-                const savedContent = localStorage.getItem('approvedContent');
-
-                if (savedDate) scheduleDateInput.value = savedDate;
-                if (savedTime) scheduleTimeInput.value = savedTime;
-                if (savedContent) contentReviewInput.value = savedContent;
-            } catch (error) {
-                console.error('Error loading saved data:', error);
-            }
+            leadCaptureModal.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>
