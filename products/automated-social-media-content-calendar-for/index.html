@@ -6,105 +6,69 @@
     <title>Automated Social Media Content Calendar</title>
     <style>
         body {
-            background-color: #333;
-            color: #fff;
             font-family: Arial, sans-serif;
+            background-color: #2f2f2f;
+            color: #fff;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #444;
+            background-color: #4f4f4f;
             padding: 20px;
             text-align: center;
         }
         main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
             max-width: 800px;
-            margin: 0 auto;
-        }
-        section {
-            background-color: #555;
+            margin: 40px auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #3f3f3f;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
+        }
+        section {
+            margin-bottom: 20px;
         }
         h1, h2 {
             color: #fff;
-            margin-bottom: 10px;
         }
-        p {
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        li {
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-        }
-        li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-        }
-        input {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-            width: 100%;
-            box-sizing: border-box;
+        input[type="text"], input[type="email"] {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 200px;
         }
         button {
-            padding: 10px 20px;
-            background-color: #666;
+            background-color: #4f4f4f;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
-            width: 100%;
+            border-radius: 4px;
+            margin: 5px;
         }
         button:hover {
-            background-color: #777;
+            background-color: #5f5f5f;
         }
         #modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #555;
-            padding: 30px;
+            background-color: #3f3f3f;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
+            display: none;
+            z-index: 1000;
         }
         #close-modal {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: auto;
-            padding: 5px 10px;
+            background-color: #4f4f4f;
         }
-        .hidden {
-            display: none;
-        }
-        .error {
-            color: #ff6b6b;
-            font-size: 0.9em;
-            margin-top: -8px;
-            margin-bottom: 10px;
+        #close-modal:hover {
+            background-color: #5f5f5f;
         }
     </style>
 </head>
@@ -126,24 +90,20 @@
             <p>An automated social media content calendar tool that uses AI-powered content suggestions, a user-friendly interface for planning and scheduling posts, and integration with popular social media platforms.</p>
             <ul>
                 <li>Save time by automating content planning and scheduling</li>
-                <li>Increase engagement through data-driven content suggestions</li>
-                <li>Improve brand consistency with a centralized content calendar</li>
-                <li>Enhance productivity by focusing on high-leverage activities</li>
-                <li>Scale your social media presence without sacrificing quality or consistency</li>
+                <li>Increase engagement through personalized and relevant content suggestions</li>
+                <li>Improve brand consistency and visibility through consistent posting</li>
+                <li>Enhance productivity by streamlining social media management tasks</li>
+                <li>Gain insights into social media performance through analytics and tracking features</li>
             </ul>
         </section>
         <section>
             <h2>Get Started</h2>
-            <form id="signup-form">
-                <input type="text" id="name" placeholder="Name" required>
-                <div id="name-error" class="error hidden"></div>
-                <input type="email" id="email" placeholder="Email" required>
-                <div id="email-error" class="error hidden"></div>
-                <button type="submit" id="submit">Submit</button>
-            </form>
+            <input type="text" id="name" placeholder="Name" aria-label="Name">
+            <input type="email" id="email" placeholder="Email" aria-label="Email">
+            <button id="submit">Submit</button>
         </section>
-        <div id="modal" class="hidden">
-            <h2>Thank you for your interest!</h2>
+        <div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <h2 id="modal-title">Thank you for your interest!</h2>
             <p>We will be in touch soon.</p>
             <button id="close-modal">Close</button>
         </div>
@@ -155,109 +115,82 @@
             const submitButton = document.getElementById('submit');
             const modal = document.getElementById('modal');
             const closeModalButton = document.getElementById('close-modal');
-            const signupForm = document.getElementById('signup-form');
-            const nameError = document.getElementById('name-error');
-            const emailError = document.getElementById('email-error');
 
-            // Validate email format
-            const validateEmail = (email) => {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            };
-
-            // Show error message
-            const showError = (element, message) => {
-                element.textContent = message;
-                element.classList.remove('hidden');
-            };
-
-            // Hide error message
-            const hideError = (element) => {
-                element.textContent = '';
-                element.classList.add('hidden');
-            };
-
-            // Form submission handler
-            signupForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                let isValid = true;
-
-                // Validate name
-                if (!nameInput.value.trim()) {
-                    showError(nameError, 'Name is required');
-                    isValid = false;
-                } else {
-                    hideError(nameError);
-                }
-
-                // Validate email
-                if (!emailInput.value.trim()) {
-                    showError(emailError, 'Email is required');
-                    isValid = false;
-                } else if (!validateEmail(emailInput.value.trim())) {
-                    showError(emailError, 'Please enter a valid email address');
-                    isValid = false;
-                } else {
-                    hideError(emailError);
-                }
-
-                if (isValid) {
-                    try {
-                        // Store data in localStorage
-                        localStorage.setItem('name', nameInput.value.trim());
-                        localStorage.setItem('email', emailInput.value.trim());
-
-                        // Submit data to API
-                        fetch('https://salarybit.in/api/v1/lead-intake', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                productConcept: 'Automated Social Media Content Calendar for Solopreneurs',
-                                name: nameInput.value.trim(),
-                                email: emailInput.value.trim()
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            modal.classList.remove('hidden');
-                            signupForm.reset();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('There was an error submitting your information. Please try again later.');
-                        });
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('There was an error saving your information. Please try again.');
-                    }
-                }
-            });
-
-            // Close modal handler
-            closeModalButton.addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
-
-            // Load stored data on page load
-            try {
-                const storedName = localStorage.getItem('name');
-                const storedEmail = localStorage.getItem('email');
-                if (storedName) nameInput.value = storedName;
-                if (storedEmail) emailInput.value = storedEmail;
-            } catch (error) {
-                console.error('Error accessing localStorage:', error);
+            if (!nameInput || !emailInput || !submitButton || !modal || !closeModalButton) {
+                console.error('One or more required elements not found');
+                return;
             }
 
-            // Check if localStorage is available
-            if (typeof Storage === 'undefined') {
-                console.warn('localStorage is not available in this browser');
+            submitButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+
+                if (!name || !email) {
+                    alert('Please fill in both name and email fields');
+                    return;
+                }
+
+                if (!validateEmail(email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                const leadData = {
+                    name: name,
+                    email: email,
+                    productConcept: 'Automated Social Media Content Calendar for Solopreneurs'
+                };
+
+                try {
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.setItem('name', name);
+                        localStorage.setItem('email', email);
+                    }
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                }
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(leadData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    modal.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                });
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const storedName = localStorage.getItem('name');
+                    const storedEmail = localStorage.getItem('email');
+                    if (storedName) nameInput.value = storedName;
+                    if (storedEmail) emailInput.value = storedEmail;
+                }
+            } catch (e) {
+                console.error('LocalStorage error:', e);
             }
         });
     </script>
