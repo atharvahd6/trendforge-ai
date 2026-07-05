@@ -7,105 +7,130 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #2f2f2f;
-            color: #fff;
             margin: 0;
             padding: 0;
-        }
-        header {
-            background-color: #4f4f4f;
-            padding: 20px;
-            text-align: center;
+            color: #fff;
         }
         main {
             max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #3f3f3f;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+            background-color: #444;
         }
         section {
-            margin-bottom: 20px;
+            margin-bottom: 1em;
+            width: 100%;
         }
         h1, h2 {
-            color: #fff;
+            margin-top: 0;
         }
-        input[type="text"], input[type="email"] {
-            padding: 8px;
-            margin: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            width: 200px;
+        ul {
+            padding: 0;
+            margin: 0;
         }
-        button {
-            background-color: #4f4f4f;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-            margin: 5px;
+        li {
+            list-style: none;
         }
-        button:hover {
-            background-color: #5f5f5f;
+        input, button {
+            font-family: Arial, sans-serif;
+            width: 100%;
+            box-sizing: border-box;
         }
         #modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #3f3f3f;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            text-align: center;
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
         }
-        #close-modal {
-            background-color: #4f4f4f;
+        .modal-content {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
         }
-        #close-modal:hover {
-            background-color: #5f5f5f;
+        .form-section {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 1em;
+            width: 100%;
+        }
+        .form-input {
+            padding: 0.5em;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 1em;
+        }
+        .form-button {
+            padding: 0.5em;
+            border: none;
+            border-radius: 10px;
+            background-color: #666;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 1em;
+        }
+        .content-section {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+        }
+        .list-item {
+            padding: 0.5em;
+            border-bottom: 1px solid #666;
+        }
+        .list-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Automated Social Media Content Calendar for Solopreneurs</h1>
+    <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
+        <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
     <main>
-        <section>
-            <h2>Target Audience</h2>
-            <p>Solopreneurs, freelancers, and small business owners who manage their own social media presence, particularly those in creative fields such as writing, design, and photography.</p>
-        </section>
-        <section>
+        <section class="content-section">
             <h2>Core Problem</h2>
-            <p>Struggling to consistently create and schedule engaging social media content due to limited time, lack of organization, and difficulty in planning content in advance.</p>
+            <p>Creating and scheduling engaging social media content that resonates with your audience and aligns with your professional brand can be time-consuming and takes away from the time you can dedicate to your clients.</p>
         </section>
-        <section>
+        <section class="content-section">
             <h2>Value Proposition</h2>
-            <p>An automated social media content calendar tool that uses AI-powered content suggestions, a user-friendly interface for planning and scheduling posts, and integration with popular social media platforms.</p>
+            <p>An automated social media content calendar specifically designed for mental health professionals would provide a library of pre-approved, engaging content (posts, stories, tweets) that can be customized and scheduled in advance.</p>
             <ul>
-                <li>Save time by automating content planning and scheduling</li>
-                <li>Increase engagement through personalized and relevant content suggestions</li>
-                <li>Improve brand consistency and visibility through consistent posting</li>
-                <li>Enhance productivity by streamlining social media management tasks</li>
-                <li>Gain insights into social media performance through analytics and tracking features</li>
+                <li class="list-item">Offer a curated selection of mental health-related content, including awareness days, motivational quotes, and educational resources.</li>
+                <li class="list-item">Include a compliance checker to ensure posts adhere to professional ethics and guidelines.</li>
+                <li class="list-item">Allow for easy customization to fit individual brands and client bases.</li>
+                <li class="list-item">Integrate with major social media platforms for seamless scheduling.</li>
+                <li class="list-item">Provide analytics to track engagement and help professionals understand what content resonates best with their audience.</li>
             </ul>
         </section>
-        <section>
+        <section class="form-section">
             <h2>Get Started</h2>
-            <input type="text" id="name" placeholder="Name" aria-label="Name">
-            <input type="email" id="email" placeholder="Email" aria-label="Email">
-            <button id="submit">Submit</button>
+            <input type="text" id="name" placeholder="Name" class="form-input">
+            <input type="email" id="email" placeholder="Email" class="form-input">
+            <button id="submit" class="form-button">Submit</button>
         </section>
-        <div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <h2 id="modal-title">Thank you for your interest!</h2>
-            <p>We will be in touch soon.</p>
-            <button id="close-modal">Close</button>
+        <div id="modal">
+            <div class="modal-content">
+                <h2>Thank you for your interest!</h2>
+                <p>We will be in touch soon.</p>
+                <button id="close" class="form-button">Close</button>
+            </div>
         </div>
     </main>
     <script>
@@ -114,10 +139,10 @@
             const emailInput = document.getElementById('email');
             const submitButton = document.getElementById('submit');
             const modal = document.getElementById('modal');
-            const closeModalButton = document.getElementById('close-modal');
+            const closeButton = document.getElementById('close');
 
-            if (!nameInput || !emailInput || !submitButton || !modal || !closeModalButton) {
-                console.error('One or more required elements not found');
+            if (!nameInput || !emailInput || !submitButton || !modal || !closeButton) {
+                console.error('Required elements not found');
                 return;
             }
 
@@ -130,22 +155,14 @@
                     return;
                 }
 
-                if (!validateEmail(email)) {
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                     alert('Please enter a valid email address');
                     return;
                 }
 
-                const leadData = {
-                    name: name,
-                    email: email,
-                    productConcept: 'Automated Social Media Content Calendar for Solopreneurs'
-                };
-
                 try {
-                    if (typeof localStorage !== 'undefined') {
-                        localStorage.setItem('name', name);
-                        localStorage.setItem('email', email);
-                    }
+                    localStorage.setItem('name', name);
+                    localStorage.setItem('email', email);
                 } catch (e) {
                     console.error('LocalStorage error:', e);
                 }
@@ -155,7 +172,11 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(leadData)
+                    body: JSON.stringify({
+                        productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals',
+                        name: name,
+                        email: email
+                    })
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -164,31 +185,23 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Success:', data);
-                    modal.style.display = 'block';
+                    modal.style.display = 'flex';
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Fetch error:', error);
                     alert('There was an error submitting your information. Please try again later.');
                 });
             });
 
-            closeModalButton.addEventListener('click', () => {
+            closeButton.addEventListener('click', () => {
                 modal.style.display = 'none';
             });
 
-            function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-
             try {
-                if (typeof localStorage !== 'undefined') {
-                    const storedName = localStorage.getItem('name');
-                    const storedEmail = localStorage.getItem('email');
-                    if (storedName) nameInput.value = storedName;
-                    if (storedEmail) emailInput.value = storedEmail;
-                }
+                const storedName = localStorage.getItem('name');
+                const storedEmail = localStorage.getItem('email');
+                if (storedName) nameInput.value = storedName;
+                if (storedEmail) emailInput.value = storedEmail;
             } catch (e) {
                 console.error('LocalStorage error:', e);
             }
