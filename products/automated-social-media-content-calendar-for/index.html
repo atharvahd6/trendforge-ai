@@ -12,31 +12,43 @@
             color: #fff;
         }
         main {
-            max-width: 800px;
-            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+            background-color: #444;
         }
         section {
+            width: 80%;
             margin-bottom: 1em;
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        input[type="text"], input[type="email"] {
-            width: 100%;
+        input, textarea, button {
             padding: 0.5em;
-            margin-bottom: 0.5em;
-            border: 1px solid #fff;
-            border-radius: 0.5em;
-            background-color: #666;
-            color: #fff;
+            border: none;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 0.5em;
+            box-sizing: border-box;
         }
         button {
             background-color: #666;
             color: #fff;
-            border: none;
-            padding: 0.5em;
-            border-radius: 0.5em;
             cursor: pointer;
+            width: auto;
         }
-        button:hover {
-            background-color: #777;
+        #template-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #template-list li {
+            padding: 0.5em;
+            border-bottom: 1px solid #666;
         }
         #lead-capture-modal {
             display: none;
@@ -50,172 +62,201 @@
             align-items: center;
             z-index: 1000;
         }
-        .modal-content {
+        #lead-capture-modal div {
             background-color: #555;
             padding: 1em;
-            border-radius: 0.5em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             width: 90%;
             max-width: 500px;
+        }
+        header {
+            background-color: #333;
+            padding: 1em;
+            text-align: center;
+        }
+        #template-search {
+            margin-bottom: 1em;
         }
     </style>
 </head>
 <body>
-    <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
-        <h1>Automated Social Media Content Calendar for Solopreneurs</h1>
+    <header>
+        <h1>Automated Social Media Content Calendar for Mental Health Professionals</h1>
     </header>
-    <main style="display: flex; flex-direction: column; align-items: center; padding: 2em; background-color: #444;">
-        <h2>Plan, Create, and Schedule Your Social Media Content in Advance</h2>
-        <section style="background-color: #555; padding: 1em; border-radius: 0.5em; margin-bottom: 1em; width: 100%;">
-            <h3>Content Library</h3>
-            <input type="text" id="content-library" placeholder="Search for customizable templates and ideas">
-            <button id="search-content">Search</button>
+    <main>
+        <section>
+            <h2>Library of Pre-approved Templates</h2>
+            <input type="text" id="template-search" placeholder="Search for templates">
+            <ul id="template-list">
+                <li>Template 1</li>
+                <li>Template 2</li>
+                <li>Template 3</li>
+            </ul>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 0.5em; margin-bottom: 1em; width: 100%;">
-            <h3>AI-Powered Content Suggestions</h3>
-            <input type="text" id="niche" placeholder="Enter your niche">
-            <input type="text" id="audience" placeholder="Enter your target audience">
-            <button id="get-suggestions">Get Suggestions</button>
+        <section>
+            <h2>Scheduling Feature</h2>
+            <input type="date" id="schedule-date">
+            <input type="time" id="schedule-time">
+            <button id="schedule-button">Schedule Post</button>
         </section>
-        <section style="background-color: #555; padding: 1em; border-radius: 0.5em; margin-bottom: 1em; width: 100%;">
-            <h3>Drag-and-Drop Calendar Interface</h3>
-            <div style="width: 100%; height: 200px; background-color: #666; border: 1px solid #fff; border-radius: 0.5em; overflow: auto;">
-                <!-- calendar interface will be generated dynamically -->
-            </div>
+        <section>
+            <h2>Compliance Checker</h2>
+            <textarea id="post-content" placeholder="Enter post content" style="height: 100px;"></textarea>
+            <button id="check-compliance">Check Compliance</button>
         </section>
         <button id="lead-capture">Get Started</button>
         <div id="lead-capture-modal">
-            <div class="modal-content">
-                <h3>Get Started with Automated Social Media Content Calendar</h3>
-                <input type="text" id="name" placeholder="Enter your name">
-                <input type="email" id="email" placeholder="Enter your email">
+            <div>
+                <h2>Get Started</h2>
+                <input type="text" id="name" placeholder="Name">
+                <input type="email" id="email" placeholder="Email">
                 <button id="submit-lead">Submit</button>
-                <button id="close-modal" style="margin-top: 0.5em; background-color: #888;">Close</button>
             </div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const templateList = document.getElementById('template-list');
+            const scheduleButton = document.getElementById('schedule-button');
+            const checkCompliance = document.getElementById('check-compliance');
+            const leadCapture = document.getElementById('lead-capture');
             const leadCaptureModal = document.getElementById('lead-capture-modal');
-            const leadCaptureButton = document.getElementById('lead-capture');
-            const submitLeadButton = document.getElementById('submit-lead');
-            const closeModalButton = document.getElementById('close-modal');
+            const submitLead = document.getElementById('submit-lead');
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
-            const contentLibraryInput = document.getElementById('content-library');
-            const nicheInput = document.getElementById('niche');
-            const audienceInput = document.getElementById('audience');
-            const searchContentButton = document.getElementById('search-content');
-            const getSuggestionsButton = document.getElementById('get-suggestions');
 
-            function showModal() {
-                leadCaptureModal.style.display = 'flex';
-            }
-
-            function hideModal() {
-                leadCaptureModal.style.display = 'none';
-            }
-
-            function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-
-            function handleSubmit() {
-                const name = nameInput.value.trim();
-                const email = emailInput.value.trim();
-                const contentLibrary = contentLibraryInput.value.trim();
-                const niche = nicheInput.value.trim();
-                const audience = audienceInput.value.trim();
-
-                if (!name || !email) {
-                    alert('Please enter both name and email');
-                    return;
-                }
-
-                if (!validateEmail(email)) {
-                    alert('Please enter a valid email address');
-                    return;
-                }
-
-                const payload = {
-                    name,
-                    email,
-                    contentLibrary,
-                    niche,
-                    audience,
-                    productConcept: 'Automated Social Media Content Calendar'
-                };
-
-                fetch('https://salarybit.in/api/v1/lead-intake', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Success:', data);
-                    alert('Thank you for your interest! We will contact you soon.');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('There was an error submitting your information. Please try again later.');
+            if (leadCapture && leadCaptureModal) {
+                leadCapture.addEventListener('click', () => {
+                    leadCaptureModal.style.display = 'flex';
                 });
-
-                try {
-                    localStorage.setItem('name', name);
-                    localStorage.setItem('email', email);
-                    localStorage.setItem('contentLibrary', contentLibrary);
-                    localStorage.setItem('niche', niche);
-                    localStorage.setItem('audience', audience);
-                } catch (e) {
-                    console.error('Error saving to localStorage:', e);
-                }
-
-                hideModal();
             }
 
-            function loadStoredData() {
-                try {
-                    const storedName = localStorage.getItem('name');
-                    const storedEmail = localStorage.getItem('email');
-                    const storedContentLibrary = localStorage.getItem('contentLibrary');
-                    const storedNiche = localStorage.getItem('niche');
-                    const storedAudience = localStorage.getItem('audience');
+            if (submitLead && nameInput && emailInput) {
+                submitLead.addEventListener('click', () => {
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim();
 
-                    if (storedName) nameInput.value = storedName;
-                    if (storedEmail) emailInput.value = storedEmail;
-                    if (storedContentLibrary) contentLibraryInput.value = storedContentLibrary;
-                    if (storedNiche) nicheInput.value = storedNiche;
-                    if (storedAudience) audienceInput.value = storedAudience;
-                } catch (e) {
-                    console.error('Error loading from localStorage:', e);
-                }
+                    if (!name || !email) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        alert('Please enter a valid email address');
+                        return;
+                    }
+
+                    const payload = {
+                        name,
+                        email,
+                        productConcept: 'Automated Social Media Content Calendar for Mental Health Professionals'
+                    };
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        alert('Thank you for your interest!');
+                        nameInput.value = '';
+                        emailInput.value = '';
+                        leadCaptureModal.style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your information. Please try again later.');
+                    });
+                });
             }
 
-            leadCaptureButton.addEventListener('click', showModal);
-            submitLeadButton.addEventListener('click', handleSubmit);
-            closeModalButton.addEventListener('click', hideModal);
-            searchContentButton.addEventListener('click', () => {
-                console.log('Searching content library for:', contentLibraryInput.value);
-            });
-            getSuggestionsButton.addEventListener('click', () => {
-                console.log('Getting suggestions for niche:', nicheInput.value, 'and audience:', audienceInput.value);
-            });
+            if (scheduleButton) {
+                scheduleButton.addEventListener('click', () => {
+                    const scheduleDate = document.getElementById('schedule-date').value;
+                    const scheduleTime = document.getElementById('schedule-time').value;
+                    const postContent = document.getElementById('post-content').value;
 
-            leadCaptureModal.addEventListener('click', (e) => {
-                if (e.target === leadCaptureModal) {
-                    hideModal();
+                    if (!scheduleDate || !scheduleTime) {
+                        alert('Please select both date and time');
+                        return;
+                    }
+
+                    try {
+                        const payload = {
+                            scheduleDate,
+                            scheduleTime,
+                            postContent
+                        };
+                        localStorage.setItem('schedule', JSON.stringify(payload));
+                        alert('Post scheduled successfully!');
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                        alert('There was an error saving your schedule. Please try again.');
+                    }
+                });
+            }
+
+            if (checkCompliance) {
+                checkCompliance.addEventListener('click', () => {
+                    const postContent = document.getElementById('post-content').value.trim();
+
+                    if (!postContent) {
+                        alert('Please enter post content to check compliance');
+                        return;
+                    }
+
+                    // Basic compliance check
+                    const complianceIssues = [];
+                    if (postContent.length > 280) {
+                        complianceIssues.push('Post exceeds 280 characters (Twitter limit)');
+                    }
+
+                    if (complianceIssues.length > 0) {
+                        alert('Compliance issues found:\n- ' + complianceIssues.join('\n- '));
+                    } else {
+                        alert('Post content appears compliant with basic guidelines');
+                    }
+                });
+            }
+
+            window.addEventListener('load', () => {
+                try {
+                    const schedule = localStorage.getItem('schedule');
+                    if (schedule) {
+                        const scheduleData = JSON.parse(schedule);
+                        if (scheduleData.scheduleDate) {
+                            document.getElementById('schedule-date').value = scheduleData.scheduleDate;
+                        }
+                        if (scheduleData.scheduleTime) {
+                            document.getElementById('schedule-time').value = scheduleData.scheduleTime;
+                        }
+                        if (scheduleData.postContent) {
+                            document.getElementById('post-content').value = scheduleData.postContent;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading from localStorage:', error);
                 }
             });
 
-            loadStoredData();
+            // Close modal when clicking outside
+            if (leadCaptureModal) {
+                leadCaptureModal.addEventListener('click', (e) => {
+                    if (e.target === leadCaptureModal) {
+                        leadCaptureModal.style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
 </body>
