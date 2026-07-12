@@ -213,6 +213,14 @@ def extract_link_url(link_markdown: str) -> str:
     return match.group(1) if match else "#"
 
 
+def get_recent_titles(limit: int = 15):
+    """Returns the most recent product titles from the journal, newest first.
+    Used to stop the Trend Scout from re-pitching a concept it already shipped."""
+    rows = read_journal_rows()
+    titles = [title for (_date, title, _link) in rows]
+    return list(reversed(titles))[:limit]
+
+
 def render_index_html(rows):
     """Rebuilds index.html from journal rows, keeping the exact same dark
     dashboard styling that was already hand-built — only the <tbody> changes."""
@@ -325,12 +333,33 @@ def run_agent_pipeline(strategy):
         )
     else:
         print("🌐 No manual idea found — running fully autonomous trend-scouting mode.")
+
+        # BUGFIX: previously the model was given no memory of what it had
+        # already shipped, so with a narrow prompt it kept converging on the
+        # same comfortable idea run after run (e.g. nine "content calendar"
+        # variants in twelve days). Pulling recent titles from the journal
+        # and explicitly banning repeats/close variants forces real variety.
+        recent_titles = get_recent_titles(limit=15)
+        if recent_titles:
+            recent_titles_block = "\n".join(f"- {t}" for t in recent_titles)
+            avoid_clause = (
+                "\n\nThe following concepts have ALREADY been built recently. Do NOT repeat any "
+                "of them, and do NOT propose a close variant that just swaps the target audience "
+                "or industry for the same underlying tool (e.g. do not submit another 'content "
+                "calendar for <different audience>' if one is already listed below). Pick a "
+                "genuinely different underlying problem and mechanism:\n"
+                f"{recent_titles_block}"
+            )
+        else:
+            avoid_clause = ""
+
         research_prompt = (
             "Identify one concrete, high-potential, underserved micro-SaaS or single-page tool "
             "opportunity based on current digital trends (not limited to any single industry). "
             "Pick a specific niche problem, not a generic category. Respond in markdown starting "
             "with a single '# Product Name' line as the title, followed by target audience, core "
             "problem, and value proposition."
+            f"{avoid_clause}"
         )
 
     research_output = call_provider(strategy["research_provider"], research_prompt)
