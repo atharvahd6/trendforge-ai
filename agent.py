@@ -145,7 +145,7 @@ def clear_manual_idea():
 # ==========================================================
 # 4. TEXT / FILE HELPERS
 # ==========================================================
-def slugify(text: str, max_words: int = 6) -> str:
+def slugify(text: str, max_words: int = 12) -> str:
     """Turns a freeform title/topic string into a filesystem-safe slug."""
     text = text.lower()
     text = re.sub(r"[^a-z0-9\s-]", "", text)
@@ -363,6 +363,22 @@ def run_agent_pipeline(strategy):
     title = extract_title(manual_idea if using_manual_idea else research_output, fallback_title)
     slug = slugify(title)
     today_str = datetime.utcnow().strftime("%Y-%m-%d")
+
+    # BUGFIX: previously the folder was named `products/{slug}` with no date
+    # prefix. Because slugify() only kept the first 6 words, near-identical
+    # titles (e.g. two different "...Content Calendar for X" ideas) collapsed
+    # to the SAME slug, and os.makedirs(..., exist_ok=True) silently reused
+    # that folder — so every colliding run overwrote the previous day's live
+    # index.html at the same URL instead of archiving it. Prefixing with the
+    # run date guarantees a fresh, permanent folder every single run, and the
+    # while-loop below still protects against two runs on the same UTC day.
+    base_slug = f"{today_str}-{slug}"
+    dated_slug = base_slug
+    suffix = 2
+    while os.path.exists(os.path.join(PRODUCTS_DIR, dated_slug)):
+        dated_slug = f"{base_slug}-{suffix}"
+        suffix += 1
+    slug = dated_slug
 
     product_dir = os.path.join(PRODUCTS_DIR, slug)
     os.makedirs(product_dir, exist_ok=True)
