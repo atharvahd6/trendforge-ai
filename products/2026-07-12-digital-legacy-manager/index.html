@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Legacy Manager</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        section {
+            background-color: #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+        }
+        h1, h2 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+        #lead-capture-modal h2 {
+            margin-top: 0;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        #estate-plan-document {
+            white-space: pre-wrap;
+            background-color: #444;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Legacy Manager</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Inventory Your Digital Assets</h2>
+            <form id="digital-assets-form">
+                <label for="social-media-accounts">Social Media Accounts:</label>
+                <input type="text" id="social-media-accounts" name="social-media-accounts">
+                <label for="email-accounts">Email Accounts:</label>
+                <input type="text" id="email-accounts" name="email-accounts">
+                <label for="online-storage-accounts">Online Storage Accounts:</label>
+                <input type="text" id="online-storage-accounts" name="online-storage-accounts">
+                <button type="submit" id="save-digital-assets-btn">Save</button>
+            </form>
+        </section>
+        <section>
+            <h2>Designate Beneficiaries</h2>
+            <form id="beneficiaries-form">
+                <label for="beneficiary-name">Beneficiary Name:</label>
+                <input type="text" id="beneficiary-name" name="beneficiary-name">
+                <label for="beneficiary-email">Beneficiary Email:</label>
+                <input type="email" id="beneficiary-email" name="beneficiary-email">
+                <label for="beneficiary-relationship">Beneficiary Relationship:</label>
+                <input type="text" id="beneficiary-relationship" name="beneficiary-relationship">
+                <button type="submit" id="save-beneficiaries-btn">Save</button>
+            </form>
+        </section>
+        <section>
+            <h2>Create a Plan</h2>
+            <form id="plan-form">
+                <label for="account-closure-plan">Account Closure Plan:</label>
+                <textarea id="account-closure-plan" name="account-closure-plan" rows="4"></textarea>
+                <label for="account-transfer-plan">Account Transfer Plan:</label>
+                <textarea id="account-transfer-plan" name="account-transfer-plan" rows="4"></textarea>
+                <label for="account-memorialization-plan">Account Memorialization Plan:</label>
+                <textarea id="account-memorialization-plan" name="account-memorialization-plan" rows="4"></textarea>
+                <button type="submit" id="save-plan-btn">Save</button>
+            </form>
+        </section>
+        <section>
+            <h2>Generate Digital Estate Plan</h2>
+            <button id="generate-estate-plan-btn">Generate</button>
+            <div id="estate-plan-document"></div>
+        </section>
+        <button id="lead-capture-btn">Get Started with Digital Legacy Manager</button>
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get Started with Digital Legacy Manager</h2>
+            <form id="lead-capture-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone">
+                <button type="submit" id="submit-lead-capture-form-btn">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const digitalAssetsForm = document.getElementById('digital-assets-form');
+            const beneficiariesForm = document.getElementById('beneficiaries-form');
+            const planForm = document.getElementById('plan-form');
+            const generateEstatePlanBtn = document.getElementById('generate-estate-plan-btn');
+            const estatePlanDocument = document.getElementById('estate-plan-document');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const leadCaptureForm = document.getElementById('lead-capture-form');
+            const submitLeadCaptureFormBtn = document.getElementById('submit-lead-capture-form-btn');
+
+            function safeLocalStorageSet(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return false;
+                }
+            }
+
+            function safeLocalStorageGet(key) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : null;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return null;
+                }
+            }
+
+            digitalAssetsForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const socialMediaAccounts = document.getElementById('social-media-accounts').value;
+                const emailAccounts = document.getElementById('email-accounts').value;
+                const onlineStorageAccounts = document.getElementById('online-storage-accounts').value;
+
+                safeLocalStorageSet('digitalAssets', {
+                    socialMediaAccounts,
+                    emailAccounts,
+                    onlineStorageAccounts
+                });
+            });
+
+            beneficiariesForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const beneficiaryName = document.getElementById('beneficiary-name').value;
+                const beneficiaryEmail = document.getElementById('beneficiary-email').value;
+                const beneficiaryRelationship = document.getElementById('beneficiary-relationship').value;
+
+                safeLocalStorageSet('beneficiaries', {
+                    beneficiaryName,
+                    beneficiaryEmail,
+                    beneficiaryRelationship
+                });
+            });
+
+            planForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const accountClosurePlan = document.getElementById('account-closure-plan').value;
+                const accountTransferPlan = document.getElementById('account-transfer-plan').value;
+                const accountMemorializationPlan = document.getElementById('account-memorialization-plan').value;
+
+                safeLocalStorageSet('plan', {
+                    accountClosurePlan,
+                    accountTransferPlan,
+                    accountMemorializationPlan
+                });
+            });
+
+            generateEstatePlanBtn.addEventListener('click', () => {
+                const digitalAssets = safeLocalStorageGet('digitalAssets');
+                const beneficiaries = safeLocalStorageGet('beneficiaries');
+                const plan = safeLocalStorageGet('plan');
+
+                if (!digitalAssets || !beneficiaries || !plan) {
+                    estatePlanDocument.innerText = 'Please complete all sections before generating the estate plan.';
+                    return;
+                }
+
+                const estatePlan = `
+Digital Assets:
+- Social Media Accounts: ${digitalAssets.socialMediaAccounts || 'Not specified'}
+- Email Accounts: ${digitalAssets.emailAccounts || 'Not specified'}
+- Online Storage Accounts: ${digitalAssets.onlineStorageAccounts || 'Not specified'}
+
+Beneficiaries:
+- Name: ${beneficiaries.beneficiaryName || 'Not specified'}
+- Email: ${beneficiaries.beneficiaryEmail || 'Not specified'}
+- Relationship: ${beneficiaries.beneficiaryRelationship || 'Not specified'}
+
+Plan:
+- Account Closure Plan: ${plan.accountClosurePlan || 'Not specified'}
+- Account Transfer Plan: ${plan.accountTransferPlan || 'Not specified'}
+- Account Memorialization Plan: ${plan.accountMemorializationPlan || 'Not specified'}
+                `;
+                estatePlanDocument.innerText = estatePlan;
+            });
+
+            leadCaptureBtn.addEventListener('click', () => {
+                modalOverlay.style.display = 'block';
+                leadCaptureModal.style.display = 'block';
+            });
+
+            modalOverlay.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+                leadCaptureModal.style.display = 'none';
+            });
+
+            leadCaptureForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+
+                try {
+                    const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            phone,
+                            productConcept: 'Digital Legacy Manager'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Lead submission successful:', data);
+                } catch (error) {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                } finally {
+                    modalOverlay.style.display = 'none';
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
