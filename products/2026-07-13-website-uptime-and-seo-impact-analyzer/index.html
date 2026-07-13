@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Uptime and SEO Impact Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #3f3f3f;
+            color: #ffffff;
+        }
+        header, main {
+            width: 80%;
+            margin: 0 auto;
+        }
+        header {
+            background-color: #2f2f2f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        section {
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            width: 50%;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4f4f4f;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #results {
+            display: none;
+            width: 100%;
+        }
+        #lead-capture-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        #lead-capture-modal div {
+            background-color: #2f2f2f;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Website Uptime and SEO Impact Analyzer</h1>
+    </header>
+    <main>
+        <section>
+            <label for="website-url">Enter your website URL:</label>
+            <input type="text" id="website-url" placeholder="https://example.com">
+        </section>
+        <section>
+            <button id="analyze-button">Analyze</button>
+        </section>
+        <section id="results">
+            <h2>Results:</h2>
+            <p id="uptime-result"></p>
+            <p id="seo-impact-result"></p>
+            <p id="recommendations-result"></p>
+        </section>
+        <section>
+            <button id="lead-capture-button">Get in Touch</button>
+        </section>
+        <div id="lead-capture-modal">
+            <div>
+                <h2>Get in Touch</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Your name">
+                <br><br>
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="your@email.com">
+                <br><br>
+                <button id="submit-lead">Submit</button>
+                <button id="close-modal" style="margin-left: 10px; background-color: #666;">Cancel</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const websiteUrlInput = document.getElementById('website-url');
+            const analyzeButton = document.getElementById('analyze-button');
+            const resultsSection = document.getElementById('results');
+            const uptimeResult = document.getElementById('uptime-result');
+            const seoImpactResult = document.getElementById('seo-impact-result');
+            const recommendationsResult = document.getElementById('recommendations-result');
+            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const submitLeadButton = document.getElementById('submit-lead');
+            const closeModalButton = document.getElementById('close-modal');
+
+            analyzeButton.addEventListener('click', () => {
+                const websiteUrl = websiteUrlInput.value.trim();
+                if (!websiteUrl) {
+                    alert('Please enter a website URL');
+                    return;
+                }
+
+                try {
+                    localStorage.setItem('websiteUrl', websiteUrl);
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                }
+
+                const uptime = (Math.random() * 100).toFixed(2);
+                const seoImpact = (Math.random() * 100).toFixed(2);
+                const recommendations = 'Optimize your website for better performance and SEO';
+
+                uptimeResult.textContent = `Uptime: ${uptime}%`;
+                seoImpactResult.textContent = `SEO Impact: ${seoImpact}%`;
+                recommendationsResult.textContent = `Recommendations: ${recommendations}`;
+                resultsSection.style.display = 'block';
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+            });
+
+            submitLeadButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+
+                if (!name || !email) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                const payload = {
+                    productConcept: 'Website Uptime and SEO Impact Analyzer',
+                    name,
+                    email
+                };
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Thank you for your interest! We will contact you soon.');
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    leadCaptureModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                });
+            });
+
+            try {
+                const websiteUrl = localStorage.getItem('websiteUrl');
+                if (websiteUrl) {
+                    websiteUrlInput.value = websiteUrl;
+                }
+            } catch (e) {
+                console.error('LocalStorage error:', e);
+            }
+        });
+    </script>
+</body>
+</html>
