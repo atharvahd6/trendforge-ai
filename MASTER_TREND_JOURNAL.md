@@ -22,3 +22,4 @@
 | 2026-07-12 | Automated Social Media Content Calendar for Mental Health Professionals | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/automated-social-media-content-calendar-for/) |
 | 2026-07-12 | Digital Legacy Manager | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-12-digital-legacy-manager/) |
 | 2026-07-13 | Website Uptime and SEO Impact Analyzer | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-13-website-uptime-and-seo-impact-analyzer/) |
+| 2026-07-14 | Accessibility Checker for E-Learning Course Creators | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-14-accessibility-checker-for-e-learning-course-creators/) |
