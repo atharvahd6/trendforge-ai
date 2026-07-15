@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro-Event Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        section {
+            margin-bottom: 2em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.5em;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1em;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 0.5em;
+            text-align: left;
+        }
+        th {
+            background-color: #555;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            padding: 1em;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Micro-Event Planner</h1>
+    </header>
+    <main>
+        <section>
+            <label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" />
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" />
+            <label for="event-time">Event Time:</label>
+            <input type="time" id="event-time" />
+            <label for="attendee-list">Attendee List:</label>
+            <textarea id="attendee-list" placeholder="Enter attendees, one per line"></textarea>
+            <label for="speaker-list">Speaker List:</label>
+            <textarea id="speaker-list" placeholder="Enter speakers, one per line"></textarea>
+            <label for="vendor-list">Vendor List:</label>
+            <textarea id="vendor-list" placeholder="Enter vendors, one per line"></textarea>
+            <button id="save-event">Save Event</button>
+        </section>
+        <section>
+            <h2>RSVP Tracking</h2>
+            <table id="rsvp-table">
+                <thead>
+                    <tr>
+                        <th>Attendee</th>
+                        <th>RSVP Status</th>
+                    </tr>
+                </thead>
+                <tbody id="rsvp-table-body">
+                </tbody>
+            </table>
+            <button id="add-rsvp">Add RSVP</button>
+        </section>
+        <section>
+            <h2>Communication</h2>
+            <label for="email-template">Email Template:</label>
+            <select id="email-template">
+                <option value="invitation">Invitation</option>
+                <option value="reminder">Reminder</option>
+                <option value="follow-up">Follow-up</option>
+            </select>
+            <label for="email-content">Email Content:</label>
+            <textarea id="email-content" placeholder="Enter email content here"></textarea>
+            <button id="send-email">Send Email</button>
+        </section>
+        <button id="get-started">Get Started</button>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div id="lead-capture-modal" style="display: none;">
+        <h2>Get Started with Micro-Event Planner</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" required />
+        <label for="email">Email:</label>
+        <input type="email" id="email" required />
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" />
+        <button id="submit-lead">Submit</button>
+        <button id="cancel-lead">Cancel</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventName = document.getElementById('event-name');
+            const eventDate = document.getElementById('event-date');
+            const eventTime = document.getElementById('event-time');
+            const attendeeList = document.getElementById('attendee-list');
+            const speakerList = document.getElementById('speaker-list');
+            const vendorList = document.getElementById('vendor-list');
+            const saveEvent = document.getElementById('save-event');
+            const rsvpTable = document.getElementById('rsvp-table-body');
+            const addRsvp = document.getElementById('add-rsvp');
+            const emailTemplate = document.getElementById('email-template');
+            const emailContent = document.getElementById('email-content');
+            const sendEmail = document.getElementById('send-email');
+            const getStarted = document.getElementById('get-started');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const submitLead = document.getElementById('submit-lead');
+            const cancelLead = document.getElementById('cancel-lead');
+
+            function showModal() {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            }
+
+            function hideModal() {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+                nameInput.value = '';
+                emailInput.value = '';
+                phoneInput.value = '';
+            }
+
+            saveEvent.addEventListener('click', () => {
+                try {
+                    const eventData = {
+                        eventName: eventName.value,
+                        eventDate: eventDate.value,
+                        eventTime: eventTime.value,
+                        attendeeList: attendeeList.value,
+                        speakerList: speakerList.value,
+                        vendorList: vendorList.value
+                    };
+                    localStorage.setItem('event_data', JSON.stringify(eventData));
+                    alert('Event saved successfully!');
+                } catch (error) {
+                    console.error('Error saving event:', error);
+                    alert('Failed to save event. Please try again.');
+                }
+            });
+
+            addRsvp.addEventListener('click', () => {
+                const attendee = prompt('Enter attendee name:');
+                if (!attendee) return;
+
+                const rsvpStatus = prompt('Enter RSVP status:');
+                if (!rsvpStatus) return;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${escapeHtml(attendee)}</td>
+                    <td>${escapeHtml(rsvpStatus)}</td>
+                `;
+                rsvpTable.appendChild(row);
+            });
+
+            sendEmail.addEventListener('click', () => {
+                if (!emailContent.value.trim()) {
+                    alert('Please enter email content');
+                    return;
+                }
+
+                const emailData = {
+                    template: emailTemplate.value,
+                    content: emailContent.value
+                };
+                console.log('Email data:', emailData);
+                alert('Email would be sent (simulated)');
+            });
+
+            getStarted.addEventListener('click', showModal);
+
+            submitLead.addEventListener('click', () => {
+                if (!nameInput.value.trim() || !emailInput.value.trim()) {
+                    alert('Please enter both name and email');
+                    return;
+                }
+
+                const leadData = {
+                    name: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    phone: phoneInput.value.trim(),
+                    product_concept: 'Micro-Event Planner'
+                };
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(leadData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Thank you for your interest! We will contact you soon.');
+                    hideModal();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                });
+            });
+
+            cancelLead.addEventListener('click', hideModal);
+
+            modalOverlay.addEventListener('click', hideModal);
+
+            window.addEventListener('load', () => {
+                try {
+                    const eventData = localStorage.getItem('event_data');
+                    if (eventData) {
+                        const parsedEventData = JSON.parse(eventData);
+                        eventName.value = parsedEventData.eventName || '';
+                        eventDate.value = parsedEventData.eventDate || '';
+                        eventTime.value = parsedEventData.eventTime || '';
+                        attendeeList.value = parsedEventData.attendeeList || '';
+                        speakerList.value = parsedEventData.speakerList || '';
+                        vendorList.value = parsedEventData.vendorList || '';
+                    }
+                } catch (error) {
+                    console.error('Error loading event data:', error);
+                }
+            });
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        });
+    </script>
+</body>
+</html>
