@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Footprint Analyzer for Job Seekers</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        section {
+            background-color: #555;
+            padding: 1em;
+            margin-bottom: 1em;
+            border-radius: 0.5em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: none;
+            border-radius: 0.5em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 0.5em;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 1em;
+            border-radius: 0.5em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 0.5em;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Footprint Analyzer for Job Seekers</h1>
+    </header>
+    <main>
+        <section>
+            <label for="name">Enter your name:</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+            <button id="analyze">Analyze Digital Footprint</button>
+            <div id="results"></div>
+        </section>
+        <section>
+            <h2>Recommendations</h2>
+            <ul id="recommendations">
+                <li>Create a professional LinkedIn profile</li>
+                <li>Review and update your social media profiles</li>
+                <li>Monitor your online presence regularly</li>
+            </ul>
+        </section>
+        <button id="get-started">Get Started with Digital Footprint Management</button>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div id="lead-capture-modal" style="display: none;">
+        <h2>Get Started with Digital Footprint Management</h2>
+        <label for="email">Enter your email:</label>
+        <input type="email" id="email" placeholder="john.doe@example.com" required>
+        <div id="email-error" class="error-message" style="display: none;">Please enter a valid email address</div>
+        <button id="submit-lead">Submit</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameInput = document.getElementById('name');
+            const analyzeButton = document.getElementById('analyze');
+            const resultsDiv = document.getElementById('results');
+            const getStartedButton = document.getElementById('get-started');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const emailInput = document.getElementById('email');
+            const submitLeadButton = document.getElementById('submit-lead');
+            const emailError = document.getElementById('email-error');
+
+            // Check for localStorage support
+            const isLocalStorageAvailable = () => {
+                try {
+                    const testKey = '__test__';
+                    localStorage.setItem(testKey, testKey);
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            // Load user input from localStorage if available
+            if (isLocalStorageAvailable()) {
+                const storedName = localStorage.getItem('name');
+                if (storedName) {
+                    nameInput.value = storedName;
+                }
+            }
+
+            analyzeButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                if (!name) {
+                    resultsDiv.innerHTML = '<p class="error-message">Please enter your name</p>';
+                    return;
+                }
+
+                // Simulate API call to analyze digital footprint
+                const socialMediaProfiles = [
+                    { platform: 'LinkedIn', professionalism: 8 },
+                    { platform: 'Facebook', professionalism: 6 },
+                    { platform: 'Twitter', professionalism: 9 }
+                ];
+                const personalInfo = `Some personal info about ${name}`;
+                const alerts = ['Unprofessional post on Facebook', 'Inappropriate photo on Twitter'];
+                const recommendations = [
+                    'Create a professional LinkedIn profile',
+                    'Review and update your social media profiles',
+                    'Monitor your online presence regularly'
+                ];
+
+                resultsDiv.innerHTML = `
+                    <h2>Digital Footprint Report for ${escapeHtml(name)}</h2>
+                    <h3>Social Media Profiles:</h3>
+                    <ul>
+                        ${socialMediaProfiles.map(profile => `<li>${escapeHtml(profile.platform)} - Professionalism: ${profile.professionalism}/10</li>`).join('')}
+                    </ul>
+                    <h3>Personal Info:</h3>
+                    <p>${escapeHtml(personalInfo)}</p>
+                    <h3>Alerts:</h3>
+                    <ul>
+                        ${alerts.map(alert => `<li>${escapeHtml(alert)}</li>`).join('')}
+                    </ul>
+                    <h3>Recommendations:</h3>
+                    <ul>
+                        ${recommendations.map(recommendation => `<li>${escapeHtml(recommendation)}</li>`).join('')}
+                    </ul>
+                `;
+
+                // Save user input to localStorage if available
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('name', name);
+                }
+            });
+
+            getStartedButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            });
+
+            modalOverlay.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            });
+
+            submitLeadButton.addEventListener('click', () => {
+                const email = emailInput.value.trim();
+                if (!email || !validateEmail(email)) {
+                    emailError.style.display = 'block';
+                    return;
+                }
+                emailError.style.display = 'none';
+
+                // Simulate API call to submit lead
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productConcept: 'Digital Footprint Analyzer for Job Seekers',
+                        email: email
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Lead submitted successfully:', data);
+                    leadCaptureModal.style.display = 'none';
+                    modalOverlay.style.display = 'none';
+                    emailInput.value = '';
+                    alert('Thank you! We will contact you soon.');
+                })
+                .catch(error => {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                });
+            });
+
+            // Helper functions
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        });
+    </script>
+</body>
+</html>

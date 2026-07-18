@@ -26,3 +26,4 @@
 | 2026-07-15 | Micro-Event Planner | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-15-micro-event-planner/) |
 | 2026-07-16 | Personalized Online Course Prerequisite Recommender | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-16-personalized-online-course-prerequisite-recommender/) |
 | 2026-07-17 | AI-Generated Video Script Optimizer | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-17-ai-generated-video-script-optimizer/) |
+| 2026-07-18 | Digital Footprint Analyzer for Job Seekers | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-18-digital-footprint-analyzer-for-job-seekers/) |
