@@ -27,3 +27,4 @@
 | 2026-07-16 | Personalized Online Course Prerequisite Recommender | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-16-personalized-online-course-prerequisite-recommender/) |
 | 2026-07-17 | AI-Generated Video Script Optimizer | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-17-ai-generated-video-script-optimizer/) |
 | 2026-07-18 | Digital Footprint Analyzer for Job Seekers | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-18-digital-footprint-analyzer-for-job-seekers/) |
+| 2026-07-19 | Website Carbon Emissions Calculator | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-19-website-carbon-emissions-calculator/) |

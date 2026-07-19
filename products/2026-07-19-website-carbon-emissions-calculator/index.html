@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Carbon Emissions Calculator</title>
+    <style>
+        body {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #4f4f4f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input, select {
+            width: 100%;
+            height: 30px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+        }
+        button {
+            width: 100%;
+            height: 30px;
+            background-color: #8f8f8f;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #9f9f9f;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4f4f4f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            z-index: 1000;
+        }
+        #lead-capture-modal h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        #lead-capture-modal label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #lead-capture-modal input, #lead-capture-modal textarea {
+            width: 100%;
+            height: 30px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+        }
+        #lead-capture-modal textarea {
+            height: 100px;
+        }
+        #emissions-result, #badge-result {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #6f6f6f;
+            border-radius: 5px;
+        }
+        #recommendations-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        #recommendations-list li {
+            background-color: #6f6f6f;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Website Carbon Emissions Calculator</h1>
+    </header>
+    <main>
+        <section>
+            <label for="website-size">Website Size (MB):</label>
+            <input type="number" id="website-size" min="0" step="0.1" value="10">
+            <label for="monthly-traffic">Monthly Traffic:</label>
+            <input type="number" id="monthly-traffic" min="0" value="10000">
+            <label for="hosting-infrastructure">Hosting Infrastructure:</label>
+            <select id="hosting-infrastructure">
+                <option value="non-renewable">Non-Renewable</option>
+                <option value="renewable">Renewable</option>
+            </select>
+            <button id="calculate-emissions">Calculate Emissions</button>
+            <p id="emissions-result"></p>
+            <button id="get-recommendations">Get Recommendations</button>
+            <ul id="recommendations-list"></ul>
+            <button id="get-badge">Get Badge</button>
+            <p id="badge-result"></p>
+        </section>
+        <button id="contact-us">Contact Us</button>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get in Touch</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="message">Message:</label>
+            <textarea id="message" required></textarea>
+            <button id="submit-lead">Submit</button>
+            <button id="close-modal" style="margin-top: 10px;">Cancel</button>
+        </div>
+    </main>
+    <script>
+        const websiteSizeInput = document.getElementById('website-size');
+        const monthlyTrafficInput = document.getElementById('monthly-traffic');
+        const hostingInfrastructureSelect = document.getElementById('hosting-infrastructure');
+        const calculateEmissionsButton = document.getElementById('calculate-emissions');
+        const emissionsResultParagraph = document.getElementById('emissions-result');
+        const getRecommendationsButton = document.getElementById('get-recommendations');
+        const recommendationsList = document.getElementById('recommendations-list');
+        const getBadgeButton = document.getElementById('get-badge');
+        const badgeResultParagraph = document.getElementById('badge-result');
+        const contactUsButton = document.getElementById('contact-us');
+        const leadCaptureModal = document.getElementById('lead-capture-modal');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageTextarea = document.getElementById('message');
+        const submitLeadButton = document.getElementById('submit-lead');
+        const closeModalButton = document.getElementById('close-modal');
+
+        calculateEmissionsButton.addEventListener('click', calculateEmissions);
+        getRecommendationsButton.addEventListener('click', getRecommendations);
+        getBadgeButton.addEventListener('click', getBadge);
+        contactUsButton.addEventListener('click', showLeadCaptureModal);
+        submitLeadButton.addEventListener('click', submitLead);
+        closeModalButton.addEventListener('click', () => leadCaptureModal.style.display = 'none');
+
+        function calculateEmissions() {
+            try {
+                const websiteSize = parseFloat(websiteSizeInput.value);
+                const monthlyTraffic = parseFloat(monthlyTrafficInput.value);
+                const hostingInfrastructure = hostingInfrastructureSelect.value;
+
+                if (isNaN(websiteSize) || isNaN(monthlyTraffic) || websiteSize < 0 || monthlyTraffic < 0) {
+                    emissionsResultParagraph.textContent = 'Please enter valid positive numbers for website size and traffic.';
+                    return;
+                }
+
+                const emissions = calculateCarbonEmissions(websiteSize, monthlyTraffic, hostingInfrastructure);
+                emissionsResultParagraph.textContent = `Your website's carbon emissions are approximately ${emissions.toFixed(2)} kg CO2 per year.`;
+
+                try {
+                    localStorage.setItem('websiteSize', websiteSizeInput.value);
+                    localStorage.setItem('monthlyTraffic', monthlyTrafficInput.value);
+                    localStorage.setItem('hostingInfrastructure', hostingInfrastructureSelect.value);
+                } catch (e) {
+                    console.error('Could not save to localStorage:', e);
+                }
+            } catch (error) {
+                console.error('Error calculating emissions:', error);
+                emissionsResultParagraph.textContent = 'An error occurred while calculating emissions.';
+            }
+        }
+
+        function getRecommendations() {
+            try {
+                const websiteSize = parseFloat(websiteSizeInput.value);
+                const monthlyTraffic = parseFloat(monthlyTrafficInput.value);
+                const hostingInfrastructure = hostingInfrastructureSelect.value;
+
+                if (isNaN(websiteSize) || isNaN(monthlyTraffic) || websiteSize < 0 || monthlyTraffic < 0) {
+                    recommendationsList.innerHTML = '<li>Please enter valid positive numbers for website size and traffic.</li>';
+                    return;
+                }
+
+                const recommendations = getRecommendationsBasedOnEmissions(websiteSize, monthlyTraffic, hostingInfrastructure);
+                recommendationsList.innerHTML = '';
+
+                if (recommendations.length === 0) {
+                    recommendationsList.innerHTML = '<li>Your website is already optimized!</li>';
+                } else {
+                    recommendations.forEach(recommendation => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = recommendation;
+                        recommendationsList.appendChild(listItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+                recommendationsList.innerHTML = '<li>An error occurred while getting recommendations.</li>';
+            }
+        }
+
+        function getBadge() {
+            try {
+                const websiteSize = parseFloat(websiteSizeInput.value);
+                const monthlyTraffic = parseFloat(monthlyTrafficInput.value);
+                const hostingInfrastructure = hostingInfrastructureSelect.value;
+
+                if (isNaN(websiteSize) || isNaN(monthlyTraffic) || websiteSize < 0 || monthlyTraffic < 0) {
+                    badgeResultParagraph.textContent = 'Please enter valid positive numbers for website size and traffic.';
+                    return;
+                }
+
+                const badge = getBadgeBasedOnEmissions(websiteSize, monthlyTraffic, hostingInfrastructure);
+                badgeResultParagraph.textContent = `Your website's badge is: ${badge}`;
+            } catch (error) {
+                console.error('Error getting badge:', error);
+                badgeResultParagraph.textContent = 'An error occurred while determining your badge.';
+            }
+        }
+
+        function showLeadCaptureModal() {
+            leadCaptureModal.style.display = 'block';
+        }
+
+        function submitLead() {
+            try {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+                const message = messageTextarea.value.trim();
+
+                if (!name || !email || !message) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                const payload = {
+                    name,
+                    email,
+                    message,
+                    productConcept: 'Website Carbon Emissions Calculator'
+                };
+
+                submitLeadButton.disabled = true;
+                submitLeadButton.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Thank you for your message! We will get back to you soon.');
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    messageTextarea.value = '';
+                    leadCaptureModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your message. Please try again later.');
+                })
+                .finally(() => {
+                    submitLeadButton.disabled = false;
+                    submitLeadButton.textContent = 'Submit';
+                });
+            } catch (error) {
+                console.error('Error in submitLead:', error);
+                alert('An unexpected error occurred. Please try again.');
+            }
+        }
+
+        function calculateCarbonEmissions(websiteSize, monthlyTraffic, hostingInfrastructure) {
+            const emissionsPerMB = 0.01;
+            const emissionsPerVisitor = 0.001;
+            let emissions = websiteSize * emissionsPerMB * 12;
+            emissions += monthlyTraffic * emissionsPerVisitor;
+            if (hostingInfrastructure === 'non-renewable') {
+                emissions *= 2;
+            }
+            return emissions;
+        }
+
+        function getRecommendationsBasedOnEmissions(websiteSize, monthlyTraffic, hostingInfrastructure) {
+            const recommendations = [];
+            if (websiteSize > 10) {
+                recommendations.push('Optimize images to reduce website size.');
+            }
+            if (monthlyTraffic > 10000) {
+                recommendations.push('Use a content delivery network (CDN) to reduce traffic.');
+            }
+            if (hostingInfrastructure === 'non-renewable') {
+                recommendations.push('Switch to a renewable energy-powered hosting infrastructure.');
+            }
+            return recommendations;
+        }
+
+        function getBadgeBasedOnEmissions(websiteSize, monthlyTraffic, hostingInfrastructure) {
+            let badge = 'Carbon Neutral';
+            if (websiteSize > 10 || monthlyTraffic > 10000 || hostingInfrastructure === 'non-renewable') {
+                badge = 'Not Carbon Neutral';
+            }
+            return badge;
+        }
+
+        window.addEventListener('load', function() {
+            try {
+                websiteSizeInput.value = localStorage.getItem('websiteSize') || 10;
+                monthlyTrafficInput.value = localStorage.getItem('monthlyTraffic') || 10000;
+                hostingInfrastructureSelect.value = localStorage.getItem('hostingInfrastructure') || 'non-renewable';
+            } catch (e) {
+                console.error('Could not load from localStorage:', e);
+            }
+        });
+    </script>
+</body>
+</html>
