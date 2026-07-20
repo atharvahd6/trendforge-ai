@@ -1,108 +1,136 @@
-# 🚀 TrendForge-AI (Venture Lab)
+# TrendForge Venture Lab
 
-TrendForge-AI is an autonomous micro-SaaS incubator. Every day, the system wakes up, scans the digital landscape for market gaps (or uses an idea you've fed it manually), builds a coded MVP, deploys it as a live GitHub Pages app, and updates the ledger on the homepage automatically.
+**An autonomous agent that ships one complete, deployed micro-SaaS tool every 24 hours.**
 
----
+Every run: research a niche problem → write the product brief → generate a working single-page
+HTML/CSS/JS tool → audit and clean it up → deploy it to GitHub Pages → log it in the public ledger.
+No human in the loop unless you drop an idea into `manual_ideas.txt`.
 
-## 🎯 Why We Are Doing This (The Core Philosophy)
-
-The biggest mistake founders make is wasting months building software before validating market demand. TrendForge-AI flips the script:
-
-1. **Outcome First:** AI research and coding steps turn raw market signals into a concrete, production-ready single-page tool.
-2. **Pre-Sell Validation (Smoke-Testing):** Each generated product is a real, deployable, live-linked tool — publish it and see if anyone bites before investing further engineering time.
-3. **Infinite Historical Memory:** Every run creates a new folder under `products/`, gets its own live GitHub Pages URL, and is permanently logged in `MASTER_TREND_JOURNAL.md`. The homepage (`index.html`) is regenerated from that journal on every run, so it never drifts out of sync.
+Live ledger: **[Launch the dashboard](https://atharvahd6.github.io/trendforge-ai/)**
 
 ---
 
-## 🤖 The Pipeline
+## Quick Start
 
-Three stages run in sequence, each backed by a real AI provider call (no agent framework — direct calls to each provider's SDK, since `requirements.txt` only ships `google-genai`, `groq`, and `mistralai`):
+### Prerequisites
 
-| Stage | Job | Provider |
-| --- | --- | --- |
-| **1. Research** | Finds one concrete product opportunity — either from your `manual_ideas.txt` input or from autonomous trend-scanning. | Gemini (primary), Groq or Mistral (fallback) |
-| **2. Build** | Converts the brief into a dark-themed, responsive single-page HTML/CSS/JS tool with localStorage persistence and a lead-capture modal. | Groq |
-| **3. Audit** | Cleans up the HTML, fixes broken tags, adds basic error handling, strips any stray markdown code fences. | Mistral |
+- Python 3.10+
+- At least one of: `GEMINI_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY`
+- `requirements.txt` → `google-genai`, `groq`, `mistralai`
 
-To stay resilient against rate limits, the **research** stage retries with a different provider if the first fails (see `FALLBACK_STRATEGIES` in `agent.py`). If all three fail, the run exits with an error so you can check API key status.
+### Run it
 
----
-
-## 📂 The Permanent Repository Structure
-
-```
-📁 trendforge-ai/
-│
-├── 📁 .github/
-│   └── 📁 workflows/
-│       └── 📄 run_agent.yml             # Daily cron trigger + manual dispatch + auto-commit
-│
-├── 📁 products/                         # 📂 Every generated product gets its own folder
-│   ├── 📁 texttidy/
-│   │   └── 📄 index.html
-│   └── 📁 parking-spot-finder/
-│       └── 📄 index.html
-│
-├── 📄 agent.py                          # Core pipeline (reads manual_ideas.txt, writes products/, updates journal + index.html)
-├── 📄 MASTER_TREND_JOURNAL.md           # Source-of-truth dated table of every concept ever produced
-├── 📄 manual_ideas.txt                  # Your manual override file — see below
-├── 📄 index.html                        # Homepage dashboard — auto-regenerated from the journal every run
-├── 📄 requirements.txt                  # google-genai, groq, mistralai
-└── 📄 README.md                         # This file
+```bash
+pip install -r requirements.txt
+export GEMINI_API_KEY=...      # optional
+export GROQ_API_KEY=...        # optional
+export MISTRAL_API_KEY=...     # optional, but recommended (see note below)
+python agent.py
 ```
 
-Each product folder is served directly by GitHub Pages at:
-`https://atharvahd6.github.io/trendforge-ai/products/<slug>/`
+> **Note on keys:** the pipeline only *requires* one key to start, but the audit stage prefers
+> Mistral as a fixed, independent auditor. If `MISTRAL_API_KEY` isn't set, audit now falls back
+> to the strategy's own coding provider instead of failing the whole run — see
+> `resolve_audit_provider()` in `agent.py` and the "Known Issues (Fixed)" section below.
 
----
+### Give it a specific idea instead of autonomous scouting
 
-## 💡 How to Add and Run Your Own Ideas Manually
-
-The system runs autonomously on its daily schedule, but you can override it any time:
-
-### Step 1: Fill in `manual_ideas.txt`
-
-Open `manual_ideas.txt` at the repo root and fill in the template:
+Drop a brief into `manual_ideas.txt`:
 
 ```
-PRODUCT NAME: RealEstate-Khatha-Bot
-WHAT IT DOES: An automation script that tracks municipal property documentation and flags application errors on local government portals.
-TARGET AUDIENCE: Property owners and property management firms in Karnataka.
+PRODUCT NAME: Invoice Reminder Scheduler
+Target audience: freelance designers
+Core problem: chasing late client payments manually
 ```
 
-Commit and push the change (or edit it directly in the GitHub web UI).
-
-### Step 2: The agent checks this file automatically
-
-`agent.py` reads `manual_ideas.txt` at the start of every run, before anything else:
-
-- **If it contains a filled-in idea:** the research stage skips trend-scanning entirely and builds your concept instead, end to end.
-- **If it's empty or still just the blank template:** the engine runs in fully autonomous mode and scouts for a trend on its own.
-
-### Step 3: Auto-cleanup happens for you
-
-Once your manual idea has been processed and saved into `products/`, `agent.py` automatically blanks `manual_ideas.txt` back to the empty template — no manual cleanup step needed.
+The next run consumes it, clears the file, and resumes autonomous scouting afterward.
 
 ---
 
-## 🗂️ How the Journal and Homepage Stay in Sync
+## How It Works
 
-Each run:
-1. Computes a slug from the product's title (e.g. `parking-spot-finder`).
-2. Writes the product to `products/<slug>/index.html`.
-3. Appends a row to `MASTER_TREND_JOURNAL.md`.
-4. **Regenerates `index.html` from the journal** — the homepage table is never hand-edited; it's always rebuilt from the journal's rows, so what you see on the live ledger always matches what's actually deployed.
+```
+main()
+  │
+  ▼
+FALLBACK_STRATEGIES loop (Gemini+Groq → Pure Groq → Mistral+Groq)
+  │
+  ▼
+run_agent_pipeline(strategy)
+  │
+  ├─ 1. IDEA        manual_ideas.txt present? → use it (and clear it after)
+  │                 else → research_provider proposes a NEW idea, explicitly
+  │                 banned from repeating the last 15 shipped titles
+  │
+  ├─ 2. RESEARCH     research_provider → markdown brief
+  │                  (# Product Name / audience / problem / value prop)
+  │
+  ├─ 3. CODE         coding_provider → single-file HTML/CSS/JS tool
+  │                  (localStorage persistence + lead-capture modal
+  │                  posting to salarybit.in/api/v1/lead-intake)
+  │
+  ├─ 4. AUDIT        resolve_audit_provider(strategy) → cleans up the HTML,
+  │                  fixes broken tags, adds error handling
+  │
+  ├─ 5. DEPLOY       writes products/<date>-<slug>/index.html
+  │                  (date-prefixed — prevents same-day slug collisions
+  │                  from overwriting a previous day's live tool)
+  │
+  └─ 6. LOG          appends a row to MASTER_TREND_JOURNAL.md,
+                     regenerates index.html from the full journal
+```
 
-If you ever need to hand-fix a journal entry, just edit `MASTER_TREND_JOURNAL.md` directly and run `agent.py`'s `rebuild_index_html()` step (or just wait for the next scheduled run) to regenerate the homepage from it.
+If a strategy throws, the executor loop waits 5s and retries with the next fallback
+strategy. Only exits non-zero if all three are exhausted.
 
 ---
 
-## ⚡ Quick Deployment Verification
+## Architecture
 
-To keep this platform running for free, make sure your repository has these secrets configured under **Settings ➡️ Secrets and variables ➡️ Actions**:
+```
+trendforge-ai/
+├── agent.py                   # the whole pipeline — single file, no framework
+├── manual_ideas.txt            # optional human override, blanked after use
+├── MASTER_TREND_JOURNAL.md     # append-only ledger: date | concept | link
+├── index.html                  # regenerated every run from the journal
+├── products/
+│   └── YYYY-MM-DD-<slug>/
+│       └── index.html          # the deployed, standalone tool for that day
+├── requirements.txt             # google-genai, groq, mistralai
+├── AGENT_GUIDE.md               # operating contract for an agent picking this up cold
+└── PROJECT_CONTEXT.md           # architecture reference / design decisions log
+```
 
-- `GEMINI_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY`
+**Why one file (`agent.py`)?** No agent framework — every provider is called directly
+against its own SDK (`google-genai`, `groq`, `mistralai`), so there's nothing else to install
+or configure to run the pipeline end to end.
 
-Also confirm **Workflow Permissions** are set to **Read and write permissions** under the Actions tab (Settings ➡️ Actions ➡️ General) — `run_agent.yml` needs write access to commit new product folders, the journal, and the regenerated homepage back to the repo.
+---
 
-Make sure **GitHub Pages** is enabled (Settings ➡️ Pages ➡️ deploy from the `main` branch) so each new `products/<slug>/` folder becomes a live URL automatically.
+## Known Issues (Fixed in this pass)
+
+- **Audit stage hardcoded to Mistral regardless of configured keys.** Previously
+  `run_agent_pipeline()` always called `call_provider("mistral", audit_prompt)`, but the
+  startup check only requires *any one* of the three API keys. A deployment running with
+  only `GEMINI_API_KEY` + `GROQ_API_KEY` set would pass the startup check, then fail at the
+  audit step on **every** fallback strategy (all three route audit through Mistral) —
+  producing a `CRITICAL SYSTEM FAILURE` even though two working providers were configured.
+  Fixed with `resolve_audit_provider(strategy)`: prefers Mistral when available, otherwise
+  falls back to that strategy's own `coding_provider`.
+- **Slug collisions** (pre-existing bugfix, already in the code you uploaded): folder names
+  are now date-prefixed (`products/YYYY-MM-DD-<slug>/`) so two different ideas that trim down
+  to the same 6-word slug no longer overwrite each other's live URL.
+- **Idea repetition** (pre-existing bugfix, already in the code you uploaded): the research
+  prompt now includes the last 15 shipped titles with an explicit "do not repeat or submit a
+  close variant" instruction, so the scout stops converging on the same comfortable idea
+  (this is why the journal shows nine near-identical "Content Calendar for X" entries before
+  2026-07-12, and genuinely distinct concepts after).
+
+---
+
+## Contributing
+
+- **New provider:** add a `call_<provider>()` wrapper + register it in `PROVIDER_CALLERS`.
+- **New fallback ordering:** edit `FALLBACK_STRATEGIES`.
+- **Change the deployed tool's shape:** edit the `coding_prompt` template in
+  `run_agent_pipeline()` — e.g. to always include a specific analytics snippet or footer.
