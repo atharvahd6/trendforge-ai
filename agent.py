@@ -311,6 +311,28 @@ if not any([os.environ.get("GEMINI_API_KEY"), os.environ.get("GROQ_API_KEY"), os
     print("❌ CRITICAL ERROR: No operational API keys detected in environment variables.")
     sys.exit(1)
 
+if not os.environ.get("MISTRAL_API_KEY"):
+    print("⚠️  MISTRAL_API_KEY not set — the audit stage will fall back to each strategy's "
+          "own coding provider instead of Mistral (see resolve_audit_provider()).")
+
+
+def resolve_audit_provider(strategy: dict) -> str:
+    """
+    BUGFIX: the audit stage used to be hardcoded to call_provider("mistral", ...)
+    on every single strategy, including 'Primary: Gemini + Groq' and 'Secondary:
+    Pure Groq', which never set MISTRAL_API_KEY as a requirement. Since the
+    top-level credential check only requires ANY ONE key (not all three), a
+    deployment running with just GEMINI_API_KEY + GROQ_API_KEY would fail at the
+    audit step on every fallback strategy — the whole pipeline would hit
+    'CRITICAL SYSTEM FAILURE' even though two perfectly good providers were
+    configured. Prefer Mistral when its key exists (matches the original design
+    intent of a fixed, independent auditor model); otherwise fall back to the
+    strategy's own coding provider so the run can still complete.
+    """
+    if os.environ.get("MISTRAL_API_KEY"):
+        return "mistral"
+    return strategy["coding_provider"]
+
 
 # ==========================================================
 # 5. RUNTIME CORE EXECUTION ENGINE
@@ -383,9 +405,11 @@ def run_agent_pipeline(strategy):
         "explanation, no markdown code fences, no separate files.\n\nHTML to audit:\n\n"
         f"{coded_html}"
     )
-    # Audit always runs on Mistral regardless of strategy, mirroring the original
-    # compliance-auditor role being a fixed model rather than part of the fallback swap.
-    final_html = call_provider("mistral", audit_prompt)
+    # Audit prefers Mistral (a fixed, independent auditor model outside the
+    # fallback swap) but degrades gracefully to the strategy's own coding
+    # provider when MISTRAL_API_KEY isn't configured — see resolve_audit_provider().
+    audit_provider = resolve_audit_provider(strategy)
+    final_html = call_provider(audit_provider, audit_prompt)
     final_html = strip_code_fences(final_html)
 
     fallback_title = "untitled-concept"
