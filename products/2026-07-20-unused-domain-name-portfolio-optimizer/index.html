@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unused Domain Name Portfolio Optimizer</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        section {
+            background-color: #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            resize: vertical;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Unused Domain Name Portfolio Optimizer</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Domain Name Portfolio</h2>
+            <textarea id="domain-names" placeholder="Enter your domain names, one per line"></textarea>
+            <button id="analyze-button">Analyze Portfolio</button>
+            <div id="results"></div>
+        </section>
+        <section>
+            <h2>Lead Capture</h2>
+            <input id="name" type="text" placeholder="Name">
+            <input id="email" type="email" placeholder="Email">
+            <button id="lead-capture-button">Get Started</button>
+        </section>
+    </main>
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div id="lead-capture-modal" style="display: none;">
+        <h2>Get Started with Unused Domain Name Portfolio Optimizer</h2>
+        <p>Enter your name and email to get started with optimizing your domain name portfolio.</p>
+        <input id="modal-name" type="text" placeholder="Name">
+        <div id="modal-name-error" class="error-message"></div>
+        <input id="modal-email" type="email" placeholder="Email">
+        <div id="modal-email-error" class="error-message"></div>
+        <button id="modal-submit-button">Submit</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const domainNamesInput = document.getElementById('domain-names');
+            const analyzeButton = document.getElementById('analyze-button');
+            const resultsDiv = document.getElementById('results');
+            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalNameInput = document.getElementById('modal-name');
+            const modalEmailInput = document.getElementById('modal-email');
+            const modalSubmitButton = document.getElementById('modal-submit-button');
+            const modalNameError = document.getElementById('modal-name-error');
+            const modalEmailError = document.getElementById('modal-email-error');
+
+            function showModal() {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            }
+
+            function hideModal() {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+                modalNameError.textContent = '';
+                modalEmailError.textContent = '';
+            }
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            analyzeButton.addEventListener('click', () => {
+                const domainNames = domainNamesInput.value.trim().split('\n').filter(domain => domain.trim() !== '');
+                if (domainNames.length === 0) {
+                    resultsDiv.innerHTML = '<p>Please enter at least one domain name.</p>';
+                    return;
+                }
+
+                const results = [];
+                domainNames.forEach((domainName) => {
+                    const trimmedDomain = domainName.trim();
+                    if (trimmedDomain) {
+                        const result = {
+                            domainName: trimmedDomain,
+                            keywordAnalysis: `Keyword analysis for ${trimmedDomain}`,
+                            competitorAnalysis: `Competitor analysis for ${trimmedDomain}`,
+                            domainAppraisal: `Domain appraisal for ${trimmedDomain}`,
+                            suggestions: `Suggestions for ${trimmedDomain}`,
+                        };
+                        results.push(result);
+                    }
+                });
+
+                resultsDiv.innerHTML = '';
+                results.forEach((result) => {
+                    const resultHtml = `
+                        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #666;">
+                            <h3>${result.domainName}</h3>
+                            <p><strong>Keyword Analysis:</strong> ${result.keywordAnalysis}</p>
+                            <p><strong>Competitor Analysis:</strong> ${result.competitorAnalysis}</p>
+                            <p><strong>Domain Appraisal:</strong> ${result.domainAppraisal}</p>
+                            <p><strong>Suggestions:</strong> ${result.suggestions}</p>
+                        </div>
+                    `;
+                    resultsDiv.insertAdjacentHTML('beforeend', resultHtml);
+                });
+
+                try {
+                    localStorage.setItem('domainNames', domainNamesInput.value);
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', showModal);
+
+            modalOverlay.addEventListener('click', hideModal);
+
+            modalSubmitButton.addEventListener('click', () => {
+                let isValid = true;
+                modalNameError.textContent = '';
+                modalEmailError.textContent = '';
+
+                if (!modalNameInput.value.trim()) {
+                    modalNameError.textContent = 'Name is required';
+                    isValid = false;
+                }
+
+                if (!modalEmailInput.value.trim()) {
+                    modalEmailError.textContent = 'Email is required';
+                    isValid = false;
+                } else if (!validateEmail(modalEmailInput.value.trim())) {
+                    modalEmailError.textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                modalSubmitButton.disabled = true;
+                modalSubmitButton.textContent = 'Submitting...';
+
+                const payload = {
+                    name: modalNameInput.value.trim(),
+                    email: modalEmailInput.value.trim(),
+                    productConcept: 'Unused Domain Name Portfolio Optimizer',
+                };
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    hideModal();
+                    modalNameInput.value = '';
+                    modalEmailInput.value = '';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again.');
+                })
+                .finally(() => {
+                    modalSubmitButton.disabled = false;
+                    modalSubmitButton.textContent = 'Submit';
+                });
+            });
+
+            window.addEventListener('load', () => {
+                try {
+                    const storedDomainNames = localStorage.getItem('domainNames');
+                    if (storedDomainNames) {
+                        domainNamesInput.value = storedDomainNames;
+                    }
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
