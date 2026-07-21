@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Virtual Event Networking Matchmaker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            color: #fff;
+        }
+        header, main {
+            width: 80%;
+            margin: 0 auto;
+        }
+        header {
+            background-color: #2f2f2f;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        section {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2f2f2f;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #modal div {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+        }
+        #lead-form {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI-Powered Virtual Event Networking Matchmaker</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Target Audience</h2>
+            <p>Event organizers, conference planners, and attendees in various industries, including tech, healthcare, finance, and education, who struggle to connect with relevant people during virtual events.</p>
+        </section>
+        <section>
+            <h2>Core Problem</h2>
+            <p>Virtual events often lack the serendipity and meaningful connections of in-person events, leading to a disappointing experience for attendees and a low return on investment (ROI) for organizers. Current virtual event platforms often rely on manual networking or basic profile-based matching, which can be time-consuming and ineffective.</p>
+        </section>
+        <section>
+            <h2>Value Proposition</h2>
+            <p>The AI-Powered Virtual Event Networking Matchmaker uses natural language processing (NLP) and machine learning algorithms to analyze attendee profiles, interests, and goals, and provides personalized matchmaking recommendations for one-on-one meetings, group discussions, or networking sessions. The tool integrates with popular virtual event platforms, allowing seamless scheduling and reminders. By leveraging AI-driven matching, attendees can connect with relevant people, and organizers can increase attendee engagement, satisfaction, and ROI. The matchmaker also provides valuable insights and analytics on attendee interactions, helping organizers to refine their event strategies and improve future events.</p>
+        </section>
+        <form id="lead-form">
+            <h2>Get Started</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <button type="submit">Submit</button>
+        </form>
+        <button id="modal-btn">Learn More</button>
+        <div id="modal">
+            <div>
+                <h2>Learn More</h2>
+                <p>The AI-Powered Virtual Event Networking Matchmaker is a revolutionary tool that uses AI-driven matching to connect attendees with relevant people during virtual events.</p>
+                <button id="close-modal">Close</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('lead-form');
+            const modalBtn = document.getElementById('modal-btn');
+            const modal = document.getElementById('modal');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const data = {
+                        name,
+                        email,
+                        phone,
+                        product: 'AI-Powered Virtual Event Networking Matchmaker'
+                    };
+
+                    try {
+                        localStorage.setItem('lead', JSON.stringify(data));
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                    }
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        alert('Thank you for your interest! We will contact you soon.');
+                        form.reset();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your information. Please try again later.');
+                    });
+                });
+            }
+
+            if (modalBtn && modal) {
+                modalBtn.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                });
+            }
+
+            if (closeModalBtn && modal) {
+                closeModalBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            }
+
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('Running in development mode - localStorage access allowed');
+            } else {
+                try {
+                    const lead = localStorage.getItem('lead');
+                    if (lead) {
+                        const data = JSON.parse(lead);
+                        if (form) {
+                            document.getElementById('name').value = data.name || '';
+                            document.getElementById('email').value = data.email || '';
+                            document.getElementById('phone').value = data.phone || '';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error reading from localStorage:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
