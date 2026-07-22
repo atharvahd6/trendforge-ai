@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Detox Planner</title>
+    <style>
+        body {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #4f4f4f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        label {
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input {
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            align-self: center;
+        }
+        button:hover {
+            background-color: #8f8f8f;
+        }
+        #result-section {
+            display: none;
+        }
+        #lead-capture-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Detox Planner</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Get Started</h2>
+            <form id="planner-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="goal">What is your goal for this digital detox?</label>
+                <textarea id="goal" name="goal" required></textarea>
+
+                <label for="duration">How many days would you like your digital detox to last?</label>
+                <input type="number" id="duration" name="duration" min="1" required>
+
+                <label>What type of offline activities are you interested in? (Check all that apply)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="reading" name="activities" value="reading">
+                        <label for="reading">Reading</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="exercise" name="activities" value="exercise">
+                        <label for="exercise">Exercise</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hobbies" name="activities" value="hobbies">
+                        <label for="hobbies">Hobbies</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="spending-time-with-family" name="activities" value="spending-time-with-family">
+                        <label for="spending-time-with-family">Spending time with family</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="meditation" name="activities" value="meditation">
+                        <label for="meditation">Meditation</label>
+                    </div>
+                </div>
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+        </section>
+        <section id="result-section">
+            <h2>Your Digital Detox Plan</h2>
+            <p id="plan"></p>
+        </section>
+        <button id="lead-capture-btn">Get Started with Digital Detox Planner</button>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('planner-form');
+            const resultSection = document.getElementById('result-section');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const planElement = document.getElementById('plan');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                try {
+                    const name = document.getElementById('name').value.trim();
+                    const goal = document.getElementById('goal').value.trim();
+                    const duration = document.getElementById('duration').value;
+                    const activities = [];
+                    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+                    checkboxes.forEach((checkbox) => {
+                        activities.push(checkbox.value);
+                    });
+
+                    if (!name || !goal || !duration || activities.length === 0) {
+                        alert('Please fill in all required fields and select at least one activity.');
+                        return;
+                    }
+
+                    const plan = `Congratulations, ${name}! Your digital detox plan is to spend the next ${duration} days focusing on ${activities.join(', ')}. Remember to stay committed to your goal of ${goal}.`;
+                    planElement.textContent = plan;
+                    resultSection.style.display = 'block';
+                    leadCaptureBtn.style.display = 'block';
+                    submitBtn.style.display = 'none';
+
+                    try {
+                        localStorage.setItem('name', name);
+                        localStorage.setItem('goal', goal);
+                        localStorage.setItem('duration', duration);
+                        localStorage.setItem('activities', activities.join(', '));
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                    }
+                } catch (error) {
+                    console.error('Error processing form:', error);
+                    alert('An error occurred while processing your form. Please try again.');
+                }
+            });
+
+            leadCaptureBtn.addEventListener('click', () => {
+                try {
+                    const name = localStorage.getItem('name');
+                    const goal = localStorage.getItem('goal');
+                    const duration = localStorage.getItem('duration');
+                    const activities = localStorage.getItem('activities');
+
+                    if (!name || !goal || !duration || !activities) {
+                        alert('No saved plan found. Please submit the form first.');
+                        return;
+                    }
+
+                    const payload = {
+                        productConcept: 'Digital Detox Planner',
+                        name: name,
+                        goal: goal,
+                        duration: duration,
+                        activities: activities
+                    };
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        alert('Thank you! Your information has been submitted.');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your information. Please try again later.');
+                    });
+                } catch (error) {
+                    console.error('Error preparing lead capture:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+
+            try {
+                const name = localStorage.getItem('name');
+                const goal = localStorage.getItem('goal');
+                const duration = localStorage.getItem('duration');
+                const activities = localStorage.getItem('activities');
+
+                if (name && goal && duration && activities) {
+                    const plan = `Congratulations, ${name}! Your digital detox plan is to spend the next ${duration} days focusing on ${activities}. Remember to stay committed to your goal of ${goal}.`;
+                    planElement.textContent = plan;
+                    resultSection.style.display = 'block';
+                    leadCaptureBtn.style.display = 'block';
+                    submitBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+            }
+        });
+    </script>
+</body>
+</html>
