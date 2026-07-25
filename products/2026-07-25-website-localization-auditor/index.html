@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Localization Auditor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        section {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input[type="url"], input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.5em;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #results {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            background-color: #555;
+            border-radius: 5px;
+        }
+        #checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #checklist li {
+            margin-bottom: 0.5em;
+            padding: 0.5em;
+            background-color: #555;
+            border-radius: 5px;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            padding: 1em;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        .status-pass {
+            color: #4CAF50;
+        }
+        .status-fail {
+            color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <header>
+        <h1>Website Localization Auditor</h1>
+    </header>
+    <main>
+        <section>
+            <label for="website-url">Enter your website URL:</label>
+            <input type="url" id="website-url" placeholder="https://example.com" required>
+            <button id="audit-button">Audit Website</button>
+            <div id="results"></div>
+        </section>
+        <section>
+            <h2>Localization Checklist</h2>
+            <ul id="checklist">
+                <li>Translations: <span id="translations-status" class="status"></span></li>
+                <li>Currency and Payment Options: <span id="currency-status" class="status"></span></li>
+                <li>Date and Time Formats: <span id="date-time-status" class="status"></span></li>
+                <li>Cultural References: <span id="cultural-references-status" class="status"></span></li>
+                <li>Language and Character Set Support: <span id="language-support-status" class="status"></span></li>
+            </ul>
+        </section>
+        <button id="get-started-button">Get Started with Localization</button>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get in Touch</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="johndoe@example.com" required>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" placeholder="+1 123 456 7890" required>
+            <button id="submit-lead">Submit</button>
+            <button id="close-modal">Cancel</button>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const websiteUrlInput = document.getElementById('website-url');
+            const auditButton = document.getElementById('audit-button');
+            const resultsDiv = document.getElementById('results');
+            const translationsStatusSpan = document.getElementById('translations-status');
+            const currencyStatusSpan = document.getElementById('currency-status');
+            const dateTimeStatusSpan = document.getElementById('date-time-status');
+            const culturalReferencesStatusSpan = document.getElementById('cultural-references-status');
+            const languageSupportStatusSpan = document.getElementById('language-support-status');
+            const getStartedButton = document.getElementById('get-started-button');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const submitLeadButton = document.getElementById('submit-lead');
+            const closeModalButton = document.getElementById('close-modal');
+
+            function showStatus(element, status) {
+                element.textContent = status;
+                element.className = status.toLowerCase() === 'pass' ? 'status status-pass' : 'status status-fail';
+            }
+
+            auditButton.addEventListener('click', () => {
+                const websiteUrl = websiteUrlInput.value.trim();
+                if (!websiteUrl) {
+                    resultsDiv.innerHTML = '<p style="color: #F44336;">Please enter a valid website URL</p>';
+                    return;
+                }
+
+                try {
+                    resultsDiv.innerHTML = '<p>Audit in progress...</p>';
+
+                    // Simulate audit process
+                    const auditResults = {
+                        translations: Math.random() > 0.5 ? 'Pass' : 'Fail',
+                        currency: Math.random() > 0.5 ? 'Pass' : 'Fail',
+                        dateTime: Math.random() > 0.5 ? 'Pass' : 'Fail',
+                        culturalReferences: Math.random() > 0.5 ? 'Pass' : 'Fail',
+                        languageSupport: Math.random() > 0.5 ? 'Pass' : 'Fail'
+                    };
+
+                    resultsDiv.innerHTML = `<p>Audit results for ${websiteUrl}:</p>`;
+                    showStatus(translationsStatusSpan, auditResults.translations);
+                    showStatus(currencyStatusSpan, auditResults.currency);
+                    showStatus(dateTimeStatusSpan, auditResults.dateTime);
+                    showStatus(culturalReferencesStatusSpan, auditResults.culturalReferences);
+                    showStatus(languageSupportStatusSpan, auditResults.languageSupport);
+
+                    try {
+                        localStorage.setItem('websiteUrl', websiteUrl);
+                        localStorage.setItem('auditResults', JSON.stringify(auditResults));
+                    } catch (e) {
+                        console.error('LocalStorage error:', e);
+                    }
+                } catch (error) {
+                    resultsDiv.innerHTML = `<p style="color: #F44336;">Error during audit: ${error.message}</p>`;
+                    console.error('Audit error:', error);
+                }
+            });
+
+            getStartedButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            });
+
+            modalOverlay.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            });
+
+            submitLeadButton.addEventListener('click', async () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+                const phone = phoneInput.value.trim();
+
+                if (!name || !email || !phone) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const leadData = {
+                    name,
+                    email,
+                    phone,
+                    productConcept: 'Website Localization Auditor'
+                };
+
+                try {
+                    const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(leadData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Lead submitted:', data);
+                    alert('Thank you for your interest! We will contact you soon.');
+                } catch (error) {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                } finally {
+                    leadCaptureModal.style.display = 'none';
+                    modalOverlay.style.display = 'none';
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    phoneInput.value = '';
+                }
+            });
+
+            window.addEventListener('load', () => {
+                try {
+                    const storedWebsiteUrl = localStorage.getItem('websiteUrl');
+                    const storedAuditResults = localStorage.getItem('auditResults');
+
+                    if (storedWebsiteUrl && storedAuditResults) {
+                        websiteUrlInput.value = storedWebsiteUrl;
+                        const auditResults = JSON.parse(storedAuditResults);
+                        showStatus(translationsStatusSpan, auditResults.translations);
+                        showStatus(currencyStatusSpan, auditResults.currency);
+                        showStatus(dateTimeStatusSpan, auditResults.dateTime);
+                        showStatus(culturalReferencesStatusSpan, auditResults.culturalReferences);
+                        showStatus(languageSupportStatusSpan, auditResults.languageSupport);
+                    }
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
