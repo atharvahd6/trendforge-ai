@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Legacy Manager</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #555;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        label {
+            margin-bottom: 10px;
+            display: block;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            align-self: center;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #lead-capture-btn {
+            margin-top: 20px;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .error-message {
+            color: #ff6b6b;
+            margin-top: -15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Legacy Manager</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Create Your Digital Legacy</h2>
+            <form id="digital-legacy-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="digital-assets">Digital Assets (e.g. social media profiles, email accounts, online storage):</label>
+                <textarea id="digital-assets" name="digital-assets"></textarea>
+                <label for="beneficiaries">Beneficiaries (e.g. family members, friends):</label>
+                <textarea id="beneficiaries" name="beneficiaries"></textarea>
+                <label for="notifications">Automatic Notifications and Instructions:</label>
+                <textarea id="notifications" name="notifications"></textarea>
+                <label for="documents">Important Documents and Information (e.g. passwords, account details):</label>
+                <textarea id="documents" name="documents"></textarea>
+                <label for="legacy">Lasting Legacy (e.g. digital time capsule, message for loved ones):</label>
+                <textarea id="legacy" name="legacy"></textarea>
+                <button type="submit" id="submit-btn">Submit</button>
+            </form>
+        </section>
+        <button id="lead-capture-btn" style="display: none;">Get Started with Digital Legacy Manager</button>
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div id="lead-capture-modal">
+            <h2>Get Started with Digital Legacy Manager</h2>
+            <p>Thank you for your interest in Digital Legacy Manager. Please fill out the form below to get started.</p>
+            <form id="lead-capture-form">
+                <label for="lead-name">Name:</label>
+                <input type="text" id="lead-name" name="name" required>
+                <div id="lead-name-error" class="error-message"></div>
+                <label for="lead-email">Email:</label>
+                <input type="email" id="lead-email" name="email" required>
+                <div id="lead-email-error" class="error-message"></div>
+                <button type="submit" id="lead-capture-submit-btn">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('digital-legacy-form');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const leadCaptureForm = document.getElementById('lead-capture-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const leadCaptureSubmitBtn = document.getElementById('lead-capture-submit-btn');
+
+            // Load data from local storage with error handling
+            try {
+                if (localStorage.getItem('digitalLegacyData')) {
+                    const data = JSON.parse(localStorage.getItem('digitalLegacyData'));
+                    if (data) {
+                        form.elements.name.value = data.name || '';
+                        form.elements.email.value = data.email || '';
+                        form.elements.digitalAssets.value = data.digitalAssets || '';
+                        form.elements.beneficiaries.value = data.beneficiaries || '';
+                        form.elements.notifications.value = data.notifications || '';
+                        form.elements.documents.value = data.documents || '';
+                        form.elements.legacy.value = data.legacy || '';
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+            }
+
+            // Save data to local storage with error handling
+            form.addEventListener('input', (e) => {
+                try {
+                    const data = {
+                        name: form.elements.name.value,
+                        email: form.elements.email.value,
+                        digitalAssets: form.elements.digitalAssets.value,
+                        beneficiaries: form.elements.beneficiaries.value,
+                        notifications: form.elements.notifications.value,
+                        documents: form.elements.documents.value,
+                        legacy: form.elements.legacy.value
+                    };
+                    localStorage.setItem('digitalLegacyData', JSON.stringify(data));
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                }
+            });
+
+            // Show lead capture modal
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (form.checkValidity()) {
+                    leadCaptureBtn.style.display = 'block';
+                } else {
+                    form.reportValidity();
+                }
+            });
+
+            // Show modal with overlay
+            leadCaptureBtn.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'block';
+                modalOverlay.style.display = 'block';
+            });
+
+            // Close modal when clicking overlay
+            modalOverlay.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            });
+
+            // Validate lead capture form
+            leadCaptureForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nameInput = document.getElementById('lead-name');
+                const emailInput = document.getElementById('lead-email');
+                const nameError = document.getElementById('lead-name-error');
+                const emailError = document.getElementById('lead-email-error');
+                let isValid = true;
+
+                nameError.textContent = '';
+                emailError.textContent = '';
+
+                if (!nameInput.value.trim()) {
+                    nameError.textContent = 'Name is required';
+                    isValid = false;
+                }
+
+                if (!emailInput.value.trim()) {
+                    emailError.textContent = 'Email is required';
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+                    emailError.textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                const formData = new FormData(leadCaptureForm);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    productConcept: 'Digital Legacy Manager'
+                };
+
+                leadCaptureSubmitBtn.disabled = true;
+                leadCaptureSubmitBtn.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    leadCaptureModal.style.display = 'none';
+                    modalOverlay.style.display = 'none';
+                    alert('Thank you for your interest! We will contact you soon.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                })
+                .finally(() => {
+                    leadCaptureSubmitBtn.disabled = false;
+                    leadCaptureSubmitBtn.textContent = 'Submit';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
