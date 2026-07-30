@@ -38,3 +38,4 @@
 | 2026-07-27 | Automated Social Media Archiver | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-27-automated-social-media-archiver/) |
 | 2026-07-28 | Cookie Consent Manager for Small E-commerce Sites | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-28-cookie-consent-manager-for-small-e-commerce-sites/) |
 | 2026-07-29 | Digital Legacy Manager | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-29-digital-legacy-manager/) |
+| 2026-07-30 | Accessibility Checker for Social Media Images | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-30-accessibility-checker-for-social-media-images/) |

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Checker for Social Media Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+            background-color: #444;
+            color: #fff;
+            min-height: 80vh;
+        }
+        section {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 1em;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.5em;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.5em;
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #lead-capture-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #lead-capture-modal > div {
+            background-color: #555;
+            padding: 1.5em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 0.2em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Accessibility Checker for Social Media Images</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Image URL:</h2>
+            <input type="url" id="image-url" placeholder="Enter image URL" required>
+            <div id="url-error" class="error" style="display: none;">Please enter a valid URL</div>
+            <button id="analyze-button">Analyze Image</button>
+            <p id="alt-text" style="margin-top: 1em; word-break: break-all;"></p>
+        </section>
+        <section>
+            <h2>Alt-Text:</h2>
+            <textarea id="alt-text-input" placeholder="Enter or edit alt-text here"></textarea>
+            <div id="alt-text-error" class="error" style="display: none;">Alt-text cannot be empty</div>
+            <button id="save-button">Save Alt-Text</button>
+        </section>
+        <button id="lead-capture-button">Get Started</button>
+        <div id="lead-capture-modal">
+            <div>
+                <h2>Get Started</h2>
+                <input type="text" id="name" placeholder="Your Name" required>
+                <div id="name-error" class="error" style="display: none;">Please enter your name</div>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <div id="email-error" class="error" style="display: none;">Please enter a valid email</div>
+                <button id="submit-button">Submit</button>
+                <button id="close-modal" style="margin-top: 0.5em; background-color: #444;">Close</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageUrlInput = document.getElementById('image-url');
+            const analyzeButton = document.getElementById('analyze-button');
+            const altTextOutput = document.getElementById('alt-text');
+            const altTextInput = document.getElementById('alt-text-input');
+            const saveButton = document.getElementById('save-button');
+            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const submitButton = document.getElementById('submit-button');
+            const closeModalButton = document.getElementById('close-modal');
+            const urlError = document.getElementById('url-error');
+            const altTextError = document.getElementById('alt-text-error');
+            const nameError = document.getElementById('name-error');
+            const emailError = document.getElementById('email-error');
+
+            // Validate URL
+            function isValidUrl(url) {
+                try {
+                    new URL(url);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            // Validate email
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+
+            analyzeButton.addEventListener('click', () => {
+                const imageUrl = imageUrlInput.value.trim();
+
+                if (!imageUrl) {
+                    urlError.textContent = 'Please enter an image URL';
+                    urlError.style.display = 'block';
+                    return;
+                }
+
+                if (!isValidUrl(imageUrl)) {
+                    urlError.textContent = 'Please enter a valid URL';
+                    urlError.style.display = 'block';
+                    return;
+                }
+
+                urlError.style.display = 'none';
+
+                // Simulate AI-powered alt-text generation
+                const altText = `Generated alt-text for image at ${imageUrl}`;
+                altTextOutput.textContent = altText;
+                altTextInput.value = altText;
+            });
+
+            saveButton.addEventListener('click', () => {
+                const altText = altTextInput.value.trim();
+
+                if (!altText) {
+                    altTextError.style.display = 'block';
+                    return;
+                }
+
+                altTextError.style.display = 'none';
+
+                try {
+                    localStorage.setItem('alt-text', altText);
+                    alert('Alt-text saved successfully!');
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Error saving alt-text. Please try again.');
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'none';
+            });
+
+            submitButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+                let isValid = true;
+
+                if (!name) {
+                    nameError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    nameError.style.display = 'none';
+                }
+
+                if (!email || !isValidEmail(email)) {
+                    emailError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    emailError.style.display = 'none';
+                }
+
+                if (!isValid) return;
+
+                const payload = {
+                    productConcept: 'Accessibility Checker for Social Media Images',
+                    name: name,
+                    email: email
+                };
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Thank you for your interest! We will contact you soon.');
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    leadCaptureModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again.');
+                })
+                .finally(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit';
+                });
+            });
+
+            // Close modal when clicking outside
+            leadCaptureModal.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+
+            // Load saved alt-text
+            try {
+                const storedAltText = localStorage.getItem('alt-text');
+                if (storedAltText) {
+                    altTextInput.value = storedAltText;
+                }
+            } catch (e) {
+                console.error('Error accessing localStorage:', e);
+            }
+
+            // Input event listeners for real-time validation
+            imageUrlInput.addEventListener('input', () => {
+                urlError.style.display = 'none';
+            });
+
+            altTextInput.addEventListener('input', () => {
+                altTextError.style.display = 'none';
+            });
+
+            nameInput.addEventListener('input', () => {
+                nameError.style.display = 'none';
+            });
+
+            emailInput.addEventListener('input', () => {
+                emailError.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
