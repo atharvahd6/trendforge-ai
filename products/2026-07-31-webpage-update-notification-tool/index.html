@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Update Notification Tool</title>
+    <style>
+        body {
+            background-color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #333; color: #fff; padding: 1em; text-align: center;">
+        <h1>Webpage Update Notification Tool</h1>
+    </header>
+    <main style="max-width: 800px; margin: 2em auto; padding: 1em; background-color: #444; color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+        <h2>Monitor External Webpages for Updates</h2>
+        <form id="webpage-form">
+            <label for="webpage-url">Enter Webpage URL:</label>
+            <input type="url" id="webpage-url" required>
+            <br><br>
+            <label for="notification-preference">Notification Preference:</label>
+            <select id="notification-preference">
+                <option value="email">Email</option>
+                <option value="slack">Slack</option>
+                <option value="api">API Integration</option>
+            </select>
+            <br><br>
+            <button type="submit">Start Monitoring</button>
+        </form>
+        <button id="lead-capture-btn" style="background-color: #555; color: #fff; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer;">Get Started</button>
+        <div id="lead-capture-modal" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
+            <div style="background-color: #444; color: #fff; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px;">
+                <h2>Get Started with Webpage Update Notification Tool</h2>
+                <form id="lead-capture-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                    <br><br>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <br><br>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const webpageForm = document.getElementById('webpage-form');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const leadCaptureForm = document.getElementById('lead-capture-form');
+
+            if (webpageForm) {
+                webpageForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    try {
+                        const webpageUrl = document.getElementById('webpage-url').value;
+                        const notificationPreference = document.getElementById('notification-preference').value;
+                        if (typeof localStorage !== 'undefined') {
+                            localStorage.setItem('webpage-url', webpageUrl);
+                            localStorage.setItem('notification-preference', notificationPreference);
+                        }
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                    }
+                });
+            }
+
+            if (leadCaptureBtn && leadCaptureModal) {
+                leadCaptureBtn.addEventListener('click', () => {
+                    leadCaptureModal.style.display = 'flex';
+                });
+            }
+
+            if (leadCaptureForm) {
+                leadCaptureForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+                        const payload = {
+                            name,
+                            email,
+                            productConcept: 'Webpage Update Notification Tool'
+                        };
+
+                        const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log('Success:', data);
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                    } finally {
+                        leadCaptureModal.style.display = 'none';
+                    }
+                });
+            }
+
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const webpageUrl = localStorage.getItem('webpage-url');
+                    const notificationPreference = localStorage.getItem('notification-preference');
+                    if (webpageUrl && notificationPreference) {
+                        document.getElementById('webpage-url').value = webpageUrl;
+                        document.getElementById('notification-preference').value = notificationPreference;
+                    }
+                }
+            } catch (error) {
+                console.error('Error reading from localStorage:', error);
+            }
+        });
+    </script>
+</body>
+</html>

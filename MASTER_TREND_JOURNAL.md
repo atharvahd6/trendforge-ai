@@ -39,3 +39,4 @@
 | 2026-07-28 | Cookie Consent Manager for Small E-commerce Sites | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-28-cookie-consent-manager-for-small-e-commerce-sites/) |
 | 2026-07-29 | Digital Legacy Manager | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-29-digital-legacy-manager/) |
 | 2026-07-30 | Accessibility Checker for Social Media Images | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-30-accessibility-checker-for-social-media-images/) |
+| 2026-07-31 | Webpage Update Notification Tool | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-31-webpage-update-notification-tool/) |
