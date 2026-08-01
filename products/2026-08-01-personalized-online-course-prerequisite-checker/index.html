@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Online Course Prerequisite Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2f2f2f;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #4f4f4f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 40px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #8f8f8f;
+        }
+        #lead-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4f4f4f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        #prerequisite-results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #3f3f3f;
+            border-radius: 10px;
+        }
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Personalized Online Course Prerequisite Checker</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Enter Student Information</h2>
+            <form id="student-form">
+                <label for="student-name">Student Name:</label>
+                <input type="text" id="student-name" name="student-name" required>
+                <div id="student-name-error" class="error-message hidden"></div>
+
+                <label for="student-id">Student ID:</label>
+                <input type="text" id="student-id" name="student-id" required>
+                <div id="student-id-error" class="error-message hidden"></div>
+
+                <label for="course-id">Course ID:</label>
+                <input type="text" id="course-id" name="course-id" required>
+                <div id="course-id-error" class="error-message hidden"></div>
+
+                <button type="submit" id="check-prerequisites">Check Prerequisites</button>
+            </form>
+            <div id="prerequisite-results"></div>
+        </section>
+        <section>
+            <h2>Lead Capture</h2>
+            <button id="lead-capture">Get Started with Personalized Online Course Prerequisite Checker</button>
+            <div id="lead-modal" class="hidden">
+                <h2>Get Started with Personalized Online Course Prerequisite Checker</h2>
+                <form id="lead-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <div id="name-error" class="error-message hidden"></div>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div id="email-error" class="error-message hidden"></div>
+
+                    <label for="phone">Phone:</label>
+                    <input type="text" id="phone" name="phone">
+                    <div id="phone-error" class="error-message hidden"></div>
+
+                    <button type="submit" id="submit-lead">Submit</button>
+                </form>
+                <button id="close-modal" style="margin-top: 10px; background-color: #5f5f5f;">Close</button>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const studentForm = document.getElementById('student-form');
+            const leadForm = document.getElementById('lead-form');
+            const leadCaptureButton = document.getElementById('lead-capture');
+            const leadModal = document.getElementById('lead-modal');
+            const submitLeadButton = document.getElementById('submit-lead');
+            const checkPrerequisitesButton = document.getElementById('check-prerequisites');
+            const prerequisiteResults = document.getElementById('prerequisite-results');
+            const closeModalButton = document.getElementById('close-modal');
+
+            // Error elements
+            const studentNameError = document.getElementById('student-name-error');
+            const studentIdError = document.getElementById('student-id-error');
+            const courseIdError = document.getElementById('course-id-error');
+            const nameError = document.getElementById('name-error');
+            const emailError = document.getElementById('email-error');
+            const phoneError = document.getElementById('phone-error');
+
+            // Form validation
+            function validateStudentForm() {
+                let isValid = true;
+                const studentName = document.getElementById('student-name').value.trim();
+                const studentId = document.getElementById('student-id').value.trim();
+                const courseId = document.getElementById('course-id').value.trim();
+
+                studentNameError.classList.add('hidden');
+                studentIdError.classList.add('hidden');
+                courseIdError.classList.add('hidden');
+
+                if (!studentName) {
+                    studentNameError.textContent = 'Student name is required';
+                    studentNameError.classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (!studentId) {
+                    studentIdError.textContent = 'Student ID is required';
+                    studentIdError.classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (!courseId) {
+                    courseIdError.textContent = 'Course ID is required';
+                    courseIdError.classList.remove('hidden');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function validateLeadForm() {
+                let isValid = true;
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                nameError.classList.add('hidden');
+                emailError.classList.add('hidden');
+
+                if (!name) {
+                    nameError.textContent = 'Name is required';
+                    nameError.classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (!email) {
+                    emailError.textContent = 'Email is required';
+                    emailError.classList.remove('hidden');
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    emailError.textContent = 'Please enter a valid email address';
+                    emailError.classList.remove('hidden');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Event listeners
+            studentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (validateStudentForm()) {
+                    const studentName = document.getElementById('student-name').value.trim();
+                    const studentId = document.getElementById('student-id').value.trim();
+                    const courseId = document.getElementById('course-id').value.trim();
+
+                    try {
+                        localStorage.setItem('studentName', studentName);
+                        localStorage.setItem('studentId', studentId);
+                        localStorage.setItem('courseId', courseId);
+                        checkPrerequisites();
+                    } catch (error) {
+                        console.error('Error saving to localStorage:', error);
+                        prerequisiteResults.innerHTML = `
+                            <h2>Error</h2>
+                            <p>There was an error saving your information. Please try again.</p>
+                        `;
+                    }
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                leadModal.classList.remove('hidden');
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                leadModal.classList.add('hidden');
+            });
+
+            leadForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (validateLeadForm()) {
+                    const name = document.getElementById('name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+
+                    const leadData = {
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        productConcept: 'Personalized Online Course Prerequisite Checker'
+                    };
+
+                    submitLeadButton.disabled = true;
+                    submitLeadButton.textContent = 'Submitting...';
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(leadData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        leadModal.classList.add('hidden');
+                        leadForm.reset();
+                        alert('Thank you for your interest! We will contact you soon.');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your information. Please try again.');
+                    })
+                    .finally(() => {
+                        submitLeadButton.disabled = false;
+                        submitLeadButton.textContent = 'Submit';
+                    });
+                }
+            });
+
+            checkPrerequisitesButton.addEventListener('click', () => {
+                if (validateStudentForm()) {
+                    checkPrerequisites();
+                }
+            });
+
+            function checkPrerequisites() {
+                try {
+                    const studentName = localStorage.getItem('studentName');
+                    const studentId = localStorage.getItem('studentId');
+                    const courseId = localStorage.getItem('courseId');
+
+                    if (studentName && studentId && courseId) {
+                        const prerequisiteData = {
+                            studentName: studentName,
+                            studentId: studentId,
+                            courseId: courseId
+                        };
+
+                        // Simulate API call
+                        setTimeout(() => {
+                            const prerequisiteResultsHtml = `
+                                <h2>Prerequisite Results</h2>
+                                <p>Student Name: ${escapeHtml(prerequisiteData.studentName)}</p>
+                                <p>Student ID: ${escapeHtml(prerequisiteData.studentId)}</p>
+                                <p>Course ID: ${escapeHtml(prerequisiteData.courseId)}</p>
+                                <p>Status: Checking prerequisites with LMS...</p>
+                                <p>Note: This is a demo. In production, this would connect to your LMS API.</p>
+                            `;
+                            prerequisiteResults.innerHTML = prerequisiteResultsHtml;
+                        }, 500);
+                    } else {
+                        const prerequisiteResultsHtml = `
+                            <h2>Prerequisite Results</h2>
+                            <p>Please enter student information to check prerequisites.</p>
+                        `;
+                        prerequisiteResults.innerHTML = prerequisiteResultsHtml;
+                    }
+                } catch (error) {
+                    console.error('Error reading from localStorage:', error);
+                    prerequisiteResults.innerHTML = `
+                        <h2>Error</h2>
+                        <p>There was an error retrieving your information. Please try again.</p>
+                    `;
+                }
+            }
+
+            // Helper function to escape HTML
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        });
+    </script>
+</body>
+</html>
