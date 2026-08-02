@@ -41,3 +41,4 @@
 | 2026-07-30 | Accessibility Checker for Social Media Images | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-30-accessibility-checker-for-social-media-images/) |
 | 2026-07-31 | Webpage Update Notification Tool | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-07-31-webpage-update-notification-tool/) |
 | 2026-08-01 | Personalized Online Course Prerequisite Checker | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-01-personalized-online-course-prerequisite-checker/) |
+| 2026-08-02 | AI-Powered Podcast Transcript Summarizer | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-02-ai-powered-podcast-transcript-summarizer/) |
