@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Online Community Health Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        section {
+            width: 100%;
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            padding: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #modal > div {
+            background-color: #444;
+            color: #fff;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Automated Online Community Health Checker</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Community Health Metrics</h2>
+            <form id="community-form">
+                <label for="platform">Select Platform:</label>
+                <select id="platform" name="platform" required>
+                    <option value="Reddit">Reddit</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Forum">Forum</option>
+                </select>
+                <label for="community-name">Community Name:</label>
+                <input type="text" id="community-name" name="community-name" required>
+                <label for="community-url">Community URL:</label>
+                <input type="url" id="community-url" name="community-url" required>
+                <button type="submit">Analyze Community</button>
+            </form>
+        </section>
+        <section id="results" style="display: none;">
+            <h2>Community Health Results</h2>
+            <p id="spam-level"></p>
+            <p id="engagement-trend"></p>
+            <p id="sentiment-analysis"></p>
+            <p id="inactive-users"></p>
+            <p id="harassment-detection"></p>
+            <button id="recommendations">Get Personalized Recommendations</button>
+        </section>
+        <button id="lead-capture">Get Started</button>
+    </main>
+    <div id="modal">
+        <div>
+            <h2>Get Started with Automated Online Community Health Checker</h2>
+            <form id="lead-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const communityForm = document.getElementById('community-form');
+            const resultsSection = document.getElementById('results');
+            const leadCaptureButton = document.getElementById('lead-capture');
+            const modal = document.getElementById('modal');
+            const leadForm = document.getElementById('lead-form');
+            const recommendationsButton = document.getElementById('recommendations');
+
+            if (communityForm) {
+                communityForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    try {
+                        const platform = document.getElementById('platform').value;
+                        const communityName = document.getElementById('community-name').value;
+                        const communityUrl = document.getElementById('community-url').value;
+
+                        if (typeof localStorage !== 'undefined') {
+                            localStorage.setItem('platform', platform);
+                            localStorage.setItem('communityName', communityName);
+                            localStorage.setItem('communityUrl', communityUrl);
+                        }
+
+                        resultsSection.style.display = 'block';
+
+                        const spamLevel = Math.random() * 100;
+                        const engagementTrend = Math.random() * 100;
+                        const sentimentAnalysis = Math.random() * 100;
+                        const inactiveUsers = Math.random() * 100;
+                        const harassmentDetection = Math.random() * 100;
+
+                        document.getElementById('spam-level').innerText = `Spam Level: ${spamLevel.toFixed(2)}%`;
+                        document.getElementById('engagement-trend').innerText = `Engagement Trend: ${engagementTrend.toFixed(2)}%`;
+                        document.getElementById('sentiment-analysis').innerText = `Sentiment Analysis: ${sentimentAnalysis.toFixed(2)}%`;
+                        document.getElementById('inactive-users').innerText = `Inactive Users: ${inactiveUsers.toFixed(2)}%`;
+                        document.getElementById('harassment-detection').innerText = `Harassment Detection: ${harassmentDetection.toFixed(2)}%`;
+                    } catch (error) {
+                        console.error('Error processing community form:', error);
+                        alert('An error occurred while processing your request. Please try again.');
+                    }
+                });
+            }
+
+            if (leadCaptureButton) {
+                leadCaptureButton.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                });
+            }
+
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+
+            if (leadForm) {
+                leadForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+
+                        const payload = {
+                            name,
+                            email,
+                            productConcept: 'Automated Online Community Health Checker'
+                        };
+
+                        if (!name || !email) {
+                            throw new Error('Name and email are required');
+                        }
+
+                        const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log('Lead submission successful:', data);
+                        modal.style.display = 'none';
+                        leadForm.reset();
+                        alert('Thank you for your interest! We will contact you soon.');
+                    } catch (error) {
+                        console.error('Error submitting lead:', error);
+                        alert('An error occurred while submitting your information. Please try again.');
+                    }
+                });
+            }
+
+            if (recommendationsButton) {
+                recommendationsButton.addEventListener('click', () => {
+                    alert('Personalized recommendations feature coming soon!');
+                });
+            }
+
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    const platform = localStorage.getItem('platform');
+                    const communityName = localStorage.getItem('communityName');
+                    const communityUrl = localStorage.getItem('communityUrl');
+
+                    if (platform && communityName && communityUrl) {
+                        document.getElementById('platform').value = platform;
+                        document.getElementById('community-name').value = communityName;
+                        document.getElementById('community-url').value = communityUrl;
+                    }
+                }
+            } catch (error) {
+                console.error('Error accessing localStorage:', error);
+            }
+        });
+    </script>
+</body>
+</html>
