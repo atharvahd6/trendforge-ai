@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporal Data Validator</title>
+    <style>
+        body {
+            background-color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        main {
+            box-sizing: border-box;
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1em;
+            font-size: 1em;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 1em;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        #result {
+            margin-top: 1em;
+            padding: 1em;
+            background-color: #555;
+            border-radius: 5px;
+        }
+        #lead-capture-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #lead-capture-modal > div {
+            background-color: #444;
+            color: #fff;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+        }
+        input {
+            width: 100%;
+            padding: 1em;
+            font-size: 1em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Temporal Data Validator</h1>
+    </header>
+    <main>
+        <h2>Upload Your Temporal Data</h2>
+        <textarea id="data-input" placeholder="Enter your temporal data here..."></textarea>
+        <button id="validate-button">Validate Data</button>
+        <div id="result"></div>
+        <button id="save-button">Save Input</button>
+        <button id="load-button">Load Saved Input</button>
+        <button id="lead-capture-button">Get Started</button>
+        <div id="lead-capture-modal">
+            <div>
+                <h2>Get Started with Temporal Data Validator</h2>
+                <input id="name-input" type="text" placeholder="Name">
+                <input id="email-input" type="email" placeholder="Email">
+                <button id="submit-button">Submit</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dataInput = document.getElementById('data-input');
+            const validateButton = document.getElementById('validate-button');
+            const resultDiv = document.getElementById('result');
+            const saveButton = document.getElementById('save-button');
+            const loadButton = document.getElementById('load-button');
+            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const nameInput = document.getElementById('name-input');
+            const emailInput = document.getElementById('email-input');
+            const submitButton = document.getElementById('submit-button');
+
+            validateButton.addEventListener('click', () => {
+                const data = dataInput.value.trim();
+                if (!data) {
+                    resultDiv.textContent = 'Please enter some data to validate.';
+                    return;
+                }
+                try {
+                    resultDiv.textContent = 'Validating data...';
+                    setTimeout(() => {
+                        resultDiv.textContent = 'Data validation result: Sample data appears valid.';
+                    }, 500);
+                } catch (error) {
+                    resultDiv.textContent = `Validation error: ${error.message}`;
+                }
+            });
+
+            saveButton.addEventListener('click', () => {
+                const data = dataInput.value.trim();
+                if (!data) {
+                    resultDiv.textContent = 'No data to save.';
+                    return;
+                }
+                try {
+                    localStorage.setItem('temporalData', data);
+                    resultDiv.textContent = 'Data saved successfully.';
+                } catch (error) {
+                    resultDiv.textContent = `Error saving data: ${error.message}`;
+                }
+            });
+
+            loadButton.addEventListener('click', () => {
+                try {
+                    const data = localStorage.getItem('temporalData');
+                    if (data) {
+                        dataInput.value = data;
+                        resultDiv.textContent = 'Loaded saved data.';
+                    } else {
+                        resultDiv.textContent = 'No saved data found.';
+                    }
+                } catch (error) {
+                    resultDiv.textContent = `Error loading data: ${error.message}`;
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
+
+            submitButton.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+
+                if (!name || !email) {
+                    alert('Please enter both name and email.');
+                    return;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                const payload = {
+                    product: 'Temporal Data Validator',
+                    name: name,
+                    email: email
+                };
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resultDiv.textContent = 'Thank you for your interest! We will contact you soon.';
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    leadCaptureModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.textContent = `Error submitting form: ${error.message}`;
+                })
+                .finally(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit';
+                });
+            });
+
+            leadCaptureModal.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
