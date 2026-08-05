@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Footprint Analyzer</title>
+    <style>
+        body {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #4f4f4f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #8f8f8f;
+        }
+        .error {
+            color: #ff6b6b;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Footprint Analyzer for Personal Data Brokers</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Get Started</h2>
+            <form id="user-input">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required>
+                <div id="first-name-error" class="error"></div>
+
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required>
+                <div id="last-name-error" class="error"></div>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <div id="email-error" class="error"></div>
+
+                <button id="submit-btn" type="submit">Analyze My Digital Footprint</button>
+            </form>
+        </section>
+        <section id="results" style="display: none;">
+            <h2>Your Digital Footprint Report</h2>
+            <p id="report"></p>
+            <div id="report-error" class="error"></div>
+            <button id="opt-out-btn">Opt-out of Data Brokers</button>
+            <button id="monitor-btn">Monitor My Digital Footprint</button>
+        </section>
+        <section id="opt-out" style="display: none;">
+            <h2>Opt-out Guidance</h2>
+            <p id="opt-out-guidance"></p>
+            <div id="opt-out-error" class="error"></div>
+        </section>
+        <section id="monitor" style="display: none;">
+            <h2>Monitoring Your Digital Footprint</h2>
+            <p id="monitor-status"></p>
+            <div id="monitor-error" class="error"></div>
+        </section>
+        <button id="lead-capture-btn" style="display: none;">Get Started with Digital Footprint Analyzer</button>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInputForm = document.getElementById('user-input');
+            const resultsSection = document.getElementById('results');
+            const optOutSection = document.getElementById('opt-out');
+            const monitorSection = document.getElementById('monitor');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const optOutBtn = document.getElementById('opt-out-btn');
+            const monitorBtn = document.getElementById('monitor-btn');
+            const firstNameInput = document.getElementById('first-name');
+            const lastNameInput = document.getElementById('last-name');
+            const emailInput = document.getElementById('email');
+            const reportPara = document.getElementById('report');
+            const optOutGuidancePara = document.getElementById('opt-out-guidance');
+            const monitorStatusPara = document.getElementById('monitor-status');
+
+            const firstNameError = document.getElementById('first-name-error');
+            const lastNameError = document.getElementById('last-name-error');
+            const emailError = document.getElementById('email-error');
+            const reportError = document.getElementById('report-error');
+            const optOutError = document.getElementById('opt-out-error');
+            const monitorError = document.getElementById('monitor-error');
+
+            function validateForm() {
+                let isValid = true;
+
+                if (!firstNameInput.value.trim()) {
+                    firstNameError.textContent = 'First name is required';
+                    isValid = false;
+                } else {
+                    firstNameError.textContent = '';
+                }
+
+                if (!lastNameInput.value.trim()) {
+                    lastNameError.textContent = 'Last name is required';
+                    isValid = false;
+                } else {
+                    lastNameError.textContent = '';
+                }
+
+                if (!emailInput.value.trim()) {
+                    emailError.textContent = 'Email is required';
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+                    emailError.textContent = 'Please enter a valid email address';
+                    isValid = false;
+                } else {
+                    emailError.textContent = '';
+                }
+
+                return isValid;
+            }
+
+            function safeLocalStorageSet(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return false;
+                }
+            }
+
+            function safeLocalStorageGet(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    return null;
+                }
+            }
+
+            function handleApiError(error, errorElement, defaultMessage = 'An error occurred') {
+                console.error('API Error:', error);
+                errorElement.textContent = defaultMessage;
+            }
+
+            userInputForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                if (!validateForm()) {
+                    return;
+                }
+
+                const firstName = firstNameInput.value.trim();
+                const lastName = lastNameInput.value.trim();
+                const email = emailInput.value.trim();
+
+                safeLocalStorageSet('firstName', firstName);
+                safeLocalStorageSet('lastName', lastName);
+                safeLocalStorageSet('email', email);
+
+                try {
+                    const response = await fetch('https://example.com/api/scan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    reportPara.textContent = `Your digital footprint report: ${data.report || 'No report data available'}`;
+                    resultsSection.style.display = 'block';
+                    userInputForm.style.display = 'none';
+                    reportError.textContent = '';
+                } catch (error) {
+                    handleApiError(error, reportError, 'Failed to generate report. Please try again later.');
+                }
+            });
+
+            optOutBtn.addEventListener('click', async () => {
+                const firstName = safeLocalStorageGet('firstName');
+                const lastName = safeLocalStorageGet('lastName');
+                const email = safeLocalStorageGet('email');
+
+                if (!firstName || !lastName || !email) {
+                    optOutError.textContent = 'User information not found. Please submit the form again.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('https://example.com/api/opt-out', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    optOutGuidancePara.textContent = `Opt-out guidance: ${data.guidance || 'No guidance available'}`;
+                    optOutSection.style.display = 'block';
+                    resultsSection.style.display = 'none';
+                    optOutError.textContent = '';
+                } catch (error) {
+                    handleApiError(error, optOutError, 'Failed to get opt-out guidance. Please try again later.');
+                }
+            });
+
+            monitorBtn.addEventListener('click', async () => {
+                const firstName = safeLocalStorageGet('firstName');
+                const lastName = safeLocalStorageGet('lastName');
+                const email = safeLocalStorageGet('email');
+
+                if (!firstName || !lastName || !email) {
+                    monitorError.textContent = 'User information not found. Please submit the form again.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('https://example.com/api/monitor', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    monitorStatusPara.textContent = `Monitoring status: ${data.status || 'No status available'}`;
+                    monitorSection.style.display = 'block';
+                    resultsSection.style.display = 'none';
+                    monitorError.textContent = '';
+                } catch (error) {
+                    handleApiError(error, monitorError, 'Failed to set up monitoring. Please try again later.');
+                }
+            });
+
+            leadCaptureBtn.addEventListener('click', async () => {
+                const firstName = safeLocalStorageGet('firstName');
+                const lastName = safeLocalStorageGet('lastName');
+                const email = safeLocalStorageGet('email');
+
+                if (!firstName || !lastName || !email) {
+                    console.error('User information not found for lead capture');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            productConcept: 'Digital Footprint Analyzer for Personal Data Brokers',
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Lead capture successful:', data);
+                } catch (error) {
+                    console.error('Lead capture failed:', error);
+                }
+            });
+
+            const firstName = safeLocalStorageGet('firstName');
+            const lastName = safeLocalStorageGet('lastName');
+            const email = safeLocalStorageGet('email');
+
+            if (firstName && lastName && email) {
+                firstNameInput.value = firstName;
+                lastNameInput.value = lastName;
+                emailInput.value = email;
+                resultsSection.style.display = 'block';
+                userInputForm.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
