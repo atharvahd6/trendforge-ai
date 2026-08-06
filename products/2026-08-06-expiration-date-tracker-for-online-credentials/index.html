@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expiration Date Tracker</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        section {
+            background-color: #555;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        label {
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #444;
+        }
+        #lead-capture-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #lead-capture-modal > div {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-form label {
+            margin-bottom: 5px;
+        }
+        .modal-form input {
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #ff4444;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Expiration Date Tracker</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Track Your Online Credentials</h2>
+            <form id="credential-form">
+                <label for="credential-name">Credential Name:</label>
+                <input type="text" id="credential-name" name="credential-name" required>
+                <div class="error-message" id="name-error"></div>
+
+                <label for="expiration-date">Expiration Date:</label>
+                <input type="date" id="expiration-date" name="expiration-date" required>
+                <div class="error-message" id="date-error"></div>
+
+                <label for="reminder-days">Reminder Days:</label>
+                <input type="number" id="reminder-days" name="reminder-days" value="30" min="1" required>
+                <div class="error-message" id="days-error"></div>
+
+                <button type="submit" id="add-credential-btn">Add Credential</button>
+            </form>
+            <table id="credential-table">
+                <thead>
+                    <tr>
+                        <th>Credential Name</th>
+                        <th>Expiration Date</th>
+                        <th>Reminder Days</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="credential-table-body">
+                </tbody>
+            </table>
+        </section>
+        <button id="lead-capture-btn">Get Started</button>
+        <div id="lead-capture-modal">
+            <div>
+                <h2>Get Started with Expiration Date Tracker</h2>
+                <form id="lead-capture-form" class="modal-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="lead-name-error"></div>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="lead-email-error"></div>
+
+                    <button type="submit" id="submit-lead-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const credentialForm = document.getElementById('credential-form');
+            const credentialTable = document.getElementById('credential-table-body');
+            const leadCaptureBtn = document.getElementById('lead-capture-btn');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const leadCaptureForm = document.getElementById('lead-capture-form');
+            const submitLeadBtn = document.getElementById('submit-lead-btn');
+
+            let credentials = [];
+            try {
+                const storedCredentials = localStorage.getItem('credentials');
+                credentials = storedCredentials ? JSON.parse(storedCredentials) : [];
+                if (!Array.isArray(credentials)) {
+                    credentials = [];
+                }
+            } catch (e) {
+                console.error('Error loading credentials from localStorage:', e);
+                credentials = [];
+            }
+
+            function validateCredentialForm() {
+                let isValid = true;
+                const name = document.getElementById('credential-name').value;
+                const date = document.getElementById('expiration-date').value;
+                const days = document.getElementById('reminder-days').value;
+
+                document.getElementById('name-error').textContent = '';
+                document.getElementById('date-error').textContent = '';
+                document.getElementById('days-error').textContent = '';
+
+                if (!name.trim()) {
+                    document.getElementById('name-error').textContent = 'Credential name is required';
+                    isValid = false;
+                }
+
+                if (!date) {
+                    document.getElementById('date-error').textContent = 'Expiration date is required';
+                    isValid = false;
+                } else if (new Date(date) < new Date()) {
+                    document.getElementById('date-error').textContent = 'Expiration date must be in the future';
+                    isValid = false;
+                }
+
+                if (!days || isNaN(days) || parseInt(days) < 1) {
+                    document.getElementById('days-error').textContent = 'Reminder days must be a positive number';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            credentialForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (!validateCredentialForm()) {
+                    return;
+                }
+
+                const credentialName = document.getElementById('credential-name').value;
+                const expirationDate = document.getElementById('expiration-date').value;
+                const reminderDays = document.getElementById('reminder-days').value;
+
+                credentials.push({ credentialName, expirationDate, reminderDays });
+
+                try {
+                    localStorage.setItem('credentials', JSON.stringify(credentials));
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                }
+
+                renderCredentialTable();
+                credentialForm.reset();
+            });
+
+            leadCaptureBtn.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
+
+            leadCaptureModal.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+
+            function validateLeadForm() {
+                let isValid = true;
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+
+                document.getElementById('lead-name-error').textContent = '';
+                document.getElementById('lead-email-error').textContent = '';
+
+                if (!name.trim()) {
+                    document.getElementById('lead-name-error').textContent = 'Name is required';
+                    isValid = false;
+                }
+
+                if (!email.trim()) {
+                    document.getElementById('lead-email-error').textContent = 'Email is required';
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    document.getElementById('lead-email-error').textContent = 'Please enter a valid email';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            leadCaptureForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if (!validateLeadForm()) {
+                    return;
+                }
+
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+
+                submitLeadBtn.disabled = true;
+                submitLeadBtn.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, product: 'Expiration Date Tracker' })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    leadCaptureModal.style.display = 'none';
+                    leadCaptureForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again.');
+                })
+                .finally(() => {
+                    submitLeadBtn.disabled = false;
+                    submitLeadBtn.textContent = 'Submit';
+                });
+            });
+
+            function renderCredentialTable() {
+                credentialTable.innerHTML = '';
+                if (credentials.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 4;
+                    cell.textContent = 'No credentials added yet';
+                    cell.style.textAlign = 'center';
+                    row.appendChild(cell);
+                    credentialTable.appendChild(row);
+                    return;
+                }
+
+                credentials.forEach((credential, index) => {
+                    const row = document.createElement('tr');
+                    const credentialNameCell = document.createElement('td');
+                    const expirationDateCell = document.createElement('td');
+                    const reminderDaysCell = document.createElement('td');
+                    const actionsCell = document.createElement('td');
+                    const deleteBtn = document.createElement('button');
+
+                    credentialNameCell.textContent = credential.credentialName;
+                    expirationDateCell.textContent = credential.expirationDate;
+                    reminderDaysCell.textContent = credential.reminderDays;
+                    deleteBtn.textContent = 'Delete';
+
+                    deleteBtn.addEventListener('click', () => {
+                        credentials.splice(index, 1);
+                        try {
+                            localStorage.setItem('credentials', JSON.stringify(credentials));
+                        } catch (e) {
+                            console.error('Error saving to localStorage:', e);
+                        }
+                        renderCredentialTable();
+                    });
+
+                    actionsCell.appendChild(deleteBtn);
+                    row.appendChild(credentialNameCell);
+                    row.appendChild(expirationDateCell);
+                    row.appendChild(reminderDaysCell);
+                    row.appendChild(actionsCell);
+                    credentialTable.appendChild(row);
+                });
+            }
+
+            renderCredentialTable();
+        });
+    </script>
+</body>
+</html>
