@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro-Event Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        section {
+            margin-bottom: 2em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            height: 2em;
+            margin-bottom: 1em;
+            padding: 0.5em;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 2em;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            padding: 1em;
+            border: 1px solid #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            z-index: 1000;
+        }
+        #lead-capture-modal h2 {
+            margin-top: 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 0.5em;
+            background-color: #555;
+            margin-bottom: 0.5em;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Micro-Event Planner</h1>
+    </header>
+    <main>
+        <section>
+            <label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" required />
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" required />
+            <label for="event-time">Event Time:</label>
+            <input type="time" id="event-time" required />
+            <label for="event-location">Event Location:</label>
+            <input type="text" id="event-location" required />
+            <button id="save-event">Save Event</button>
+        </section>
+        <section>
+            <h2>Event Timeline</h2>
+            <ul id="event-timeline">
+            </ul>
+        </section>
+        <section>
+            <h2>Attendees and Speakers</h2>
+            <label for="attendee-name">Attendee Name:</label>
+            <input type="text" id="attendee-name" required />
+            <label for="attendee-email">Attendee Email:</label>
+            <input type="email" id="attendee-email" required />
+            <button id="add-attendee">Add Attendee</button>
+            <ul id="attendees">
+            </ul>
+            <label for="speaker-name">Speaker Name:</label>
+            <input type="text" id="speaker-name" required />
+            <label for="speaker-email">Speaker Email:</label>
+            <input type="email" id="speaker-email" required />
+            <button id="add-speaker">Add Speaker</button>
+            <ul id="speakers">
+            </ul>
+        </section>
+        <button id="get-started">Get Started with Micro-Event Planner</button>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get Started with Micro-Event Planner</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required />
+            <label for="email">Email:</label>
+            <input type="email" id="email" required />
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" />
+            <button id="submit-lead">Submit</button>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const event_name = document.getElementById('event-name');
+            const event_date = document.getElementById('event-date');
+            const event_time = document.getElementById('event-time');
+            const event_location = document.getElementById('event-location');
+            const save_event = document.getElementById('save-event');
+            const event_timeline = document.getElementById('event-timeline');
+            const attendee_name = document.getElementById('attendee-name');
+            const attendee_email = document.getElementById('attendee-email');
+            const add_attendee = document.getElementById('add-attendee');
+            const attendees = document.getElementById('attendees');
+            const speaker_name = document.getElementById('speaker-name');
+            const speaker_email = document.getElementById('speaker-email');
+            const add_speaker = document.getElementById('add-speaker');
+            const speakers = document.getElementById('speakers');
+            const get_started = document.getElementById('get-started');
+            const lead_capture_modal = document.getElementById('lead-capture-modal');
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const submit_lead = document.getElementById('submit-lead');
+
+            function safeLocalStorageGet(key) {
+                try {
+                    return JSON.parse(localStorage.getItem(key));
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                    return null;
+                }
+            }
+
+            function safeLocalStorageSet(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error('Error writing to localStorage:', e);
+                }
+            }
+
+            save_event.addEventListener('click', () => {
+                if (!event_name.value || !event_date.value || !event_time.value || !event_location.value) {
+                    alert('Please fill in all event fields');
+                    return;
+                }
+
+                const event = {
+                    name: event_name.value,
+                    date: event_date.value,
+                    time: event_time.value,
+                    location: event_location.value
+                };
+                safeLocalStorageSet('event', event);
+
+                event_timeline.innerHTML = `
+                    <li>Event Name: ${event.name}</li>
+                    <li>Event Date: ${event.date}</li>
+                    <li>Event Time: ${event.time}</li>
+                    <li>Event Location: ${event.location}</li>
+                `;
+            });
+
+            add_attendee.addEventListener('click', () => {
+                if (!attendee_name.value || !attendee_email.value) {
+                    alert('Please fill in all attendee fields');
+                    return;
+                }
+
+                const attendee = {
+                    name: attendee_name.value,
+                    email: attendee_email.value
+                };
+                const attendees_list = safeLocalStorageGet('attendees') || [];
+                attendees_list.push(attendee);
+                safeLocalStorageSet('attendees', attendees_list);
+
+                attendees.innerHTML = attendees_list.map(attendee =>
+                    `<li>${attendee.name} - ${attendee.email}</li>`
+                ).join('');
+            });
+
+            add_speaker.addEventListener('click', () => {
+                if (!speaker_name.value || !speaker_email.value) {
+                    alert('Please fill in all speaker fields');
+                    return;
+                }
+
+                const speaker = {
+                    name: speaker_name.value,
+                    email: speaker_email.value
+                };
+                const speakers_list = safeLocalStorageGet('speakers') || [];
+                speakers_list.push(speaker);
+                safeLocalStorageSet('speakers', speakers_list);
+
+                speakers.innerHTML = speakers_list.map(speaker =>
+                    `<li>${speaker.name} - ${speaker.email}</li>`
+                ).join('');
+            });
+
+            get_started.addEventListener('click', () => {
+                lead_capture_modal.style.display = 'block';
+            });
+
+            submit_lead.addEventListener('click', async () => {
+                if (!name.value || !email.value) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
+                const lead = {
+                    name: name.value,
+                    email: email.value,
+                    phone: phone.value,
+                    product: 'Micro-Event Planner'
+                };
+
+                try {
+                    const response = await fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(lead)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Lead submitted successfully:', data);
+                    alert('Thank you for your interest! We will contact you soon.');
+                } catch (error) {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                } finally {
+                    lead_capture_modal.style.display = 'none';
+                    name.value = '';
+                    email.value = '';
+                    phone.value = '';
+                }
+            });
+
+            function loadData() {
+                const event = safeLocalStorageGet('event');
+                if (event) {
+                    event_name.value = event.name || '';
+                    event_date.value = event.date || '';
+                    event_time.value = event.time || '';
+                    event_location.value = event.location || '';
+                    event_timeline.innerHTML = `
+                        <li>Event Name: ${event.name || ''}</li>
+                        <li>Event Date: ${event.date || ''}</li>
+                        <li>Event Time: ${event.time || ''}</li>
+                        <li>Event Location: ${event.location || ''}</li>
+                    `;
+                }
+
+                const attendees_list = safeLocalStorageGet('attendees');
+                if (attendees_list && attendees_list.length > 0) {
+                    attendees.innerHTML = attendees_list.map(attendee =>
+                        `<li>${attendee.name} - ${attendee.email}</li>`
+                    ).join('');
+                }
+
+                const speakers_list = safeLocalStorageGet('speakers');
+                if (speakers_list && speakers_list.length > 0) {
+                    speakers.innerHTML = speakers_list.map(speaker =>
+                        `<li>${speaker.name} - ${speaker.email}</li>`
+                    ).join('');
+                }
+            }
+
+            loadData();
+        });
+    </script>
+</body>
+</html>
