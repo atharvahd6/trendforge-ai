@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Virtual Meeting Note Taker and Action Item Assigner</title>
+    <style>
+        body {
+            background-color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #lead-capture-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        textarea, input[type="text"], input[type="email"], input[type="date"] {
+            width: 100%;
+            padding: 1em;
+            border: none;
+            border-radius: 10px;
+            background-color: #555;
+            color: #fff;
+            margin-bottom: 1em;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 1em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-right: 0.5em;
+            margin-bottom: 0.5em;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            padding: 0.5em;
+            margin-bottom: 0.5em;
+            background-color: #555;
+            border-radius: 5px;
+        }
+        .modal-content {
+            background-color: #444;
+            color: #fff;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI-Powered Virtual Meeting Note Taker and Action Item Assigner</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Meeting Notes</h2>
+            <textarea id="meeting-notes" aria-label="Meeting notes"></textarea>
+        </section>
+        <section>
+            <h2>Action Items</h2>
+            <ul id="action-items"></ul>
+            <button id="add-action-item">Add Action Item</button>
+        </section>
+        <section>
+            <h2>Assign Action Items</h2>
+            <input id="assignee" type="text" placeholder="Assign to" aria-label="Assignee name">
+            <input id="due-date" type="date" aria-label="Due date">
+            <button id="assign-action-item">Assign</button>
+        </section>
+        <button id="save-meeting-notes">Save Meeting Notes</button>
+        <button id="lead-capture">Get Started</button>
+    </main>
+    <div id="lead-capture-modal">
+        <div class="modal-content">
+            <h2>Get Started</h2>
+            <input id="name" type="text" placeholder="Name" aria-label="Your name">
+            <input id="email" type="email" placeholder="Email" aria-label="Your email">
+            <button id="submit-lead">Submit</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const meetingNotes = document.getElementById('meeting-notes');
+            const actionItems = document.getElementById('action-items');
+            const addActionItem = document.getElementById('add-action-item');
+            const assignee = document.getElementById('assignee');
+            const dueDate = document.getElementById('due-date');
+            const assignActionItem = document.getElementById('assign-action-item');
+            const saveMeetingNotes = document.getElementById('save-meeting-notes');
+            const leadCapture = document.getElementById('lead-capture');
+            const leadCaptureModal = document.getElementById('lead-capture-modal');
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const submitLead = document.getElementById('submit-lead');
+
+            let actionItemsArray = [];
+
+            try {
+                if (localStorage.getItem('actionItems')) {
+                    actionItemsArray = JSON.parse(localStorage.getItem('actionItems')) || [];
+                    renderActionItems();
+                }
+            } catch (e) {
+                console.error('Error loading action items:', e);
+            }
+
+            try {
+                if (localStorage.getItem('meetingNotes')) {
+                    meetingNotes.value = localStorage.getItem('meetingNotes');
+                }
+            } catch (e) {
+                console.error('Error loading meeting notes:', e);
+            }
+
+            addActionItem.addEventListener('click', () => {
+                const actionItem = prompt('Enter action item');
+                if (actionItem && actionItem.trim()) {
+                    actionItemsArray.push(actionItem.trim());
+                    renderActionItems();
+                    try {
+                        localStorage.setItem('actionItems', JSON.stringify(actionItemsArray));
+                    } catch (e) {
+                        console.error('Error saving action items:', e);
+                    }
+                }
+            });
+
+            assignActionItem.addEventListener('click', () => {
+                const assigneeValue = assignee.value.trim();
+                const dueDateValue = dueDate.value;
+                if (assigneeValue && dueDateValue && actionItemsArray.length > 0) {
+                    const lastIndex = actionItemsArray.length - 1;
+                    const actionItem = actionItemsArray[lastIndex];
+                    actionItemsArray[lastIndex] = `${actionItem} - Assigned to ${assigneeValue} - Due ${dueDateValue}`;
+                    renderActionItems();
+                    assignee.value = '';
+                    dueDate.value = '';
+                    try {
+                        localStorage.setItem('actionItems', JSON.stringify(actionItemsArray));
+                    } catch (e) {
+                        console.error('Error saving action items:', e);
+                    }
+                }
+            });
+
+            saveMeetingNotes.addEventListener('click', () => {
+                const meetingNotesValue = meetingNotes.value.trim();
+                try {
+                    localStorage.setItem('meetingNotes', meetingNotesValue);
+                } catch (e) {
+                    console.error('Error saving meeting notes:', e);
+                }
+            });
+
+            leadCapture.addEventListener('click', () => {
+                leadCaptureModal.style.display = 'flex';
+            });
+
+            submitLead.addEventListener('click', () => {
+                const nameValue = name.value.trim();
+                const emailValue = email.value.trim();
+                if (nameValue && emailValue) {
+                    const leadData = {
+                        name: nameValue,
+                        email: emailValue,
+                        productConcept: 'AI-Powered Virtual Meeting Note Taker and Action Item Assigner'
+                    };
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(leadData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        leadCaptureModal.style.display = 'none';
+                        name.value = '';
+                        email.value = '';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error submitting your information. Please try again.');
+                    });
+                }
+            });
+
+            function renderActionItems() {
+                actionItems.innerHTML = '';
+                actionItemsArray.forEach((actionItem, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = actionItem;
+                    actionItems.appendChild(listItem);
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                if (e.target === leadCaptureModal) {
+                    leadCaptureModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
