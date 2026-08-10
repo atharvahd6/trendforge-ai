@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Carbon Footprint Analyzer</title>
+    <style>
+        body {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4f4f4f;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        section {
+            background-color: #4f4f4f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="url"], input[type="number"], input[type="text"], input[type="email"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 40px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #8f8f8f;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4f4f4f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <header>
+        <h1>Website Carbon Footprint Analyzer</h1>
+    </header>
+    <main>
+        <section>
+            <label for="website-url">Enter your website URL:</label>
+            <input type="url" id="website-url" placeholder="https://example.com" required>
+            <div id="url-error" class="error-message"></div>
+            <button id="calculate-button">Calculate Carbon Footprint</button>
+            <p id="carbon-footprint-result"></p>
+        </section>
+        <section>
+            <label for="design-score">Design Score (1-10):</label>
+            <input type="number" id="design-score" min="1" max="10" value="5">
+            <div id="design-error" class="error-message"></div>
+
+            <label for="functionality-score">Functionality Score (1-10):</label>
+            <input type="number" id="functionality-score" min="1" max="10" value="5">
+            <div id="functionality-error" class="error-message"></div>
+
+            <label for="engagement-score">Engagement Score (1-10):</label>
+            <input type="number" id="engagement-score" min="1" max="10" value="5">
+            <div id="engagement-error" class="error-message"></div>
+
+            <button id="get-recommendations-button">Get Recommendations</button>
+            <ul id="recommendations-list"></ul>
+        </section>
+        <button id="learn-more-button">Learn More</button>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get Started with Website Carbon Footprint Analyzer</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+            <div id="name-error" class="error-message"></div>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="johndoe@example.com" required>
+            <div id="email-error" class="error-message"></div>
+
+            <button id="submit-lead-button">Submit</button>
+            <button id="close-modal-button" style="margin-top: 10px; background-color: #5f5f5f;">Close</button>
+        </div>
+    </main>
+    <script>
+        const websiteUrlInput = document.getElementById('website-url');
+        const calculateButton = document.getElementById('calculate-button');
+        const carbonFootprintResult = document.getElementById('carbon-footprint-result');
+        const designScoreInput = document.getElementById('design-score');
+        const functionalityScoreInput = document.getElementById('functionality-score');
+        const engagementScoreInput = document.getElementById('engagement-score');
+        const getRecommendationsButton = document.getElementById('get-recommendations-button');
+        const recommendationsList = document.getElementById('recommendations-list');
+        const learnMoreButton = document.getElementById('learn-more-button');
+        const leadCaptureModal = document.getElementById('lead-capture-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const submitLeadButton = document.getElementById('submit-lead-button');
+        const closeModalButton = document.getElementById('close-modal-button');
+
+        const urlError = document.getElementById('url-error');
+        const designError = document.getElementById('design-error');
+        const functionalityError = document.getElementById('functionality-error');
+        const engagementError = document.getElementById('engagement-error');
+        const nameError = document.getElementById('name-error');
+        const emailError = document.getElementById('email-error');
+
+        function validateUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function validateScore(value, min, max) {
+            const num = parseInt(value);
+            return !isNaN(num) && num >= min && num <= max;
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        calculateButton.addEventListener('click', () => {
+            let isValid = true;
+
+            // Validate URL
+            if (!websiteUrlInput.value) {
+                urlError.textContent = 'Please enter a website URL';
+                isValid = false;
+            } else if (!validateUrl(websiteUrlInput.value)) {
+                urlError.textContent = 'Please enter a valid URL (include http:// or https://)';
+                isValid = false;
+            } else {
+                urlError.textContent = '';
+            }
+
+            // Validate scores
+            if (!validateScore(designScoreInput.value, 1, 10)) {
+                designError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                designError.textContent = '';
+            }
+
+            if (!validateScore(functionalityScoreInput.value, 1, 10)) {
+                functionalityError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                functionalityError.textContent = '';
+            }
+
+            if (!validateScore(engagementScoreInput.value, 1, 10)) {
+                engagementError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                engagementError.textContent = '';
+            }
+
+            if (!isValid) return;
+
+            try {
+                const websiteUrl = websiteUrlInput.value;
+                const designScore = designScoreInput.value;
+                const functionalityScore = functionalityScoreInput.value;
+                const engagementScore = engagementScoreInput.value;
+                const carbonFootprint = calculateCarbonFootprint(websiteUrl, designScore, functionalityScore, engagementScore);
+                carbonFootprintResult.textContent = `Your website's carbon footprint is: ${carbonFootprint.toFixed(2)} kg CO2`;
+
+                try {
+                    localStorage.setItem('websiteUrl', websiteUrl);
+                    localStorage.setItem('designScore', designScore);
+                    localStorage.setItem('functionalityScore', functionalityScore);
+                    localStorage.setItem('engagementScore', engagementScore);
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                }
+            } catch (e) {
+                carbonFootprintResult.textContent = 'Error calculating carbon footprint. Please try again.';
+                console.error('Calculation error:', e);
+            }
+        });
+
+        getRecommendationsButton.addEventListener('click', () => {
+            let isValid = true;
+
+            if (!validateScore(designScoreInput.value, 1, 10)) {
+                designError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                designError.textContent = '';
+            }
+
+            if (!validateScore(functionalityScoreInput.value, 1, 10)) {
+                functionalityError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                functionalityError.textContent = '';
+            }
+
+            if (!validateScore(engagementScoreInput.value, 1, 10)) {
+                engagementError.textContent = 'Please enter a score between 1 and 10';
+                isValid = false;
+            } else {
+                engagementError.textContent = '';
+            }
+
+            if (!isValid) return;
+
+            try {
+                const designScore = designScoreInput.value;
+                const functionalityScore = functionalityScoreInput.value;
+                const engagementScore = engagementScoreInput.value;
+                const recommendations = getRecommendations(designScore, functionalityScore, engagementScore);
+                recommendationsList.innerHTML = '';
+                recommendations.forEach(recommendation => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = recommendation;
+                    recommendationsList.appendChild(listItem);
+                });
+            } catch (e) {
+                recommendationsList.innerHTML = '<li>Error generating recommendations. Please try again.</li>';
+                console.error('Recommendation error:', e);
+            }
+        });
+
+        learnMoreButton.addEventListener('click', () => {
+            leadCaptureModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        });
+
+        closeModalButton.addEventListener('click', () => {
+            leadCaptureModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        modalOverlay.addEventListener('click', () => {
+            leadCaptureModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        submitLeadButton.addEventListener('click', () => {
+            let isValid = true;
+
+            if (!nameInput.value.trim()) {
+                nameError.textContent = 'Please enter your name';
+                isValid = false;
+            } else {
+                nameError.textContent = '';
+            }
+
+            if (!emailInput.value.trim()) {
+                emailError.textContent = 'Please enter your email';
+                isValid = false;
+            } else if (!validateEmail(emailInput.value)) {
+                emailError.textContent = 'Please enter a valid email address';
+                isValid = false;
+            } else {
+                emailError.textContent = '';
+            }
+
+            if (!isValid) return;
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const leadData = {
+                name,
+                email,
+                productConcept: 'Website Carbon Footprint Analyzer'
+            };
+
+            submitLeadButton.disabled = true;
+            submitLeadButton.textContent = 'Submitting...';
+
+            fetch('https://salarybit.in/api/v1/lead-intake', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(leadData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Thank you for your interest! We will contact you soon.');
+                nameInput.value = '';
+                emailInput.value = '';
+                leadCaptureModal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error submitting lead:', error);
+                alert('There was an error submitting your information. Please try again later.');
+            })
+            .finally(() => {
+                submitLeadButton.disabled = false;
+                submitLeadButton.textContent = 'Submit';
+            });
+        });
+
+        function calculateCarbonFootprint(websiteUrl, designScore, functionalityScore, engagementScore) {
+            // This is a placeholder function and should be replaced with a real calculation
+            const baseFootprint = 50;
+            const designFactor = (11 - parseInt(designScore)) * 2;
+            const functionalityFactor = (11 - parseInt(functionalityScore)) * 1.5;
+            const engagementFactor = parseInt(engagementScore) * 0.5;
+
+            return baseFootprint + designFactor + functionalityFactor + engagementFactor + (Math.random() * 10);
+        }
+
+        function getRecommendations(designScore, functionalityScore, engagementScore) {
+            const recommendations = [];
+
+            if (designScore < 5) {
+                recommendations.push('Improve visual design and user interface');
+                recommendations.push('Optimize images and media for faster loading');
+            }
+
+            if (functionalityScore < 5) {
+                recommendations.push('Fix broken links and improve site navigation');
+                recommendations.push('Implement better error handling and user feedback');
+            }
+
+            if (engagementScore < 5) {
+                recommendations.push('Add interactive elements to increase user engagement');
+                recommendations.push('Improve content quality and relevance');
+            }
+
+            recommendations.push('Minify and compress CSS, JavaScript, and HTML files');
+            recommendations.push('Leverage browser caching for static assets');
+            recommendations.push('Consider using a green web hosting provider');
+            recommendations.push('Implement lazy loading for images and videos');
+
+            return recommendations;
+        }
+
+        window.addEventListener('load', () => {
+            try {
+                const storedWebsiteUrl = localStorage.getItem('websiteUrl');
+                const storedDesignScore = localStorage.getItem('designScore');
+                const storedFunctionalityScore = localStorage.getItem('functionalityScore');
+                const storedEngagementScore = localStorage.getItem('engagementScore');
+
+                if (storedWebsiteUrl) websiteUrlInput.value = storedWebsiteUrl;
+                if (storedDesignScore) designScoreInput.value = storedDesignScore;
+                if (storedFunctionalityScore) functionalityScoreInput.value = storedFunctionalityScore;
+                if (storedEngagementScore) engagementScoreInput.value = storedEngagementScore;
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+            }
+        });
+    </script>
+</body>
+</html>
