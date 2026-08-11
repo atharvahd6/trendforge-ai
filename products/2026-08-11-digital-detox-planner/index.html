@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Detox Planner</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        section {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="number"], input[type="text"], input[type="email"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 40px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #444;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+        #modal h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Detox Planner</h1>
+    </header>
+    <main>
+        <section id="intro">
+            <p>Welcome to the Digital Detox Planner. Please answer the following questions to create your personalized detox plan.</p>
+        </section>
+        <section id="questions">
+            <label for="digital-usage">How many hours do you spend on digital devices per day?</label>
+            <input type="number" id="digital-usage" min="0" step="0.1" required />
+
+            <label for="detox-duration">How many days would you like your detox to last?</label>
+            <input type="number" id="detox-duration" min="1" required />
+
+            <label for="interests">What are your interests? (separate with commas)</label>
+            <input type="text" id="interests" required />
+
+            <button id="submit">Create Detox Plan</button>
+        </section>
+        <section id="plan" style="display: none;">
+            <h2>Your Personalized Detox Plan</h2>
+            <p id="plan-text"></p>
+            <h2>Alternative Activity Suggestions</h2>
+            <ul id="activities"></ul>
+            <button id="start-detox">Start Detox</button>
+        </section>
+        <section id="progress" style="display: none;">
+            <h2>Track Your Progress</h2>
+            <p id="progress-text"></p>
+            <button id="end-detox">End Detox</button>
+        </section>
+        <section id="post-detox" style="display: none;">
+            <h2>Post-Detox Strategies</h2>
+            <p id="post-detox-text"></p>
+        </section>
+        <button id="lead-capture" style="display: none;">Get Started with Digital Detox</button>
+        <div id="modal" style="display: none;">
+            <h2>Get Started with Digital Detox</h2>
+            <p>Thank you for using the Digital Detox Planner. Please enter your email to get started.</p>
+            <input type="email" id="email" required />
+            <button id="submit-lead">Submit</button>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const digitalUsageInput = document.getElementById('digital-usage');
+            const detoxDurationInput = document.getElementById('detox-duration');
+            const interestsInput = document.getElementById('interests');
+            const submitButton = document.getElementById('submit');
+            const planSection = document.getElementById('plan');
+            const planText = document.getElementById('plan-text');
+            const activitiesList = document.getElementById('activities');
+            const startDetoxButton = document.getElementById('start-detox');
+            const progressSection = document.getElementById('progress');
+            const progressText = document.getElementById('progress-text');
+            const endDetoxButton = document.getElementById('end-detox');
+            const postDetoxSection = document.getElementById('post-detox');
+            const postDetoxText = document.getElementById('post-detox-text');
+            const leadCaptureButton = document.getElementById('lead-capture');
+            const modal = document.getElementById('modal');
+            const emailInput = document.getElementById('email');
+            const submitLeadButton = document.getElementById('submit-lead');
+
+            submitButton.addEventListener('click', () => {
+                if (!digitalUsageInput.value || !detoxDurationInput.value || !interestsInput.value) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const digitalUsage = parseFloat(digitalUsageInput.value);
+                const detoxDuration = parseInt(detoxDurationInput.value);
+                const interests = interestsInput.value.split(',').filter(interest => interest.trim() !== '');
+
+                if (isNaN(digitalUsage) || isNaN(detoxDuration)) {
+                    alert('Please enter valid numbers');
+                    return;
+                }
+
+                const plan = `Your personalized detox plan is to spend ${detoxDuration} days without digital devices, with a goal of reducing your daily digital usage from ${digitalUsage} hours to 0 hours.`;
+                planText.textContent = plan;
+
+                const activities = interests.map(interest => `Read a book about ${interest.trim()}`)
+                    .concat(['Take a walk', 'Meditate', 'Practice yoga', 'Journal your thoughts', 'Cook a new recipe']);
+
+                activitiesList.innerHTML = activities.map(activity => `<li>${activity}</li>`).join('');
+                planSection.style.display = 'block';
+                leadCaptureButton.style.display = 'block';
+            });
+
+            startDetoxButton.addEventListener('click', () => {
+                try {
+                    localStorage.setItem('detoxStarted', 'true');
+                    localStorage.setItem('detoxDuration', detoxDurationInput.value);
+                    planSection.style.display = 'none';
+                    progressSection.style.display = 'block';
+                    const progress = `You have started your ${detoxDurationInput.value} day detox. Stay committed and track your progress.`;
+                    progressText.textContent = progress;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Could not save your progress. Please try again.');
+                }
+            });
+
+            endDetoxButton.addEventListener('click', () => {
+                try {
+                    localStorage.setItem('detoxCompleted', 'true');
+                    progressSection.style.display = 'none';
+                    postDetoxSection.style.display = 'block';
+                    const postDetox = `Congratulations, you have completed your ${localStorage.getItem('detoxDuration') || detoxDurationInput.value} day detox. Here are some strategies to maintain a healthy digital-life balance:
+                    \n1. Set specific times for digital use
+                    \n2. Create device-free zones in your home
+                    \n3. Practice mindfulness when using devices
+                    \n4. Schedule regular digital detox periods
+                    \n5. Engage in offline hobbies and activities`;
+                    postDetoxText.textContent = postDetox;
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Could not save your completion status.');
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                modal.style.display = 'block';
+            });
+
+            submitLeadButton.addEventListener('click', () => {
+                if (!emailInput.value || !emailInput.checkValidity()) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                const email = emailInput.value;
+                const payload = {
+                    product: 'Digital Detox Planner',
+                    email: email
+                };
+
+                submitLeadButton.disabled = true;
+                submitLeadButton.textContent = 'Submitting...';
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Thank you! We will be in touch soon.');
+                    modal.style.display = 'none';
+                    emailInput.value = '';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                })
+                .finally(() => {
+                    submitLeadButton.disabled = false;
+                    submitLeadButton.textContent = 'Submit';
+                });
+            });
+
+            window.addEventListener('load', () => {
+                try {
+                    if (localStorage.getItem('detoxStarted') === 'true') {
+                        planSection.style.display = 'none';
+                        progressSection.style.display = 'block';
+                        const duration = localStorage.getItem('detoxDuration') || 'your';
+                        progressText.textContent = `You have started your ${duration} day detox. Stay committed and track your progress.`;
+                    }
+                    if (localStorage.getItem('detoxCompleted') === 'true') {
+                        progressSection.style.display = 'none';
+                        postDetoxSection.style.display = 'block';
+                        const duration = localStorage.getItem('detoxDuration') || 'your';
+                        postDetoxText.textContent = `Congratulations, you have completed your ${duration} day detox. Here are some strategies to maintain a healthy digital-life balance:
+                        \n1. Set specific times for digital use
+                        \n2. Create device-free zones in your home
+                        \n3. Practice mindfulness when using devices
+                        \n4. Schedule regular digital detox periods
+                        \n5. Engage in offline hobbies and activities`;
+                    }
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
