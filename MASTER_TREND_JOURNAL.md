@@ -53,3 +53,4 @@
 | 2026-08-11 | Digital Detox Planner | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-11-digital-detox-planner/) |
 | 2026-08-12 | Automated Social Media Archiver for Personal Brand Preservation | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-12-automated-social-media-archiver-for-personal-brand-preservat/) |
 | 2026-08-13 | Digital Duplicate File Detector for Cloud Storage | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-13-digital-duplicate-file-detector-for-cloud-storage/) |
+| 2026-08-14 | AI-Powered Personal Knowledge Graph Builder | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-14-ai-powered-personal-knowledge-graph-builder/) |
