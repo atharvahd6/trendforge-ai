@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Legacy Manager</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        section {
+            background-color: #555;
+            padding: 1em;
+            margin: 1em;
+            border-radius: 0.5em;
+            box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1, h2 {
+            color: #fff;
+            margin: 0 0 0.5em 0;
+        }
+        #assets, #wishes {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #assets li, #wishes li {
+            margin: 0.5em 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+        }
+        #assets input, #wishes input, #wishes select {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.5em;
+            border-radius: 0.25em;
+            border: none;
+        }
+        #add-asset, #add-wish {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 0.5em;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        #generate-plan, #save-plan, #lead-capture {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 0.5em;
+            cursor: pointer;
+            margin: 0.5em;
+        }
+        #lead-capture-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #555;
+            padding: 1em;
+            border-radius: 0.5em;
+            box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            z-index: 1000;
+        }
+        #lead-capture-modal input {
+            display: block;
+            width: 100%;
+            padding: 0.5em;
+            margin: 0.5em 0;
+            border-radius: 0.25em;
+            border: none;
+        }
+        #submit-lead {
+            background-color: #666;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 0.5em;
+            cursor: pointer;
+            margin-top: 0.5em;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <header>
+        <h1>Digital Legacy Manager</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Step 1: Identify Digital Assets</h2>
+            <ul id="assets">
+                <li>
+                    <input type="text" placeholder="Social Media Profile" class="asset-input" />
+                </li>
+                <li>
+                    <input type="text" placeholder="Email Account" class="asset-input" />
+                </li>
+                <li>
+                    <input type="text" placeholder="Online Storage Service" class="asset-input" />
+                </li>
+            </ul>
+            <button id="add-asset">Add Asset</button>
+        </section>
+        <section>
+            <h2>Step 2: Specify Wishes</h2>
+            <ul id="wishes">
+                <li>
+                    <select class="wish-type">
+                        <option value="deletion">Deletion</option>
+                        <option value="preservation">Preservation</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                    <input type="text" placeholder="Beneficiary (if applicable)" class="beneficiary" />
+                </li>
+            </ul>
+            <button id="add-wish">Add Wish</button>
+        </section>
+        <section>
+            <h2>Step 3: Generate Plan</h2>
+            <button id="generate-plan">Generate Plan</button>
+            <pre id="plan"></pre>
+        </section>
+        <button id="save-plan">Save Plan</button>
+        <button id="lead-capture">Get Started with Digital Legacy Manager</button>
+        <div id="lead-capture-modal" style="display: none;">
+            <h2>Get Started with Digital Legacy Manager</h2>
+            <p>Thank you for your interest in Digital Legacy Manager. Please provide your contact information to learn more about our product.</p>
+            <input type="text" placeholder="Name" id="name" />
+            <input type="email" placeholder="Email" id="email" />
+            <button id="submit-lead">Submit</button>
+        </div>
+    </main>
+    <script>
+        let assets = [];
+        let wishes = [];
+        let plan = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('lead-capture-modal');
+            const overlay = document.getElementById('modal-overlay');
+
+            function showModal() {
+                modal.style.display = 'block';
+                overlay.style.display = 'block';
+            }
+
+            function hideModal() {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+
+            document.getElementById('add-asset').addEventListener('click', () => {
+                const inputs = document.querySelectorAll('.asset-input');
+                let assetAdded = false;
+
+                inputs.forEach(input => {
+                    if (input.value.trim()) {
+                        assets.push(input.value.trim());
+                        input.value = '';
+                        assetAdded = true;
+                    }
+                });
+
+                if (assetAdded) {
+                    renderAssets();
+                }
+            });
+
+            document.getElementById('add-wish').addEventListener('click', () => {
+                const wishType = document.querySelector('.wish-type').value;
+                const beneficiary = document.querySelector('.beneficiary').value.trim();
+
+                if (wishType) {
+                    wishes.push({
+                        type: wishType,
+                        beneficiary: beneficiary || 'N/A'
+                    });
+                    renderWishes();
+                    document.querySelector('.wish-type').value = 'deletion';
+                    document.querySelector('.beneficiary').value = '';
+                }
+            });
+
+            document.getElementById('generate-plan').addEventListener('click', () => {
+                if (assets.length === 0 && wishes.length === 0) {
+                    document.getElementById('plan').textContent = 'Please add at least one asset or wish before generating a plan.';
+                    return;
+                }
+
+                plan = `Digital Legacy Plan:\n\nAssets:\n${assets.length > 0 ? assets.join('\n') : 'None'}\n\nWishes:\n${wishes.length > 0 ? wishes.map(wish => `${wish.type} to ${wish.beneficiary}`).join('\n') : 'None'}`;
+                document.getElementById('plan').textContent = plan;
+            });
+
+            document.getElementById('save-plan').addEventListener('click', () => {
+                try {
+                    localStorage.setItem('plan', plan);
+                    localStorage.setItem('assets', JSON.stringify(assets));
+                    localStorage.setItem('wishes', JSON.stringify(wishes));
+                    alert('Plan saved successfully!');
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Error saving plan. Please try again.');
+                }
+            });
+
+            document.getElementById('lead-capture').addEventListener('click', showModal);
+            overlay.addEventListener('click', hideModal);
+
+            document.getElementById('submit-lead').addEventListener('click', () => {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                if (!name || !email) {
+                    alert('Please provide both name and email.');
+                    return;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please provide a valid email address.');
+                    return;
+                }
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product: 'Digital Legacy Manager',
+                        name,
+                        email
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Thank you for your interest! We will contact you soon.');
+                    hideModal();
+                    document.getElementById('name').value = '';
+                    document.getElementById('email').value = '';
+                })
+                .catch(error => {
+                    console.error('Error submitting lead:', error);
+                    alert('There was an error submitting your information. Please try again later.');
+                });
+            });
+
+            function renderAssets() {
+                const assetsList = document.getElementById('assets');
+                assetsList.innerHTML = assets.map(asset => `<li>${escapeHtml(asset)}</li>`).join('');
+                assetsList.innerHTML += `
+                    <li>
+                        <input type="text" placeholder="Social Media Profile" class="asset-input" />
+                    </li>
+                    <li>
+                        <input type="text" placeholder="Email Account" class="asset-input" />
+                    </li>
+                    <li>
+                        <input type="text" placeholder="Online Storage Service" class="asset-input" />
+                    </li>
+                `;
+            }
+
+            function renderWishes() {
+                const wishesList = document.getElementById('wishes');
+                wishesList.innerHTML = wishes.map(wish => `<li>${escapeHtml(wish.type)} to ${escapeHtml(wish.beneficiary)}</li>`).join('');
+                wishesList.innerHTML += `
+                    <li>
+                        <select class="wish-type">
+                            <option value="deletion">Deletion</option>
+                            <option value="preservation">Preservation</option>
+                            <option value="transfer">Transfer</option>
+                        </select>
+                        <input type="text" placeholder="Beneficiary (if applicable)" class="beneficiary" />
+                    </li>
+                `;
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .toString()
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            try {
+                const storedPlan = localStorage.getItem('plan');
+                const storedAssets = localStorage.getItem('assets');
+                const storedWishes = localStorage.getItem('wishes');
+
+                if (storedPlan) {
+                    plan = storedPlan;
+                    document.getElementById('plan').textContent = plan;
+                }
+
+                if (storedAssets) {
+                    assets = JSON.parse(storedAssets);
+                    renderAssets();
+                }
+
+                if (storedWishes) {
+                    wishes = JSON.parse(storedWishes);
+                    renderWishes();
+                }
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+            }
+        });
+    </script>
+</body>
+</html>
