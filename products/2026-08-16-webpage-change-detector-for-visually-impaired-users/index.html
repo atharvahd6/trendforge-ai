@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Change Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2f2f2f;
+        }
+        header {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            background-color: #4f4f4f;
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input, button {
+            width: 50%;
+            height: 30px;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6f6f6f;
+            color: #ffffff;
+        }
+        button {
+            width: 20%;
+            cursor: pointer;
+            background-color: #8f8f8f;
+        }
+        #result {
+            width: 50%;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6f6f6f;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        #modal div {
+            background-color: #2f2f2f;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 500px;
+        }
+        #modal input {
+            width: calc(100% - 20px);
+        }
+        #modal button {
+            width: calc(100% - 20px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Webpage Change Detector for Visually Impaired Users</h1>
+    </header>
+    <main>
+        <h2>Monitor Webpages for Changes</h2>
+        <input id="url" type="url" placeholder="Enter webpage URL" aria-label="Webpage URL to monitor">
+        <div>
+            <button id="save-url" aria-label="Save URL">Save URL</button>
+            <button id="detect-changes" aria-label="Detect changes">Detect Changes</button>
+        </div>
+        <p id="result" role="status" aria-live="polite"></p>
+        <button id="get-started" aria-label="Get started">Get Started</button>
+    </main>
+    <div id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div>
+            <h2>Get Started with Webpage Change Detector</h2>
+            <input id="name" type="text" placeholder="Name" aria-label="Your name">
+            <input id="email" type="email" placeholder="Email" aria-label="Your email">
+            <button id="submit-lead" aria-label="Submit information">Submit</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlInput = document.getElementById('url');
+            const saveUrlButton = document.getElementById('save-url');
+            const detectChangesButton = document.getElementById('detect-changes');
+            const resultParagraph = document.getElementById('result');
+            const getStartedButton = document.getElementById('get-started');
+            const modal = document.getElementById('modal');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const submitLeadButton = document.getElementById('submit-lead');
+
+            saveUrlButton.addEventListener('click', () => {
+                try {
+                    const url = urlInput.value.trim();
+                    if (!url) {
+                        resultParagraph.textContent = 'Please enter a valid URL';
+                        return;
+                    }
+                    localStorage.setItem('url', url);
+                    resultParagraph.textContent = 'URL saved successfully!';
+                } catch (error) {
+                    resultParagraph.textContent = 'Error saving URL. Please try again.';
+                    console.error('Error saving URL:', error);
+                }
+            });
+
+            detectChangesButton.addEventListener('click', () => {
+                try {
+                    const url = localStorage.getItem('url');
+                    if (!url) {
+                        resultParagraph.textContent = 'Please save a URL first!';
+                        return;
+                    }
+
+                    resultParagraph.textContent = 'Detecting changes...';
+
+                    // Simulate change detection
+                    setTimeout(() => {
+                        resultParagraph.textContent = 'Changes detected! (This is a simulation)';
+                    }, 1500);
+                } catch (error) {
+                    resultParagraph.textContent = 'Error detecting changes. Please try again.';
+                    console.error('Error detecting changes:', error);
+                }
+            });
+
+            getStartedButton.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modal.setAttribute('aria-hidden', 'false');
+                nameInput.focus();
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    modal.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            submitLeadButton.addEventListener('click', () => {
+                try {
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim();
+
+                    if (!name || !email) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        alert('Please enter a valid email address');
+                        return;
+                    }
+
+                    const payload = {
+                        productConcept: 'Webpage Change Detector for Visually Impaired Users',
+                        name,
+                        email
+                    };
+
+                    fetch('https://salarybit.in/api/v1/lead-intake', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        resultParagraph.textContent = 'Thank you for your interest! We will contact you soon.';
+                        nameInput.value = '';
+                        emailInput.value = '';
+                        modal.style.display = 'none';
+                        modal.setAttribute('aria-hidden', 'true');
+                    })
+                    .catch(error => {
+                        console.error('Error submitting lead:', error);
+                        resultParagraph.textContent = 'Error submitting your information. Please try again.';
+                    });
+                } catch (error) {
+                    console.error('Error in lead submission:', error);
+                    resultParagraph.textContent = 'Error submitting your information. Please try again.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

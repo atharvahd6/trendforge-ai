@@ -55,3 +55,4 @@
 | 2026-08-13 | Digital Duplicate File Detector for Cloud Storage | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-13-digital-duplicate-file-detector-for-cloud-storage/) |
 | 2026-08-14 | AI-Powered Personal Knowledge Graph Builder | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-14-ai-powered-personal-knowledge-graph-builder/) |
 | 2026-08-15 | Digital Legacy Manager | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-15-digital-legacy-manager/) |
+| 2026-08-16 | Webpage Change Detector for Visually Impaired Users | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-16-webpage-change-detector-for-visually-impaired-users/) |
