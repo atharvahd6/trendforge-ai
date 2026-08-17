@@ -56,3 +56,4 @@
 | 2026-08-14 | AI-Powered Personal Knowledge Graph Builder | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-14-ai-powered-personal-knowledge-graph-builder/) |
 | 2026-08-15 | Digital Legacy Manager | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-15-digital-legacy-manager/) |
 | 2026-08-16 | Webpage Change Detector for Visually Impaired Users | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-16-webpage-change-detector-for-visually-impaired-users/) |
+| 2026-08-17 | Accessibility Checker for Custom Web Fonts | [Launch App Tool 🌐](https://atharvahd6.github.io/trendforge-ai/products/2026-08-17-accessibility-checker-for-custom-web-fonts/) |

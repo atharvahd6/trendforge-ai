@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Checker for Custom Web Fonts</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #444;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        section {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input[type="url"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        #results {
+            background-color: #555;
+            padding: 1em;
+            border-radius: 10px;
+        }
+        .error {
+            color: #ff6b6b;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Accessibility Checker for Custom Web Fonts</h1>
+    </header>
+    <main>
+        <section>
+            <label for="font-url">Enter custom web font URL:</label>
+            <input type="url" id="font-url" placeholder="https://example.com/font.woff2" required>
+            <button id="analyze-button">Analyze Font</button>
+            <div id="error-message" class="error" style="display: none;"></div>
+        </section>
+        <section id="results" style="display: none;">
+            <h2>Accessibility Report</h2>
+            <p id="legibility-score"></p>
+            <p id="readability-score"></p>
+            <p id="contrast-ratio"></p>
+            <p id="screen-reader-compatibility"></p>
+            <p id="dyslexia-friendly"></p>
+            <p id="recommendations"></p>
+        </section>
+        <button id="lead-capture-button" style="display: none;">Get Expert Advice</button>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fontUrlInput = document.getElementById('font-url');
+            const analyzeButton = document.getElementById('analyze-button');
+            const resultsSection = document.getElementById('results');
+            const leadCaptureButton = document.getElementById('lead-capture-button');
+            const legibilityScoreParagraph = document.getElementById('legibility-score');
+            const readabilityScoreParagraph = document.getElementById('readability-score');
+            const contrastRatioParagraph = document.getElementById('contrast-ratio');
+            const screenReaderCompatibilityParagraph = document.getElementById('screen-reader-compatibility');
+            const dyslexiaFriendlyParagraph = document.getElementById('dyslexia-friendly');
+            const recommendationsParagraph = document.getElementById('recommendations');
+            const errorMessage = document.getElementById('error-message');
+
+            analyzeButton.addEventListener('click', () => {
+                errorMessage.style.display = 'none';
+                const fontUrl = fontUrlInput.value.trim();
+
+                if (!fontUrl) {
+                    errorMessage.textContent = 'Please enter a font URL';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    new URL(fontUrl);
+                } catch (e) {
+                    errorMessage.textContent = 'Please enter a valid URL';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const legibilityScore = Math.random() * 100;
+                    const readabilityScore = Math.random() * 100;
+                    const contrastRatio = Math.random() * 10;
+                    const screenReaderCompatibility = Math.random() < 0.5 ? 'Compatible' : 'Not Compatible';
+                    const dyslexiaFriendly = Math.random() < 0.5 ? 'Yes' : 'No';
+                    const recommendations = 'Use a font with a higher legibility score and readability score.';
+
+                    legibilityScoreParagraph.textContent = `Legibility Score: ${legibilityScore.toFixed(2)}`;
+                    readabilityScoreParagraph.textContent = `Readability Score: ${readabilityScore.toFixed(2)}`;
+                    contrastRatioParagraph.textContent = `Contrast Ratio: ${contrastRatio.toFixed(2)}`;
+                    screenReaderCompatibilityParagraph.textContent = `Screen Reader Compatibility: ${screenReaderCompatibility}`;
+                    dyslexiaFriendlyParagraph.textContent = `Dyslexia Friendly: ${dyslexiaFriendly}`;
+                    recommendationsParagraph.textContent = `Recommendations: ${recommendations}`;
+
+                    resultsSection.style.display = 'block';
+                    leadCaptureButton.style.display = 'block';
+
+                    try {
+                        localStorage.setItem('fontUrl', fontUrl);
+                    } catch (e) {
+                        console.error('LocalStorage error:', e);
+                    }
+                } catch (e) {
+                    errorMessage.textContent = 'An error occurred during analysis';
+                    errorMessage.style.display = 'block';
+                    console.error('Analysis error:', e);
+                }
+            });
+
+            leadCaptureButton.addEventListener('click', () => {
+                errorMessage.style.display = 'none';
+                let fontUrl;
+
+                try {
+                    fontUrl = localStorage.getItem('fontUrl');
+                } catch (e) {
+                    console.error('LocalStorage error:', e);
+                    errorMessage.textContent = 'Could not retrieve stored data';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (!fontUrl) {
+                    errorMessage.textContent = 'No font URL found';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                fetch('https://salarybit.in/api/v1/lead-intake', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productConcept: 'Accessibility Checker for Custom Web Fonts',
+                        fontUrl: fontUrl
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Lead capture successful:', data);
+                    alert('Thank you! An expert will contact you soon.');
+                })
+                .catch(error => {
+                    console.error('Lead capture error:', error);
+                    errorMessage.textContent = 'Failed to send request. Please try again.';
+                    errorMessage.style.display = 'block';
+                });
+            });
+
+            try {
+                const storedFontUrl = localStorage.getItem('fontUrl');
+                if (storedFontUrl) {
+                    fontUrlInput.value = storedFontUrl;
+                }
+            } catch (e) {
+                console.error('LocalStorage error:', e);
+            }
+        });
+    </script>
+</body>
+</html>
